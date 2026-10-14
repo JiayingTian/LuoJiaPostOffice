@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="珞珈烟火邮局——在珞珈山的晨光与黄昏里，读信、写信，收藏校园里的故事。"
+    />
+    <title>珞珈烟火邮局</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="珞珈烟火邮局首页">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-copy">
+          <strong>珞珈烟火邮局</strong>
+          <small>LUOJIA POST OFFICE</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+        <span class="sr-only">打开导航菜单</span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <button class="nav-item active" type="button">首页</button>
+        <button class="nav-item" type="button">时光信笺</button>
+        <button class="nav-item" type="button">邮局故事</button>
+        <button class="nav-item" type="button">珞珈印记</button>
+        <button class="nav-item" type="button">特别企划</button>
+        <button class="nav-item" type="button">关于我们</button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button" type="button" aria-label="搜索">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 4.4 4.4"></path>
+          </svg>
+        </button>
+        <button class="login-button" type="button">登录</button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-wash" aria-hidden="true"></div>
+        <div class="hero-content">
+          <div class="postmark" aria-hidden="true">
+            <span>WHU</span>
+            <i></i><i></i><i></i>
+          </div>
+          <p class="eyebrow">LUOJIA · AUTUMN LETTERS</p>
+          <h1 id="hero-title">珞珈烟火邮局</h1>
+          <h2>那些未寄出的信</h2>
+          <p class="hero-intro">
+            在珞珈山的晨光与黄昏里，<br />
+            总有一些话，值得认真地写下来。
+          </p>
+
+          <div class="hero-actions" aria-label="首页主要操作">
+            <button class="primary-button" type="button" data-action="读信">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5.5c2.7-.7 5.3-.2 8 1.6v12c-2.7-1.8-5.3-2.3-8-1.6z"></path>
+                <path d="M20 5.5c-2.7-.7-5.3-.2-8 1.6v12c2.7-1.8 5.3-2.3 8-1.6z"></path>
+              </svg>
+              去读信
+              <span aria-hidden="true">→</span>
+            </button>
+            <button class="secondary-button" type="button" data-action="写信">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m4 20 4.6-1 10-10-3.6-3.6-10 10z"></path>
+                <path d="m13.8 6.6 3.6 3.6"></path>
+              </svg>
+              写一封信
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <dl class="stats" aria-label="邮局数据">
+            <div>
+              <dt>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="1"></rect>
+                  <path d="m4 7 8 6 8-6"></path>
+                </svg>
+                12,630 <small>封</small>
+              </dt>
+              <dd>已收藏信件</dd>
+            </div>
+            <div>
+              <dt>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4.5 21c.4-5 3-7.5 7.5-7.5S19.1 16 19.5 21"></path>
+                </svg>
+                8,921 <small>位</small>
+              </dt>
+              <dd>共鸣的你</dd>
+            </div>
+            <div>
+              <dt>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m3 11 18-8-7 18-3-7z"></path>
+                  <path d="m11 14 4-4"></path>
+                </svg>
+                1,205 <small>天</small>
+              </dt>
+              <dd>邮局已陪伴</dd>
+            </div>
+          </dl>
+        </div>
+        <p class="hero-note">有些故事<br />会在这里相遇</p>
+      </section>
+
+      <section class="portal-section" aria-label="邮局栏目">
+        <div class="portal-grid">
+          <article class="portal-card card-letters">
+            <div class="card-copy">
+              <p class="card-index">01 / LETTERS</p>
+              <h3>时光信笺</h3>
+              <p>在他人的文字里，<br />遇见相似的青春。</p>
+            </div>
+            <span class="sprite sprite-envelope" aria-hidden="true"></span>
+            <button class="card-button" type="button" data-action="时光信笺" aria-label="进入时光信笺">→</button>
+          </article>
+
+          <article class="portal-card card-write">
+            <div class="card-copy">
+              <p class="card-index">02 / WRITE</p>
+              <h3>写一封信</h3>
+              <p>写下此刻的心情，<br />也写给未来的自己。</p>
+            </div>
+            <span class="sprite sprite-paper" aria-hidden="true"></span>
+            <button class="card-button" type="button" data-action="写一封信" aria-label="开始写一封信">→</button>
+          </article>
+
+          <article class="portal-card card-campus">
+            <div class="card-copy">
+              <p class="card-index">03 / CAMPUS</p>
+              <h3>珞珈印记</h3>
+              <p>关于这座校园的<br />人、事与时光。</p>
+            </div>
+            <span class="sprite sprite-gate" aria-hidden="true"></span>
+            <button class="card-button" type="button" data-action="珞珈印记" aria-label="查看珞珈印记">→</button>
+          </article>
+
+          <article class="portal-card card-plan">
+            <div class="card-copy">
+              <p class="card-index">04 / SPECIAL</p>
+              <h3>特别企划</h3>
+              <p>不定期的主题活动，<br />让更多故事被看见。</p>
+            </div>
+            <span class="sprite sprite-stamps" aria-hidden="true"></span>
+            <button class="card-button" type="button" data-action="特别企划" aria-label="查看特别企划">→</button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p><span></span>在珞珈，每一封信，都是生活的注脚<span></span></p>
+      <div class="footer-skyline" aria-hidden="true"></div>
+      <small>LUOJIA POST OFFICE&nbsp;&nbsp; ✉ 〰</small>
+    </footer>
+
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
