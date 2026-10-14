@@ -1,0 +1,1411 @@
+openapi: 3.1.0
+
+info:
+  title: 珞珈烟火邮局 API
+  version: 0.1.0
+  summary: 珞珈烟火邮局前后端接口约定
+  description: |
+    本文件是前端与后端共同遵守的接口契约，也是联调、Mock、测试和接口文档的唯一事实来源。
+
+    核心约定：
+    1. 所有接口使用 UTF-8 JSON；文件上传接口除外。
+    2. API 前缀固定为 `/api/v1`，字段统一使用 lowerCamelCase。
+    3. 资源 ID 始终作为字符串传输；时间统一使用带时区的 ISO 8601 格式。
+    4. 信件与回信正文只接收纯文本，换行使用 `\n`，后端不得原样返回可执行 HTML。
+    5. 成功响应的 `code` 固定为 `0`；失败响应使用稳定的业务错误码，前端不根据 message 判断逻辑。
+    6. 列表接口统一使用 `page`、`pageSize`、`total` 和 `hasMore`。
+    7. Web 端使用 HttpOnly Cookie Session；有副作用的登录态请求同时携带 `X-CSRF-Token`。
+    8. 开发环境可允许明确配置的 localhost Origin；携带凭据时禁止使用 `Access-Control-Allow-Origin: *`。
+    9. POST 创建接口支持 `Idempotency-Key`，相同用户和相同 Key 在 24 小时内不得创建重复资源。
+    10. 本契约发生不兼容变更时必须提升 API 主版本，兼容性新增只提升文档版本。
+
+  x-error-code-ranges:
+    success: "0"
+    request: "40000-40099"
+    authentication: "40100-40199"
+    authorization: "40300-40399"
+    notFound: "40400-40499"
+    conflict: "40900-40999"
+    validation: "42200-42299"
+    rateLimit: "42900-42999"
+    server: "50000-59999"
+
+servers:
+  - url: /api/v1
+    description: 当前站点同源 API
+  - url: http://localhost:8080/api/v1
+    description: 本地开发环境
+
+tags:
+  - name: Home
+    description: 首页聚合数据
+  - name: Auth
+    description: 登录态与当前用户
+  - name: Letters
+    description: 信件浏览、创建与管理
+  - name: Replies
+    description: 信件回信
+  - name: Favorites
+    description: 信件收藏
+  - name: Stories
+    description: 邮局故事与珞珈印记
+  - name: Projects
+    description: 特别企划
+  - name: Me
+    description: 当前用户的信箱与收藏
+  - name: Admin
+    description: 管理员审核接口
+
+paths:
+  /home:
+    get:
+      tags: [Home]
+      operationId: getHome
+      summary: 获取首页聚合数据
+      description: 首页首次加载只调用此接口，避免分别请求统计数字和推荐内容。
+      responses:
+        "200":
+          description: 首页数据
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/RequestId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: 登录
+      description: 登录成功后，后端通过 Set-Cookie 写入 HttpOnly Session，并在响应数据中返回 CSRF Token。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: 登录成功
+          headers:
+            Set-Cookie:
+              description: HttpOnly、Secure、SameSite=Lax 的会话 Cookie
+              schema:
+                type: string
+            X-Request-Id:
+              $ref: "#/components/headers/RequestId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: 退出登录
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        "200":
+          $ref: "#/components/responses/SuccessWithoutData"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      operationId: getCurrentUser
+      summary: 获取当前登录用户
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: 当前用户
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /letters:
+    get:
+      tags: [Letters]
+      operationId: listLetters
+      summary: 获取公开信件列表
+      security:
+        - {}
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: sort
+          in: query
+          description: 排序方式
+          schema:
+            type: string
+            enum: [latest, popular, mostReplied]
+            default: latest
+        - name: keyword
+          in: query
+          description: 匹配标题、正文摘要和地点
+          schema:
+            type: string
+            maxLength: 50
+        - name: location
+          in: query
+          description: 地点筛选
+          schema:
+            type: string
+            maxLength: 40
+        - name: hasReplies
+          in: query
+          description: 是否只返回已有回信的信件
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: 信件分页列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      tags: [Letters]
+      operationId: createLetter
+      summary: 创建并提交信件
+      description: 默认提交审核；如果 saveAsDraft 为 true，则保存为草稿。
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LetterCreateRequest"
+      responses:
+        "201":
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+
+  /letters/{letterId}:
+    parameters:
+      - $ref: "#/components/parameters/LetterId"
+    get:
+      tags: [Letters]
+      operationId: getLetter
+      summary: 获取信件详情
+      security:
+        - {}
+        - cookieAuth: []
+      responses:
+        "200":
+          description: 信件详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      tags: [Letters]
+      operationId: updateLetter
+      summary: 修改自己的草稿或被退回信件
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LetterUpdateRequest"
+      responses:
+        "200":
+          description: 修改成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+
+    delete:
+      tags: [Letters]
+      operationId: deleteLetter
+      summary: 删除自己的信件
+      description: 后端执行软删除；已发布内容保留审计记录，不直接物理删除。
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        "200":
+          $ref: "#/components/responses/SuccessWithoutData"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /letters/{letterId}/favorite:
+    parameters:
+      - $ref: "#/components/parameters/LetterId"
+    put:
+      tags: [Favorites]
+      operationId: favoriteLetter
+      summary: 收藏信件
+      description: 幂等操作；重复收藏仍返回成功。
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        "200":
+          description: 收藏状态
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoriteResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags: [Favorites]
+      operationId: unfavoriteLetter
+      summary: 取消收藏信件
+      description: 幂等操作；尚未收藏时仍返回成功。
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        "200":
+          description: 收藏状态
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoriteResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /letters/{letterId}/replies:
+    parameters:
+      - $ref: "#/components/parameters/LetterId"
+    get:
+      tags: [Replies]
+      operationId: listReplies
+      summary: 获取信件的公开回信
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: 回信分页列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReplyListResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    post:
+      tags: [Replies]
+      operationId: createReply
+      summary: 提交回信
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplyCreateRequest"
+      responses:
+        "201":
+          description: 回信已提交审核
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReplyResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+
+  /stories:
+    get:
+      tags: [Stories]
+      operationId: listStories
+      summary: 获取邮局故事与珞珈印记列表
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: category
+          in: query
+          schema:
+            $ref: "#/components/schemas/StoryCategory"
+      responses:
+        "200":
+          description: 故事分页列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /stories/{storyId}:
+    get:
+      tags: [Stories]
+      operationId: getStory
+      summary: 获取故事详情
+      parameters:
+        - $ref: "#/components/parameters/StoryId"
+      responses:
+        "200":
+          description: 故事详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /projects:
+    get:
+      tags: [Projects]
+      operationId: listProjects
+      summary: 获取特别企划列表
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/ProjectStatus"
+      responses:
+        "200":
+          description: 企划分页列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectListResponse"
+
+  /projects/{projectId}:
+    get:
+      tags: [Projects]
+      operationId: getProject
+      summary: 获取特别企划详情
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: 企划详情
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /me/letters:
+    get:
+      tags: [Me]
+      operationId: listMyLetters
+      summary: 获取当前用户写过的信件
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/LetterStatus"
+      responses:
+        "200":
+          description: 当前用户信件列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /me/favorites:
+    get:
+      tags: [Me]
+      operationId: listMyFavorites
+      summary: 获取当前用户收藏的信件
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: 收藏信件列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /admin/letters:
+    get:
+      tags: [Admin]
+      operationId: listLettersForReview
+      summary: 获取待审核或已处理的信件
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/LetterStatus"
+      responses:
+        "200":
+          description: 审核列表
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/letters/{letterId}/review:
+    post:
+      tags: [Admin]
+      operationId: reviewLetter
+      summary: 审核信件
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - $ref: "#/components/parameters/LetterId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewRequest"
+      responses:
+        "200":
+          description: 审核完成
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: luojia_session
+      description: 后端设置的 HttpOnly Session Cookie，前端请求需开启 credentials。
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+      description: 登录后获得；所有有副作用的登录态请求必须携带。
+
+  headers:
+    RequestId:
+      description: 服务端生成的请求追踪 ID；报错反馈时应一并提交。
+      schema:
+        type: string
+        example: req_01JABCD2EFGH3456789
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: 从 1 开始的页码
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      description: 每页数量，最大 50
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 20
+    LetterId:
+      name: letterId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      example: let_01JABCD2EFGH3456789
+    StoryId:
+      name: storyId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      example: sty_01JABCD2EFGH3456789
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      example: prj_01JABCD2EFGH3456789
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: 客户端生成的唯一值，建议使用 UUID；用于防止重复提交。
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 128
+
+  responses:
+    SuccessWithoutData:
+      description: 操作成功
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EmptyResponse"
+    BadRequest:
+      description: 请求格式、查询参数或 JSON 无效
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 40001
+            message: 请求参数无效
+            data:
+              fieldErrors:
+                pageSize: 必须小于或等于 50
+            requestId: req_01JABCD2EFGH3456789
+    Unauthorized:
+      description: 未登录、会话失效或凭据错误
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 40101
+            message: 请先登录
+            data: null
+            requestId: req_01JABCD2EFGH3456789
+    Forbidden:
+      description: 已登录但没有操作权限，或 CSRF Token 无效
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 40301
+            message: 无权执行此操作
+            data: null
+            requestId: req_01JABCD2EFGH3456789
+    NotFound:
+      description: 资源不存在、已删除或当前用户不可见
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 40401
+            message: 资源不存在
+            data: null
+            requestId: req_01JABCD2EFGH3456789
+    Conflict:
+      description: 重复提交、状态冲突或资源版本冲突
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 40901
+            message: 当前状态不允许执行此操作
+            data: null
+            requestId: req_01JABCD2EFGH3456789
+    ValidationFailed:
+      description: 请求格式正确，但内容未通过业务校验或内容安全规则
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 42201
+            message: 信件内容未通过校验
+            data:
+              fieldErrors:
+                content: 正文长度必须为 20 至 1500 个字符
+            requestId: req_01JABCD2EFGH3456789
+    RateLimited:
+      description: 请求过于频繁
+      headers:
+        Retry-After:
+          description: 建议重试等待秒数
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 42901
+            message: 请求过于频繁，请稍后重试
+            data: null
+            requestId: req_01JABCD2EFGH3456789
+    InternalError:
+      description: 服务端内部错误；不得向前端暴露堆栈、SQL 或密钥信息
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            code: 50000
+            message: 服务暂时不可用
+            data: null
+            requestId: req_01JABCD2EFGH3456789
+
+  schemas:
+    EmptyResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+          example: success
+        data:
+          type: "null"
+        requestId:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          minimum: 40000
+        message:
+          type: string
+          description: 面向用户的简短中文提示，不作为前端逻辑判断依据。
+        data:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/ErrorData"
+        requestId:
+          type: string
+
+    ErrorData:
+      type: object
+      additionalProperties: true
+      properties:
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+
+    Pagination:
+      type: object
+      required: [page, pageSize, total, hasMore]
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+        hasMore:
+          type: boolean
+
+    UserRole:
+      type: string
+      enum: [user, moderator, admin]
+
+    User:
+      type: object
+      required: [id, displayName, avatarUrl, role, createdAt]
+      properties:
+        id:
+          type: string
+          example: usr_01JABCD2EFGH3456789
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 30
+          example: 珞珈来客
+        avatarUrl:
+          type: [string, "null"]
+          format: uri
+        role:
+          $ref: "#/components/schemas/UserRole"
+        createdAt:
+          type: string
+          format: date-time
+
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [account, password]
+      properties:
+        account:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: 用户名、邮箱或统一身份认证账号。
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 128
+
+    AuthData:
+      type: object
+      required: [user, csrfToken]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        csrfToken:
+          type: string
+          minLength: 16
+          description: 仅保存在内存中，不写入 localStorage。
+
+    AuthResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/AuthData"
+        requestId:
+          type: string
+
+    UserResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/User"
+        requestId:
+          type: string
+
+    LetterStatus:
+      type: string
+      enum: [draft, pending, published, rejected, hidden, deleted]
+
+    LetterVisibility:
+      type: string
+      enum: [public, private, scheduled]
+
+    AuthorView:
+      type: object
+      required: [displayName, isAnonymous]
+      properties:
+        displayName:
+          type: string
+          example: 一位珞珈来客
+        isAnonymous:
+          type: boolean
+
+    LetterSummary:
+      type: object
+      required:
+        - id
+        - title
+        - excerpt
+        - author
+        - location
+        - status
+        - publishedAt
+        - favoriteCount
+        - replyCount
+        - isFavorited
+      properties:
+        id:
+          type: string
+          example: let_01JABCD2EFGH3456789
+        title:
+          type: string
+          maxLength: 80
+        excerpt:
+          type: string
+          maxLength: 120
+        author:
+          $ref: "#/components/schemas/AuthorView"
+        location:
+          type: [string, "null"]
+          maxLength: 40
+        status:
+          $ref: "#/components/schemas/LetterStatus"
+        publishedAt:
+          type: [string, "null"]
+          format: date-time
+        favoriteCount:
+          type: integer
+          minimum: 0
+        replyCount:
+          type: integer
+          minimum: 0
+        isFavorited:
+          type: boolean
+          description: 未登录时固定为 false。
+
+    Letter:
+      allOf:
+        - $ref: "#/components/schemas/LetterSummary"
+        - type: object
+          required:
+            - content
+            - visibility
+            - scheduledAt
+            - createdAt
+            - updatedAt
+            - canEdit
+            - canDelete
+          properties:
+            content:
+              type: string
+              minLength: 20
+              maxLength: 1500
+              description: 纯文本正文。
+            visibility:
+              $ref: "#/components/schemas/LetterVisibility"
+            scheduledAt:
+              type: [string, "null"]
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            canEdit:
+              type: boolean
+            canDelete:
+              type: boolean
+            rejectionReason:
+              type: [string, "null"]
+              maxLength: 300
+
+    LetterCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [title, content, isAnonymous, visibility, saveAsDraft]
+      properties:
+        title:
+          type: string
+          minLength: 2
+          maxLength: 80
+        content:
+          type: string
+          minLength: 20
+          maxLength: 1500
+          description: 纯文本正文，不接收 HTML。
+        isAnonymous:
+          type: boolean
+        location:
+          type: [string, "null"]
+          maxLength: 40
+        visibility:
+          $ref: "#/components/schemas/LetterVisibility"
+        scheduledAt:
+          type: [string, "null"]
+          format: date-time
+          description: visibility 为 scheduled 时必填，并且必须晚于当前时间。
+        saveAsDraft:
+          type: boolean
+          default: false
+
+    LetterUpdateRequest:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        title:
+          type: string
+          minLength: 2
+          maxLength: 80
+        content:
+          type: string
+          minLength: 20
+          maxLength: 1500
+        isAnonymous:
+          type: boolean
+        location:
+          type: [string, "null"]
+          maxLength: 40
+        visibility:
+          $ref: "#/components/schemas/LetterVisibility"
+        scheduledAt:
+          type: [string, "null"]
+          format: date-time
+        submitForReview:
+          type: boolean
+          description: 修改完成后是否重新提交审核。
+
+    ReplyStatus:
+      type: string
+      enum: [pending, published, rejected, hidden, deleted]
+
+    Reply:
+      type: object
+      required: [id, letterId, content, author, status, createdAt]
+      properties:
+        id:
+          type: string
+          example: rep_01JABCD2EFGH3456789
+        letterId:
+          type: string
+        content:
+          type: string
+          minLength: 2
+          maxLength: 500
+        author:
+          $ref: "#/components/schemas/AuthorView"
+        status:
+          $ref: "#/components/schemas/ReplyStatus"
+        createdAt:
+          type: string
+          format: date-time
+
+    ReplyCreateRequest:
+      type: object
+      additionalProperties: false
+      required: [content, isAnonymous]
+      properties:
+        content:
+          type: string
+          minLength: 2
+          maxLength: 500
+          description: 纯文本回信，不接收 HTML。
+        isAnonymous:
+          type: boolean
+
+    FavoriteData:
+      type: object
+      required: [letterId, isFavorited, favoriteCount]
+      properties:
+        letterId:
+          type: string
+        isFavorited:
+          type: boolean
+        favoriteCount:
+          type: integer
+          minimum: 0
+
+    HomeStatistics:
+      type: object
+      required: [letterCount, userCount, runningDays]
+      properties:
+        letterCount:
+          type: integer
+          minimum: 0
+          example: 12630
+        userCount:
+          type: integer
+          minimum: 0
+          example: 8921
+        runningDays:
+          type: integer
+          minimum: 0
+          example: 1205
+
+    HomeData:
+      type: object
+      required: [statistics, featuredLetters, featuredStories, specialProjects]
+      properties:
+        statistics:
+          $ref: "#/components/schemas/HomeStatistics"
+        featuredLetters:
+          type: array
+          maxItems: 6
+          items:
+            $ref: "#/components/schemas/LetterSummary"
+        featuredStories:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/StorySummary"
+        specialProjects:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/ProjectSummary"
+
+    StoryCategory:
+      type: string
+      enum: [postOfficeStory, campusMark]
+
+    StorySummary:
+      type: object
+      required: [id, category, title, excerpt, coverImageUrl, publishedAt]
+      properties:
+        id:
+          type: string
+        category:
+          $ref: "#/components/schemas/StoryCategory"
+        title:
+          type: string
+          maxLength: 100
+        excerpt:
+          type: string
+          maxLength: 160
+        coverImageUrl:
+          type: [string, "null"]
+          format: uri
+        publishedAt:
+          type: string
+          format: date-time
+
+    Story:
+      allOf:
+        - $ref: "#/components/schemas/StorySummary"
+        - type: object
+          required: [content]
+          properties:
+            content:
+              type: string
+              description: 经后端消毒后的受限 Markdown；前端不得启用原生 HTML。
+
+    ProjectStatus:
+      type: string
+      enum: [upcoming, active, ended]
+
+    ProjectSummary:
+      type: object
+      required: [id, title, excerpt, coverImageUrl, status, startsAt, endsAt]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          maxLength: 100
+        excerpt:
+          type: string
+          maxLength: 160
+        coverImageUrl:
+          type: [string, "null"]
+          format: uri
+        status:
+          $ref: "#/components/schemas/ProjectStatus"
+        startsAt:
+          type: [string, "null"]
+          format: date-time
+        endsAt:
+          type: [string, "null"]
+          format: date-time
+
+    Project:
+      allOf:
+        - $ref: "#/components/schemas/ProjectSummary"
+        - type: object
+          required: [content]
+          properties:
+            content:
+              type: string
+              description: 经后端消毒后的受限 Markdown。
+
+    ReviewAction:
+      type: string
+      enum: [approve, reject, hide]
+
+    ReviewRequest:
+      type: object
+      additionalProperties: false
+      required: [action]
+      properties:
+        action:
+          $ref: "#/components/schemas/ReviewAction"
+        reason:
+          type: [string, "null"]
+          maxLength: 300
+          description: reject 或 hide 时必填。
+
+    HomeResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/HomeData"
+        requestId:
+          type: string
+
+    LetterResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Letter"
+        requestId:
+          type: string
+
+    LetterListData:
+      allOf:
+        - $ref: "#/components/schemas/Pagination"
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/LetterSummary"
+
+    LetterListResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/LetterListData"
+        requestId:
+          type: string
+
+    ReplyResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Reply"
+        requestId:
+          type: string
+
+    ReplyListData:
+      allOf:
+        - $ref: "#/components/schemas/Pagination"
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/Reply"
+
+    ReplyListResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/ReplyListData"
+        requestId:
+          type: string
+
+    FavoriteResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/FavoriteData"
+        requestId:
+          type: string
+
+    StoryResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Story"
+        requestId:
+          type: string
+
+    StoryListData:
+      allOf:
+        - $ref: "#/components/schemas/Pagination"
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/StorySummary"
+
+    StoryListResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/StoryListData"
+        requestId:
+          type: string
+
+    ProjectResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Project"
+        requestId:
+          type: string
+
+    ProjectListData:
+      allOf:
+        - $ref: "#/components/schemas/Pagination"
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProjectSummary"
+
+    ProjectListResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/ProjectListData"
+        requestId:
+          type: string
