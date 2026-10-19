@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: 珞珈烟火邮局 API
-  version: 0.2.1
+  version: 0.3.0
   summary: 珞珈烟火邮局前后端接口约定
   description: |
     本文件是前端与后端共同遵守的接口契约，也是联调、Mock、测试和接口文档的唯一事实来源。
@@ -178,7 +178,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
-          $ref: "#/components/responses/Forbidden"
+          $ref: "#/components/responses/CsrfForbidden"
 
   /auth/me:
     get:
@@ -194,6 +194,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/csrf:
+    get:
+      tags: [Auth]
+      operationId: refreshCsrfToken
+      summary: 刷新页面后恢复 CSRF Token
+      description: 验证 HttpOnly Session Cookie，生成新的 CSRF Token 并使旧 Token 失效；响应禁止缓存。
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: CSRF Token 已刷新
+          headers:
+            Cache-Control:
+              description: 固定为 no-store
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CsrfResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -538,6 +562,27 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /letters/{letterId}/replies:
+    parameters:
+      - $ref: "#/components/parameters/LetterId"
+    get:
+      tags: [Letters]
+      operationId: listLetterReplies
+      summary: 获取信件下已公开的完整回信
+      description: 只返回直接关联、已经审核通过且未删除的完整回信，首版不支持多层回信树。
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: 完整回信分页列表，按 publishedAt 和 id 升序排列
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LetterListResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /letters/{letterId}/responses:
     parameters:
       - $ref: "#/components/parameters/LetterId"
@@ -681,13 +726,18 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/LetterStatus"
+        - name: workflowState
+          in: query
+          description: 面向作者的派生展示状态，不写入数据库 status 字段。
+          schema:
+            $ref: "#/components/schemas/LetterWorkflowState"
       responses:
         "200":
           description: 当前用户信件列表
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LetterListResponse"
+                $ref: "#/components/schemas/MyLetterListResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -960,14 +1010,33 @@ components:
             data: null
             requestId: req_01JABCD2EFGH3456789
     Forbidden:
-      description: 已登录但没有操作权限，或 CSRF Token 无效
+      description: 已登录但没有操作权限，或写请求的 CSRF Token 无效
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            permissionDenied:
+              value:
+                code: 40301
+                message: 无权执行此操作
+                data: null
+                requestId: req_01JABCD2EFGH3456789
+            csrfInvalid:
+              value:
+                code: 40302
+                message: CSRF Token 无效
+                data: null
+                requestId: req_01JABCD2EFGH3456789
+    CsrfForbidden:
+      description: CSRF Token 缺失、错误或已经失效
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            code: 40301
-            message: 无权执行此操作
+            code: 40302
+            message: CSRF Token 无效
             data: null
             requestId: req_01JABCD2EFGH3456789
     NotFound:
@@ -1208,6 +1277,30 @@ components:
         requestId:
           type: string
 
+    CsrfData:
+      type: object
+      required: [csrfToken]
+      properties:
+        csrfToken:
+          type: string
+          minLength: 16
+          description: 新生成的 CSRF Token，只保存在前端内存中。
+
+    CsrfResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/CsrfData"
+        requestId:
+          type: string
+
     UserResponse:
       type: object
       required: [code, message, data, requestId]
@@ -1230,6 +1323,11 @@ components:
     LetterVisibility:
       type: string
       enum: [public, private]
+
+    LetterWorkflowState:
+      type: string
+      description: 面向作者列表的派生展示状态，不写入数据库的 status 字段。
+      enum: [draft, pendingReview, published, returnedForEdit]
 
     RecipientType:
       type: string
@@ -1274,9 +1372,12 @@ components:
       allOf:
         - $ref: "#/components/schemas/MetadataOption"
         - type: object
-          required: [previewUrl]
+          required: [previewUrl, assetUrl]
           properties:
             previewUrl:
+              type: string
+              format: uri
+            assetUrl:
               type: string
               format: uri
 
@@ -1366,20 +1467,28 @@ components:
           required:
             - content
             - parentLetterId
+            - allowResponses
+            - allowReplies
             - createdAt
             - updatedAt
             - canEdit
             - canDelete
             - canForward
+            - reviewNote
           properties:
             content:
               type: string
-              minLength: 20
+              minLength: 0
               maxLength: 1500
-              description: 纯文本正文。
+              description: 纯文本正文；作者读取草稿时允许少于 20 个字符。
             parentLetterId:
               type: [string, "null"]
               description: 完整回信所关联的原信 ID；首版不允许原信本身已有 parentLetterId。
+            allowResponses:
+              type: boolean
+            allowReplies:
+              type: boolean
+              description: 当前信件是否允许创建完整回信；后端仍会检查信件状态和调用者权限。
             createdAt:
               type: string
               format: date-time
@@ -1400,25 +1509,39 @@ components:
     LetterCreateRequest:
       type: object
       additionalProperties: false
-      required:
-        - title
-        - content
-        - recipientType
-        - isAnonymous
-        - patternId
-        - allowResponses
-        - allowReplies
-        - saveAsDraft
+      required: [saveAsDraft]
+      allOf:
+        - if:
+            properties:
+              saveAsDraft:
+                const: false
+            required: [saveAsDraft]
+          then:
+            required:
+              - title
+              - content
+              - recipientType
+              - isAnonymous
+              - patternId
+              - allowResponses
+              - allowReplies
+            properties:
+              title:
+                minLength: 2
+              content:
+                minLength: 20
       properties:
         title:
           type: string
-          minLength: 2
+          minLength: 0
           maxLength: 80
+          default: ""
         content:
           type: string
-          minLength: 20
+          minLength: 0
           maxLength: 1500
-          description: 纯文本正文，不接收 HTML。
+          default: ""
+          description: 纯文本正文；草稿允许为空，正式提交时至少 20 个 Unicode 字符。
         recipientType:
           $ref: "#/components/schemas/RecipientType"
         recipientUserId:
@@ -1436,6 +1559,7 @@ components:
           type: [string, "null"]
         patternId:
           type: string
+          description: 草稿可省略；后端只能在恰有一个启用图案时自动选择。
         allowResponses:
           type: boolean
           default: true
@@ -1453,12 +1577,13 @@ components:
       properties:
         title:
           type: string
-          minLength: 2
+          minLength: 0
           maxLength: 80
         content:
           type: string
-          minLength: 20
+          minLength: 0
           maxLength: 1500
+          description: 草稿允许为空；submitForReview=true 时后端对信件完整状态执行正式校验。
         recipientType:
           $ref: "#/components/schemas/RecipientType"
         recipientUserId:
@@ -1822,6 +1947,44 @@ components:
           type: string
         data:
           $ref: "#/components/schemas/LetterListData"
+        requestId:
+          type: string
+
+    MyLetterSummary:
+      allOf:
+        - $ref: "#/components/schemas/LetterSummary"
+        - type: object
+          required: [workflowState, reviewNote]
+          properties:
+            workflowState:
+              $ref: "#/components/schemas/LetterWorkflowState"
+            reviewNote:
+              type: [string, "null"]
+              maxLength: 300
+              description: 最近一次适用于当前版本的退回修改原因；从未退回时为 null。
+
+    MyLetterListData:
+      allOf:
+        - $ref: "#/components/schemas/Pagination"
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/MyLetterSummary"
+
+    MyLetterListResponse:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code:
+          type: integer
+          const: 0
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/MyLetterListData"
         requestId:
           type: string
 

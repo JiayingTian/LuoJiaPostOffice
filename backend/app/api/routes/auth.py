@@ -6,12 +6,19 @@ from sqlalchemy.orm import Session
 from app.api.dependencies.auth import AuthContext, get_auth_context, require_csrf
 from app.core.database import get_db
 from app.core.ids import new_id
-from app.core.security import hash_password, verify_password
+from app.core.security import (
+    hash_password,
+    hash_token,
+    new_secure_token,
+    verify_password,
+)
 from app.models import User
 from app.models.base import utc_now
 from app.schemas.auth import (
     AuthData,
     AuthResponse,
+    CsrfData,
+    CsrfResponse,
     LoginRequest,
     RegisterRequest,
     UserRead,
@@ -133,6 +140,29 @@ def get_current_user(
 ) -> UserResponse:
     return UserResponse(
         data=UserRead.model_validate(auth_context.user),
+        request_id=request.state.request_id,
+    )
+
+
+@router.get(
+    "/csrf",
+    response_model=CsrfResponse,
+)
+def refresh_csrf_token(
+    request: Request,
+    response: Response,
+    auth_context: AuthContext = Depends(get_auth_context),
+    database_session: Session = Depends(get_db),
+) -> CsrfResponse:
+    csrf_token = new_secure_token()
+    auth_context.session.csrf_token_hash = hash_token(csrf_token)
+    auth_context.session.last_seen_at = utc_now()
+    database_session.commit()
+
+    response.headers["Cache-Control"] = "no-store"
+
+    return CsrfResponse(
+        data=CsrfData(csrf_token=csrf_token),
         request_id=request.state.request_id,
     )
 

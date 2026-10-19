@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     session_cookie_name: str = "luojia_session"
     session_expire_days: int = 7
     session_cookie_secure: bool = False
+    cors_origins: list[str] = [
+        "http://127.0.0.1:4173",
+        "http://localhost:4173",
+    ]
 
     model_config = SettingsConfigDict(
         env_file=BACKEND_DIR / ".env",
