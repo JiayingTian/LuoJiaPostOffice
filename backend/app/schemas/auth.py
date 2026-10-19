@@ -57,3 +57,14 @@ class UserResponse(APIModel):
     message: str = "success"
     data: UserRead
     request_id: str
+
+
+class CsrfData(APIModel):
+    csrf_token: str
+
+
+class CsrfResponse(APIModel):
+    code: int = 0
+    message: str = "success"
+    data: CsrfData
+    request_id: str

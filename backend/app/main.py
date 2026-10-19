@@ -1,5 +1,8 @@
+import logging
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.router import api_router
@@ -8,10 +11,19 @@ from app.core.ids import new_id
 
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.2.1",
+    version="0.3.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "X-CSRF-Token", "Idempotency-Key"],
 )
 
 
@@ -33,13 +45,22 @@ def get_request_id(request: Request) -> str:
 
 @app.exception_handler(HTTPException)
 async def handle_http_exception(request: Request, exception: HTTPException):
-    message = exception.detail if isinstance(exception.detail, str) else "请求失败"
+    if isinstance(exception.detail, dict):
+        default_code = ERROR_CODES.get(exception.status_code, 40000)
+        code = int(exception.detail.get("code", default_code))
+        message = str(exception.detail.get("message", "请求失败"))
+        data = exception.detail.get("data")
+    else:
+        code = ERROR_CODES.get(exception.status_code, 40000)
+        message = exception.detail if isinstance(exception.detail, str) else "请求失败"
+        data = None
+
     return JSONResponse(
         status_code=exception.status_code,
         content={
-            "code": ERROR_CODES.get(exception.status_code, 40000),
+            "code": code,
             "message": message,
-            "data": None,
+            "data": data,
             "requestId": get_request_id(request),
         },
         headers=exception.headers,
@@ -63,6 +84,24 @@ async def handle_validation_error(
             "code": 42201,
             "message": "请求内容未通过校验",
             "data": {"fieldErrors": field_errors},
+            "requestId": get_request_id(request),
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def handle_unexpected_error(request: Request, exception: Exception):
+    logger.exception(
+        "Unhandled request error",
+        extra={"request_id": get_request_id(request)},
+        exc_info=exception,
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "code": 50001,
+            "message": "服务器暂时无法处理请求",
+            "data": None,
             "requestId": get_request_id(request),
         },
     )
