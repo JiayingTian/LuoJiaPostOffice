@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="珞珈烟火邮局基础交互预览">
+  <title>信箱 · 珞珈烟火邮局</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="../index.html"><span class="brand-icon" aria-hidden="true">珞</span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
+    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">公共来信</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
+    <div class="account"><span id="user-name"></span><button id="account-button" class="button primary" type="button">登录</button></div>
+  </header>
+  <div id="mode-note" class="mode-note" role="note"></div>
+  <main id="app" tabindex="-1"><p class="empty">信箱正在准备中……</p></main>
+  <footer class="footer">在珞珈，每一封信，都是生活的注脚。<span>LUOJIA POST OFFICE</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <button class="dialog-close" type="button" aria-label="关闭登录">×</button>
+    <p class="eyebrow">LUOJIA POST OFFICE</p><h2 id="auth-title">回到你的信箱</h2>
+    <div id="auth-body"></div>
+  </dialog>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
