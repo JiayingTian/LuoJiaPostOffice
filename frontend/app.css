@@ -6,3 +6,10 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 [hidden]{display:none!important}.tabs{flex-wrap:wrap}.replies{margin:40px auto;max-width:1144px}.review-panel{margin-top:28px}.review-panel textarea{min-height:110px}
+
+.letter-settings{border:1px solid var(--line);border-radius:7px;padding:20px;margin:24px 0}.letter-settings legend{padding:0 8px}.letter-settings select{width:100%;padding:12px;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--ink);font:inherit}.letter-settings .form-field{margin-bottom:16px}#choice-dialog{width:min(520px,calc(100% - 32px))}#choice-dialog .dialog-actions{justify-content:flex-end;gap:10px}
+
+/* V4: 校园建筑剪影与并列署名 */
+.brand-icon{width:58px;height:48px;border:0;outline:0;background:transparent;color:#79533e;flex-shrink:0;box-shadow:none}.brand-icon svg{display:block;width:100%;height:100%}
+.signature-row{display:flex;align-items:center;gap:28px;margin:12px 0 22px}.signature-row .form-field{flex:1;min-width:0;margin:0}.signature-row .check-label{flex-shrink:0;margin:20px 0 0}.form-meta{justify-content:flex-end}
+@media(max-width:600px){.brand-icon{width:42px;height:38px}.signature-row{gap:16px}.signature-row .check-label{font-size:14px}}

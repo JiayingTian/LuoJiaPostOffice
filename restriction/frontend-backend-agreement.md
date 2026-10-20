@@ -123,7 +123,7 @@ Accept: application/json
   "message": "信件内容未通过校验",
   "data": {
     "fieldErrors": {
-      "content": "正文长度必须为 20 至 1500 个字符"
+      "content": "正文长度必须为 20 至 2000 个字符"
     }
   },
   "requestId": "req_01JABCD2EFGH3456789"
@@ -262,7 +262,7 @@ published_at DESC, id DESC
 ## 13. 信件字段限制
 
 1. 标题长度为 2 至 80 个 Unicode 字符。
-2. 正文长度为 20 至 1500 个 Unicode 字符。
+2. 正文长度为 20 至 2000 个 Unicode 字符。
 3. 地点只能使用 `/metadata` 返回的预设 `locationId`，允许不选择地点。
 4. 正文格式为纯文本。
 5. 换行使用 `\n`。
@@ -425,7 +425,7 @@ UNIQUE(user_id, letter_id)
 ```
 
 15. 必须为外键、审核队列和列表排序建立索引。
-16. 信件正文可以使用 `TEXT`，但后端仍必须执行 1500 字符业务限制。
+16. 信件正文可以使用 `TEXT`，但后端仍必须执行 2000 字符业务限制。
 17. 字符长度按 Unicode 字符计算，不按 UTF-8 字节数计算。
 
 ## 19. 数据库迁移

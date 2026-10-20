@@ -49,7 +49,8 @@ export class DemoService {
   async list({ mine = false, drafts = false, workflowState, page = 1, pageSize = 6 } = {}) {
     if (mine && !this.user) throw new ApiError('请先使用演示身份。', { status: 401 });
     let rows = mine ? this.rows() : seeds;
-    if (workflowState || drafts) rows = rows.filter(row => (row.workflowState || (row.status === 'draft' ? 'draft' : 'pendingReview')) === (workflowState || 'draft'));
+    if (workflowState === 'draft' || drafts) rows = rows.filter(row => row.status === 'draft');
+    else if (workflowState) rows = rows.filter(row => (row.workflowState || (row.status === 'draft' ? 'draft' : 'pendingReview')) === (workflowState || 'draft'));
     if (mine) rows = [...rows].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
     return { items: rows.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total: rows.length, hasMore: page * pageSize < rows.length };
   }
@@ -62,22 +63,32 @@ export class DemoService {
     await this.detail(id);
     return { items: [], page, pageSize, total: 0, hasMore: false };
   }
+  async remove(id) {
+    if (!this.user) throw new ApiError('请先登录。', { status: 401 });
+    const rows = this.rows();
+    const row = rows.find(item => item.id === id);
+    if (!row || row.status !== 'draft') throw new ApiError('草稿暂时无法删除。', { status: 404 });
+    try { this.storage.setItem(storageKey, JSON.stringify(rows.filter(item => item.id !== id))); }
+    catch { throw new ApiError('暂时未能删除，请稍后再试。'); }
+  }
   async save(payload, { id, key } = {}) {
     if (!this.user) throw new ApiError('请先使用演示身份。', { status: 401 });
     if (!id && this.keys.has(key)) return this.detail(this.keys.get(key));
     const rows = this.rows();
     const previous = id ? rows.find(row => row.id === id) : null;
-    if (id && (!previous || previous.status !== 'draft')) throw new ApiError('只能继续编辑自己的草稿。', { status: 409 });
+    if (id && (!previous || previous.status !== 'draft' && previous.visibility !== 'private' && !previous.publishedAt)) throw new ApiError('只能继续编辑自己的草稿。', { status: 409 });
+    if (previous) payload = { ...previous, penName: previous.author?.displayName, isAnonymous: previous.author?.isAnonymous, ...payload };
     const draft = id ? !payload.submitForReview : payload.saveAsDraft;
     const now = new Date().toISOString();
+    const privateLetter = payload.visibility === 'private';
     const row = {
-      ...seeds[0], id: id || `let_local_${crypto.randomUUID()}`, ...payload,
+      ...seeds[0], ...previous, id: id || `let_local_${crypto.randomUUID()}`, ...payload,
       author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '演示来客', isAnonymous: payload.isAnonymous },
       recipient: { type: 'wall', user: null }, pattern: demoPattern,
       excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
-      workflowState: draft ? 'draft' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: 'public', publishedAt: null,
-      submittedAt: draft ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
-      canEdit: draft, canDelete: true, canForward: false,
+      workflowState: draft ? 'draft' : privateLetter ? 'private' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: null,
+      submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
+      canEdit: draft || privateLetter, canDelete: true, canForward: false,
     };
     // 演示存储与真实接口完全隔离，不保存账号口令或 token。
     const next = [row, ...rows.filter(item => item.id !== row.id)];

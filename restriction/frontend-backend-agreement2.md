@@ -170,7 +170,7 @@ deleted_at IS NULL
 
 1. `saveAsDraft=true` 时，标题和正文允许为空或低于正式投递的最小长度。
 2. 草稿标题允许 `0` 至 `80` 个 Unicode 字符。
-3. 草稿正文允许 `0` 至 `1500` 个 Unicode 字符。
+3. 草稿正文允许 `0` 至 `2000` 个 Unicode 字符。
 4. 空白字符可以暂时保存在草稿中，但正式提交前必须按去除首尾空白后的内容重新校验。
 5. 草稿可以暂时缺少 `locationId`，地点始终为可选字段。
 6. 本轮只启用白色信纸，稳定 `patternId` 为 `pat_00000000000000000000000001`，资源路径为 `/pictures/material/letter-paper/white.png`。
@@ -224,7 +224,7 @@ POST /api/v1/letters
 创建时 `saveAsDraft=false`，或更新时 `submitForReview=true`，均视为正式提交。后端必须在事务中执行完整校验：
 
 1. 标题去除首尾空白后为 `2` 至 `80` 个 Unicode 字符。
-2. 正文去除首尾空白后为 `20` 至 `1500` 个 Unicode 字符。
+2. 正文去除首尾空白后为 `20` 至 `2000` 个 Unicode 字符。
 3. 正文为纯文本，不接收可执行 HTML。
 4. `recipientType` 本轮只接受 `wall`。
 5. `recipientUserId` 必须为 `null`。
@@ -373,7 +373,7 @@ GET /api/v1/letters/{letterId}/replies?page=1&pageSize=20
 
 ### 19.5 边界与失败
 
-1. 中文、Emoji、换行、空草稿和 1500 字正文均能正确处理。
+1. 中文、Emoji、换行、空草稿和 2000 字正文均能正确处理。
 2. 标题、正文和退回原因的边界校验返回对应字段错误。
 3. 连续点击或超时重试不会产生重复信件。
 4. 登录失效、CSRF 失效和服务器错误均不会清空前端编辑区。
@@ -439,7 +439,7 @@ CSRF 恢复方案：
 
 1. 新增 `GET /auth/csrf` 及响应 Schema。
 2. 将草稿请求改为条件校验，允许 `saveAsDraft=true` 时标题和正文为空。
-3. 保持正式提交时标题 `2–80` 字、正文 `20–1500` 字的严格校验。
+3. 保持正式提交时标题 `2–80` 字、正文 `20–2000` 字的严格校验。
 4. 在我的信件响应中增加 `workflowState` 和 `reviewNote`。
 5. 为 `GET /me/letters` 增加 `workflowState` 筛选参数。
 6. 新增 `GET /letters/{letterId}/replies` 及分页响应 Schema。

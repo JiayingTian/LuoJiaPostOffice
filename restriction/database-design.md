@@ -256,7 +256,7 @@ WHERE id = :id AND version = :expected_version;
 | `recipient_type` | `VARCHAR(16)` | `wall` 或 `user` |
 | `recipient_user_id` | `CHAR(30) NULL` | 收信用户；信墙信件为空 |
 | `title` | `VARCHAR(80)` | 2–80 个 Unicode 字符 |
-| `content` | `TEXT` | 20–1500 个 Unicode 字符，纯文本 |
+| `content` | `TEXT` | 20–2000 个 Unicode 字符，纯文本 |
 | `pen_name` | `VARCHAR(30) NULL` | 可选笔名 |
 | `is_anonymous` | `BOOLEAN` | 是否匿名展示 |
 | `location_id` | `CHAR(30) NULL` | 外键到 `locations.id` |

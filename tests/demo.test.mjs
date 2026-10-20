@@ -19,3 +19,22 @@ test('retry does not duplicate and storage failure is not a false success',async
   assert.equal((await api.list({mine:true})).total,1);
   api.storage.setItem=()=>{throw Error('quota');};await assert.rejects(api.save(data,{key:'new'}),/未能保存/);
 });
+test('private demo stays personal, supports re-edit, and draft deletion persists',async()=>{
+  const storage=memory(),session=memory(),api=new DemoService(storage,session);await api.login();
+  const letter=await api.save({title:'给自己',content:'只给自己看的文字',visibility:'private',allowReplies:false,saveAsDraft:false},{key:'private'});
+  assert.equal(letter.workflowState,'private');assert.equal(letter.submittedAt,null);assert.equal(letter.publishedAt,null);
+  assert.ok(!(await api.list()).items.some(x=>x.id===letter.id));
+  const draft=await api.save({title:'给自己',content:'修改',visibility:'private',submitForReview:false},{id:letter.id});
+  assert.equal(draft.status,'draft');await api.remove(draft.id);await assert.rejects(api.detail(draft.id),e=>e.status===404);
+  const reload=new DemoService(storage,session);await reload.session();assert.equal((await reload.list({mine:true})).total,0);
+});
+
+test('editing a published letter preserves content and identity, then returns to drafts', async()=>{
+  const storage=memory(),api=new DemoService(storage,memory());await api.login();
+  const row=await api.save({title:'已公开的信',content:'需要完整保留的原文',allowReplies:false,saveAsDraft:true},{key:'published'});
+  storage.setItem('luojia.demo.letters.v1',JSON.stringify([{...row,status:'active',workflowState:'published',publishedAt:'2026-10-20T00:00:00Z'}]));
+  const changed=await api.save({title:row.title,submitForReview:false},{id:row.id});
+  assert.equal(changed.id,row.id);assert.equal(changed.content,row.content);assert.equal(changed.allowReplies,false);
+  assert.equal(changed.status,'draft');assert.equal(changed.publishedAt,null);assert.equal(changed.submittedAt,null);
+  assert.equal((await api.list({mine:true,workflowState:'draft'})).total,1);
+});

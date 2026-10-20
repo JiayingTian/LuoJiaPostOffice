@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: 珞珈烟火邮局 API
-  version: 0.3.0
+  version: 0.3.1
   summary: 珞珈烟火邮局前后端接口约定
   description: |
     本文件是前端与后端共同遵守的接口契约，也是联调、Mock、测试和接口文档的唯一事实来源。
@@ -1072,7 +1072,7 @@ components:
             message: 信件内容未通过校验
             data:
               fieldErrors:
-                content: 正文长度必须为 20 至 1500 个字符
+                content: 正文长度必须为 20 至 2000 个字符
             requestId: req_01JABCD2EFGH3456789
     RateLimited:
       description: 请求过于频繁
@@ -1479,7 +1479,7 @@ components:
             content:
               type: string
               minLength: 0
-              maxLength: 1500
+              maxLength: 2000
               description: 纯文本正文；作者读取草稿时允许少于 20 个字符。
             parentLetterId:
               type: [string, "null"]
@@ -1539,7 +1539,7 @@ components:
         content:
           type: string
           minLength: 0
-          maxLength: 1500
+          maxLength: 2000
           default: ""
           description: 纯文本正文；草稿允许为空，正式提交时至少 20 个 Unicode 字符。
         recipientType:
@@ -1582,7 +1582,7 @@ components:
         content:
           type: string
           minLength: 0
-          maxLength: 1500
+          maxLength: 2000
           description: 草稿允许为空；submitForReview=true 时后端对信件完整状态执行正式校验。
         recipientType:
           $ref: "#/components/schemas/RecipientType"

@@ -74,7 +74,8 @@ export class ApiClient {
   metadata() { return this.request('/metadata'); }
   list({ mine = false, page = 1, pageSize = 6, drafts = false, workflowState } = {}) {
     const query = new URLSearchParams({ page, pageSize });
-    if (mine && (workflowState || drafts)) query.set('workflowState', workflowState || 'draft');
+    if (mine && (workflowState === 'draft' || drafts)) query.set('status', 'draft');
+    else if (mine && workflowState) query.set('workflowState', workflowState);
     if (!mine) query.set('sort', 'latest');
     return this.request(`${mine ? '/me/letters' : '/letters'}?${query}`);
   }
@@ -88,6 +89,7 @@ export class ApiClient {
   review(id, action, reason) {
     return this.request(`/admin/letters/${encodeURIComponent(id)}/review`, { method: 'POST', body: { action, ...(reason ? { reason } : {}) } });
   }
+  remove(id) { return this.request(`/letters/${encodeURIComponent(id)}`, { method: 'DELETE' }); }
   save(payload, { id, key } = {}) {
     return this.request(id ? `/letters/${encodeURIComponent(id)}` : '/letters', {
       method: id ? 'PATCH' : 'POST', body: payload, idempotencyKey: id ? undefined : key,

@@ -67,7 +67,7 @@ test('concurrent failed writes share one token recovery',async()=>{
 });
 test('workflow filters, replies and review use declared paths and bodies',async()=>{
   const calls=[];const api=new ApiClient('/api/v1',async(url,options)=>{calls.push({url,options});return success({});});api.csrfToken='csrf';
-  await api.list({mine:true,workflowState:'returnedForEdit'});assert.match(calls[0].url,/workflowState=returnedForEdit/);assert.ok(!calls[0].url.includes('&status='));
+  await api.list({mine:true,workflowState:'draft'});assert.match(calls[0].url,/status=draft/);assert.ok(!calls[0].url.includes('workflowState='));
   await api.replies('let_a',{page:2});assert.match(calls[1].url,/letters\/let_a\/replies\?page=2/);
-  await api.review('let_a','returnForEdit','请补充');assert.deepEqual(JSON.parse(calls[2].options.body),{action:'returnForEdit',reason:'请补充'});
+  await api.review('let_a','approve');assert.deepEqual(JSON.parse(calls[2].options.body),{action:'approve'});
 });

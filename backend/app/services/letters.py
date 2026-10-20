@@ -135,8 +135,8 @@ def validate_submission(letter: Letter) -> None:
 
     if len(title) < 2 or len(title) > 80:
         field_errors["title"] = "标题必须为 2 至 80 个字符"
-    if len(content) < 20 or len(content) > 1500:
-        field_errors["content"] = "正文必须为 20 至 1500 个字符"
+    if len(content) < 20 or len(content) > 2000:
+        field_errors["content"] = "正文必须为 20 至 2000 个字符"
     if letter.recipient_type != "wall":
         field_errors["recipientType"] = "本轮只支持投递信墙"
     if letter.recipient_user_id is not None:

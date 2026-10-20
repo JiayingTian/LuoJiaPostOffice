@@ -105,7 +105,7 @@ class MyLetterListResponse(APIModel):
 
 class LetterCreateRequest(APIModel):
     title: str = Field(default="", max_length=80)
-    content: str = Field(default="", max_length=1500)
+    content: str = Field(default="", max_length=2000)
     recipient_type: Literal["wall", "user"] = "wall"
     recipient_user_id: str | None = None
     parent_letter_id: str | None = None
@@ -120,7 +120,7 @@ class LetterCreateRequest(APIModel):
 
 class LetterUpdateRequest(APIModel):
     title: str | None = Field(default=None, max_length=80)
-    content: str | None = Field(default=None, max_length=1500)
+    content: str | None = Field(default=None, max_length=2000)
     recipient_type: Literal["wall", "user"] | None = None
     recipient_user_id: str | None = None
     pen_name: str | None = Field(default=None, max_length=30)

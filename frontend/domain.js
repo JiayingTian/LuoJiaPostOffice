@@ -7,21 +7,23 @@ export function validateLetter(letter, { draft = false } = {}) {
   const title = charCount(draft ? letter.title : letter.title.trim());
   const content = charCount(draft ? letter.content : letter.content.trim());
   if (!draft && (title < 2 || title > 80)) errors.title = '标题请写 2–80 个字符。';
-  if (!draft && (content < 20 || content > 1500)) errors.content = '正文请写 20–1500 个字符。';
+  if (!draft && (content < 20 || content > 2000)) errors.content = '正文请写 20–2000 个字符。';
   if (draft && title > 80) errors.title = '标题最多 80 个字符。';
-  if (draft && content > 1500) errors.content = '正文最多 1500 个字符。';
+  if (draft && content > 2000) errors.content = '正文最多 2000 个字符。';
   if (charCount(letter.penName || '') > 30) errors.penName = '署名最多 30 个字符。';
   if (!letter.patternId) errors.patternId = '信纸尚未准备好，请稍后重试。';
   return errors;
 }
 
-export function letterPayload(letter, { draft = false, update = false } = {}) {
+export function letterPayload(letter, { draft = false, update = false, privateEnabled = false } = {}) {
+  if (letter.visibility === 'private' && !privateEnabled) throw new Error('仅自己可见暂不可用，未发送任何内容。');
   const common = {
+    ...(privateEnabled ? { visibility: letter.visibility || 'public' } : {}),
     title: draft ? letter.title : letter.title.trim(), content: draft ? letter.content : letter.content.trim(),
     recipientType: 'wall', recipientUserId: null,
     penName: letter.penName?.trim() || null, isAnonymous: Boolean(letter.isAnonymous),
     locationId: null, patternId: letter.patternId,
-    allowResponses: letter.allowResponses ?? false, allowReplies: letter.allowReplies ?? true,
+    allowResponses: letter.allowResponses ?? false, allowReplies: letter.visibility === 'private' ? false : letter.allowReplies ?? true,
   };
   return update
     ? { ...common, submitForReview: !draft }
@@ -29,14 +31,14 @@ export function letterPayload(letter, { draft = false, update = false } = {}) {
 }
 
 export function statusLabel(letter) {
-  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'待审核', published:'已公开', returnedForEdit:'退回修改' })[letter.workflowState] || '状态待确认';
+  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'待审核', published:'已公开', returnedForEdit:'草稿', private:'仅自己可见' })[letter.workflowState] || '状态待确认';
   if (letter.status === 'deleted') return '已删除';
-  if (letter.status === 'draft') return letter.reviewNote ? '退回修改' : '草稿';
+  if (letter.status === 'draft') return '草稿';
   if (letter.status === 'active' && letter.visibility === 'public') {
     if (letter.publishedAt) return '已公开';
     if (letter.submittedAt) return '待审核';
   }
-  if (letter.status === 'active' && letter.visibility === 'private') return '私人信件';
+  if (letter.status === 'active' && letter.visibility === 'private') return '仅自己可见';
   return '状态待确认';
 }
 
