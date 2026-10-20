@@ -136,7 +136,7 @@ paths:
       tags: [Auth]
       operationId: register
       summary: 注册普通用户
-      description: 自助注册只能创建 role=user 的账户；用户名由后端转为小写并执行唯一性检查。成功后直接建立 Session。
+      description: 自助注册只能创建 role=user 的账户；用户名仅支持小写字母、数字和下划线，并执行唯一性检查。成功后直接建立 Session。
       requestBody:
         required: true
         content:
@@ -1213,8 +1213,8 @@ components:
       properties:
         username:
           type: string
-          pattern: "^[A-Za-z0-9_]{3,32}$"
-          description: 注册时允许输入大小写，后端统一转为小写保存。
+          pattern: "^[a-z0-9_]{3,32}$"
+          description: 仅支持 3–32 位英文小写字母、数字和下划线。
         password:
           type: string
           format: password

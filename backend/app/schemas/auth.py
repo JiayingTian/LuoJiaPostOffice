@@ -10,16 +10,10 @@ class RegisterRequest(APIModel):
     username: str = Field(
         min_length=3,
         max_length=32,
-        pattern=r"^[A-Za-z0-9_]+$",
+        pattern=r"^[a-z0-9_]+$",
     )
     password: str = Field(min_length=8, max_length=128)
     display_name: str = Field(min_length=1, max_length=30)
-
-    @field_validator("username")
-    @classmethod
-    def normalize_username(cls, value: str) -> str:
-        return value.lower()
-
 
 class LoginRequest(APIModel):
     account: str = Field(min_length=3, max_length=32)
