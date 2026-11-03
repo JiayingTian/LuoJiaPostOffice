@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="珞珈烟火邮局基础交互预览">
+  <title>信箱 · 珞珈烟火邮局</title>
+  
+  <style>:root{--paper:#fcf8ef;--card:#fffaf0;--ink:#4d3b2f;--muted:#826e59;--gold:#a36720;--line:#dfc99f;--glow:rgba(219,164,66,.3);--serif:'STKaiti','KaiTi','Songti SC','SimSun',serif;--sans:'Microsoft YaHei','PingFang SC',system-ui,sans-serif;color:var(--ink);font-family:var(--sans);font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);font-size:15px}button,input,textarea{font:inherit}button,a{touch-action:manipulation}button,a,input,textarea{outline-offset:5px}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold)}button{color:inherit;cursor:pointer}a{color:inherit;text-decoration:none}button:disabled{cursor:wait;opacity:.55;box-shadow:none!important;transform:none!important}h1,h2,h3,p{overflow-wrap:anywhere}h1,h2,h3{font-family:var(--serif)}h1{font-size:36px;letter-spacing:.08em;margin:10px 0}h2{font-size:28px}p{line-height:1.8}.header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px max(28px,6vw);background:#fffdf8;border-bottom:1px solid #eee3cf}.brand{display:flex;align-items:center;gap:12px;font:24px var(--serif);letter-spacing:2px;white-space:nowrap}.brand-icon{display:grid;place-items:center;width:42px;height:46px;border:1px solid #bc9b69;outline:1px solid #bc9b69;outline-offset:3px;font-size:25px}.brand small{display:block;font:9px Georgia,serif;letter-spacing:2px;color:var(--gold);margin-top:7px}.header nav{display:flex;gap:24px}.header nav a{padding:10px 4px;border-radius:6px;transition:color .18s,box-shadow .18s}.header nav a[aria-current=page]{color:var(--gold);border-bottom:2px solid var(--gold)}.account{display:flex;align-items:center;gap:10px;font-size:13px}.mode-note{font-size:12px;color:#746146;text-align:center;padding:9px 18px;background:#f3ebd9;line-height:1.6}.mode-note strong{font-weight:600}.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid #ccb184;background:#fffaf0;border-radius:7px;padding:10px 21px;transition:box-shadow .18s,background .18s,transform .18s;white-space:nowrap}.primary{background:#a66c25;border-color:#a66c25;color:#fff}.button:active{transform:translateY(1px)}.button:disabled{pointer-events:none}.text-button{border:0;background:none;text-decoration:underline;text-underline-offset:4px;padding:10px;color:var(--gold)}.header nav a:hover,.button:hover:not(:disabled),.text-button:hover{box-shadow:0 0 0 3px rgba(230,192,119,.16),0 0 22px var(--glow)}.button:hover:not(:disabled){border-color:#b78032}.primary:hover:not(:disabled){background:#b67b2c}.eyebrow{font:10px Georgia,serif;letter-spacing:3px;color:#9c7b49;margin:0 0 12px}.intro{color:var(--muted);margin:12px 0 0}#app{max-width:1200px;min-height:65vh;margin:auto;padding:38px 28px 56px}#app:focus{outline:none}.breadcrumbs{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:30px}.breadcrumbs a{padding:8px 0}.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:32px}.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:28px;padding-bottom:12px}.tabs a{padding:10px 20px;border-radius:6px}.tabs a.active{background:#eddeb9;color:#704c1a}.section-label{font-size:14px;color:var(--muted);margin-bottom:18px;display:flex;justify-content:space-between}.letter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}.envelope{position:relative;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:left;width:100%;min-width:0;height:238px;padding:34px 27px 28px;border:1px solid #d8bd87;border-radius:12px;background:linear-gradient(155deg,#fff9e9,#f4e5c1);box-shadow:0 5px 12px #785b2b0a;overflow:hidden;transition:transform .18s,box-shadow .18s,background .18s;isolation:isolate}.envelope:after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(30deg,transparent 49.7%,#c6a87220 50%,transparent 50.3%),linear-gradient(-30deg,transparent 49.7%,#c6a87220 50%,transparent 50.3%);opacity:.5;z-index:-1}.envelope-title{flex-shrink:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:24px/1.45 var(--serif);margin:0;min-height:70px;max-width:94%;overflow-wrap:anywhere}.envelope-excerpt{flex-shrink:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.7;height:44px;margin:9px 0 0;padding-right:16px;opacity:0;transform:translateY(4px);transition:opacity .18s,transform .18s;color:#745d45;overflow-wrap:anywhere}.envelope-meta{position:absolute;left:27px;bottom:24px;right:90px;color:#897452;font-size:11px;line-height:1.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stamp{position:absolute;right:23px;bottom:20px;width:50px;height:61px;border:4px double #c5a773;background:#f4e9cb;transform:rotate(9deg);display:grid;place-items:center;font:21px var(--serif);color:#8b6b3c;outline:2px dashed #cfb68d;outline-offset:2px}.badge{display:inline-block;padding:3px 9px;border:1px solid #d6c1a0;border-radius:4px;color:#6e532f;background:#f6ecd5;font-size:12px;line-height:1.5}.envelope .badge{position:absolute;top:10px;right:14px;font-size:10px}.envelope.revealed,.envelope:focus-visible{transform:translateY(-4px);box-shadow:0 12px 25px #8b692724;background:#fff4d3}.envelope.revealed .envelope-excerpt,.envelope:focus-visible .envelope-excerpt{opacity:1;transform:none}@media(hover:hover){.envelope:hover{transform:translateY(-4px);box-shadow:0 12px 25px #8b692724;background:#fff4d3}.envelope:hover .envelope-excerpt{opacity:1;transform:none}}
+.pagination{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:35px;color:var(--muted);font-size:13px}.empty{max-width:620px;margin:60px auto;text-align:center;line-height:1.9;padding:24px}.empty h2{font-size:26px}.empty p{color:var(--muted)}.paper{max-width:810px;margin:0 auto;padding:48px 64px;background:#fffdf6;border:1px solid #e5d8b9;box-shadow:0 14px 40px #785b2b0b;border-radius:3px}.paper h1{font-size:32px;line-height:1.6;margin-bottom:18px;overflow-wrap:anywhere}.letter-meta{color:var(--muted);font-size:13px;margin-bottom:30px;display:flex;flex-wrap:wrap;gap:16px}.letter-content{white-space:pre-wrap;overflow-wrap:anywhere;font:19px/2.1 var(--serif);min-height:180px;margin:24px 0 40px}.letter-signature{text-align:right;color:var(--muted);font:18px var(--serif)}.actions{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:28px}.paper .actions{padding-top:24px;border-top:1px solid #e8dcc5}.parent-note{font-size:13px;line-height:1.7;color:var(--muted);border-bottom:1px solid #e8dcc5;padding-bottom:16px}.parent-note a{text-decoration:underline;text-underline-offset:4px}.form-field{margin-bottom:22px}.form-field label{display:block;margin-bottom:9px;font-size:14px}.form-field input,.form-field textarea{display:block;width:100%;border:1px solid #d9c7a6;border-radius:5px;padding:12px;background:#fffefb;color:var(--ink)}.form-field textarea{min-height:320px;resize:vertical;font:18px/1.9 var(--serif)}.form-field input[aria-invalid=true],.form-field textarea[aria-invalid=true]{border-color:#ae4e32}.field-error{color:#9c3f2a;min-height:1.6em;font-size:12px;margin-top:5px;line-height:1.6}.form-meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;margin-top:8px}.check-label{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}.help{font-size:12px;line-height:1.8;color:var(--muted)}.saved-note{font-size:12px;color:#667044;min-height:24px;line-height:1.8}.form-error{color:#9c3f2a;font-size:13px;line-height:1.7;overflow-wrap:anywhere}.footer{border-top:1px solid #e8dcc5;text-align:center;padding:25px;color:#8d7b63;font:13px var(--serif);letter-spacing:2px}.footer span{display:block;font:9px Georgia,serif;letter-spacing:3px;margin-top:12px}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);max-width:min(90vw,540px);padding:13px 20px;border-radius:8px;background:#594534;color:#fff;font-size:14px;line-height:1.6;box-shadow:0 10px 25px #0002;z-index:20;opacity:0;pointer-events:none}.toast.visible{opacity:1}dialog{width:min(450px,calc(100% - 32px));max-height:90vh;border:1px solid #d5bc8d;border-radius:14px;padding:36px;background:#fffaf0;color:var(--ink);box-shadow:0 25px 90px #39281740}dialog::backdrop{background:#3f302745;backdrop-filter:blur(3px)}.dialog-close{position:absolute;top:10px;right:12px;border:none;background:none;padding:8px;font-size:25px}.dialog-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:16px}.skeleton{height:238px;border:1px solid #e8dcc5;border-radius:12px;background:#f1eadb;animation:breathe 1.2s infinite alternate}@keyframes breathe{to{opacity:.5}}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:1000px){.header{padding:18px 24px;flex-wrap:wrap}.header nav{order:3;width:100%;justify-content:center}.letter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.account{margin-left:auto}}
+@media(max-width:600px){.header{gap:16px;padding:16px 20px}.brand{font-size:19px}.brand-icon{width:32px;height:36px;font-size:21px}.brand small{font-size:8px;letter-spacing:1px}.account #user-name{display:none}.account .button{padding:8px 12px}.header nav{gap:24px;font-size:13px}#app{padding:25px 18px 38px}.page-heading{align-items:start;gap:16px}.page-heading h1{font-size:29px}.page-heading .button{padding:10px 12px;font-size:13px}.intro{font-size:13px}.letter-grid{grid-template-columns:1fr;gap:18px}.envelope{height:230px}.stamp{width:42px;height:50px;bottom:14px;font-size:18px}.paper{padding:28px 22px}.paper h1{font-size:27px}.letter-content{font-size:18px}.breadcrumbs{margin-bottom:20px}.tabs a{padding:9px 12px}.actions .button{flex:1}.form-field textarea{min-height:300px}.mode-note{font-size:11px}.footer{font-size:11px;letter-spacing:1px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+[hidden]{display:none!important}.tabs{flex-wrap:wrap}.replies{margin:40px auto;max-width:1144px}.review-panel{margin-top:28px}.review-panel textarea{min-height:110px}
+
+.letter-settings{border:1px solid var(--line);border-radius:7px;padding:20px;margin:24px 0}.letter-settings legend{padding:0 8px}.letter-settings select{width:100%;padding:12px;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--ink);font:inherit}.letter-settings .form-field{margin-bottom:16px}#choice-dialog{width:min(520px,calc(100% - 32px))}#choice-dialog .dialog-actions{justify-content:flex-end;gap:10px}
+
+/* V4: 校园建筑剪影与并列署名 */
+.brand-icon{width:58px;height:48px;border:0;outline:0;background:transparent;color:#79533e;flex-shrink:0;box-shadow:none}.brand-icon svg{display:block;width:100%;height:100%}
+.signature-row{display:flex;align-items:center;gap:28px;margin:12px 0 22px}.signature-row .form-field{flex:1;min-width:0;margin:0}.signature-row .check-label{flex-shrink:0;margin:20px 0 0}.form-meta{justify-content:flex-end}
+@media(max-width:600px){.brand-icon{width:42px;height:38px}.signature-row{gap:16px}.signature-row .check-label{font-size:14px}}
+
+/* V5: 原始纸纹仅叠加背景，校园插画连续循环 */
+:root{--texture-opacity:.4;--scenery-opacity:.72;--scenery-duration:80s}
+.page-surface{position:relative;isolation:isolate;min-height:calc(100vh - 92px)}
+.page-surface::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("assets/art-16.png") center top / 1400px auto repeat;opacity:var(--texture-opacity)}
+#app{padding-bottom:40px}
+.footer{position:relative;isolation:isolate;overflow:hidden;min-height:330px;padding:30px 24px 245px;border-top:1px solid #dfcfb3;background:rgba(252,248,239,.15)}
+.footer-copy{position:relative;z-index:1;color:#77614b;line-height:1.8}
+.campus-window{position:absolute;inset:auto 0 0;height:235px;overflow:hidden;pointer-events:none;mask-image:linear-gradient(to bottom,transparent,black 18%,black 88%,transparent)}
+.campus-track{display:flex;width:max-content;height:100%;opacity:var(--scenery-opacity);animation:campus-drift var(--scenery-duration) linear infinite;will-change:transform}
+.campus-group{display:flex;align-items:flex-end;flex:none;gap:40px;padding-right:40px}
+.campus-group img{display:block;width:560px;height:230px;object-fit:contain;object-position:bottom;mix-blend-mode:multiply;mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent)}
+
+
+
+@keyframes campus-drift{to{transform:translateX(-50%)}}
+@media(max-width:600px){.page-surface::before{background-size:900px auto}.footer{min-height:270px;padding:26px 16px 195px}.campus-window{height:185px}.campus-group{gap:24px;padding-right:24px}.campus-group img{width:360px;height:180px}.campus-track{animation-duration:65s}}
+@media(prefers-reduced-motion:reduce){.campus-track{animation:none;transform:none;will-change:auto}}
+
+/* V6: UI 同学原图 + 页面原生邮票边框，不重绘建筑 */
+.brand-stamp{position:relative;display:block;width:70px;height:60px;isolation:isolate;filter:drop-shadow(0 1px 1px rgba(91,61,32,.1))}
+.brand-stamp .stamp-frame{position:absolute;inset:0;width:100%;height:100%}
+.brand-stamp img{position:absolute;left:14%;top:17%;width:72%;height:66%;object-fit:contain;mix-blend-mode:multiply}
+.brand-stamp .stamp-postmark{position:absolute;right:-5%;top:-4%;width:55%;height:60%;color:#795137;opacity:.25;transform:rotate(-14deg);pointer-events:none}
+@media(max-width:600px){.brand-stamp{width:54px;height:47px}.brand{gap:10px}}
+
+/* V7: 紧凑页脚，同高建筑，电脑信箱一屏布局 */
+body{min-height:100svh;display:flex;flex-direction:column}
+.page-surface{flex:1;display:flex;flex-direction:column;min-height:0}
+#app{width:100%;flex:1}
+.footer{flex:none;min-height:0;height:128px;padding:0;display:grid;place-items:center}
+.footer-copy{padding:12px 20px;text-shadow:0 1px 7px #fffaf0,0 0 14px #fffaf0}
+.campus-window{height:100%;mask-image:linear-gradient(to bottom,transparent,black 12%,black 88%,transparent)}
+.campus-group{gap:45px;padding-right:45px}
+.campus-group img{height:118px;width:auto;max-width:none;object-fit:contain;flex:none}
+@media(min-width:1001px){
+ .mailbox-view .header{padding-top:10px;padding-bottom:10px}
+ .mailbox-view .brand-stamp{width:60px;height:52px}
+ .mailbox-view .mode-note{font-size:11px;padding:5px 16px}
+ .mailbox-view #app{min-height:0;padding:12px 28px 10px}
+ .mailbox-view .breadcrumbs{margin-bottom:8px;font-size:12px}
+ .mailbox-view .breadcrumbs a{padding:2px 0}
+ .mailbox-view .page-heading{margin-bottom:10px;align-items:center}
+ .mailbox-view .page-heading .eyebrow{margin:0 0 4px;font-size:9px}
+ .mailbox-view .page-heading h1{font-size:29px;margin:0}
+ .mailbox-view .intro{font-size:13px;margin:4px 0 0}
+ .mailbox-view .section-label{font-size:12px;margin-bottom:8px}
+ .mailbox-view .letter-grid{gap:14px}
+ .mailbox-view .envelope{height:clamp(154px,20vh,205px);padding:18px 20px}
+ .mailbox-view .envelope-title{font-size:20px;line-height:1.3;min-height:52px}
+ .mailbox-view .envelope-excerpt{font-size:12px;line-height:1.5;height:36px;margin-top:3px}
+ .mailbox-view .envelope-meta{left:20px;bottom:10px;font-size:10px;line-height:1.5}
+ .mailbox-view .stamp{width:34px;height:40px;font-size:17px;bottom:10px;right:16px}
+ .mailbox-view .pagination{margin-top:10px;gap:14px;font-size:12px}
+ .mailbox-view .pagination .button{min-height:32px;padding:5px 14px}
+ .mailbox-view .tabs{margin:0 0 8px;gap:8px}
+ .mailbox-view .tabs a{padding:5px 10px;font-size:12px}
+ .mailbox-view .footer{height:clamp(96px,14vh,135px)}
+ .mailbox-view .campus-group img{height:clamp(90px,13vh,125px)}
+}
+@media(max-width:600px){.footer{height:115px}.campus-group img{height:105px;width:auto}.campus-group{gap:28px;padding-right:28px}.footer-copy{font-size:11px;letter-spacing:0}.footer-copy span{margin-top:7px}}
+
+/* V8: 信纸阅读与横竖版图案 */
+.pattern-picker{border:1px solid var(--line);border-radius:8px;padding:16px;margin:24px 0}.pattern-picker legend{padding:0 8px}.pattern-group h3{font-size:15px;font-weight:400;margin:12px 0 8px}.pattern-options{display:flex;gap:10px;overflow-x:auto;padding:3px 3px 12px}.pattern-option{flex:0 0 92px;position:relative;cursor:pointer}.pattern-option input{position:absolute;top:7px;left:7px;z-index:1;accent-color:#a36720}.pattern-option>span{display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #dfcfb3;border-radius:5px;padding:7px;background:#fffaf0}.pattern-option img{width:76px;height:75px;object-fit:contain}.pattern-option small{font-size:10px}.pattern-option input:checked+span{border:2px solid #aa752d;padding:6px;background:#f8ecd4}.pattern-option input:focus-visible+span{outline:2px solid #a36720;outline-offset:3px}
+.reading-view #app{max-width:1440px;padding-top:20px;min-height:0}.reading-view .breadcrumbs{margin-bottom:20px}
+.reading-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px);align-items:start;gap:34px;margin:10px 0 24px}
+.stationery-sheet.paper{position:relative;isolation:isolate;display:flex;flex-direction:column;width:100%;max-width:900px;margin:0 auto;padding:6% 7%;background:#fcf4e7;border:0;border-radius:16px;box-shadow:0 7px 18px #65543b25,8px -8px 0 #f4eadd,16px -16px 0 #f8f0e5;overflow:hidden}
+.stationery-sheet.landscape{aspect-ratio:1.414;min-height:540px}
+.stationery-sheet.portrait{aspect-ratio:.707;max-width:590px;min-height:720px}
+.stationery-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none}
+.sheet-header{flex:none;border-bottom:1px solid #b78b4b77;margin-bottom:18px;padding-bottom:10px}.sheet-header .eyebrow{font-size:9px;margin:0 0 8px}.stationery-sheet .sheet-header h1{font-size:clamp(22px,2.1vw,30px);line-height:1.45;margin:0 0 10px}.stationery-sheet .letter-meta{font-size:12px;gap:12px;margin:0;flex-wrap:wrap}.stationery-sheet .parent-note{font-size:12px;margin:0 0 8px}
+.reading-body{position:relative;flex:1;min-height:160px;overflow:hidden;transform-origin:left center}.stationery-sheet .letter-content{font:17px/1.95 var(--serif);white-space:pre-wrap;overflow-wrap:anywhere;margin:0;min-height:0;letter-spacing:.03em}.stationery-sheet .letter-signature{flex:none;font:15px var(--serif);text-align:right;margin:12px 0}.sheet-paging{display:flex;align-items:center;justify-content:space-between;flex:none;font-size:12px;gap:8px}.sheet-paging button{padding:8px 0}.sheet-paging button:disabled{cursor:default;opacity:.35}.stationery-sheet .actions{flex:none;border-top:1px solid #b78b4b77;margin-top:8px;padding-top:12px;gap:8px}.stationery-sheet .actions .button{font-size:13px;padding:8px 14px;min-height:38px}.stationery-sheet>.help{font-size:12px;line-height:1.5;margin:8px 0}.stationery-sheet>.form-error:empty{display:none}
+.correspondence{background:#fffaf0e8;border:1px solid #e6d8c2;border-radius:24px;padding:26px;box-shadow:0 5px 16px #65543b18}.correspondence h2{font-size:25px;color:#a36720;margin:0 0 20px}.original-letter{background:#f5ecd9;padding:16px;border-radius:10px}.original-letter h3{font-size:18px;line-height:1.6;margin:8px 0}.original-letter p{font-size:12px;color:var(--muted);margin:6px 0}.original-letter a{font-size:13px;color:var(--gold)}.reply-item{display:block;padding:16px 0;border-bottom:1px solid var(--line)}.reply-item h3{font-size:18px;line-height:1.5;margin:0 0 8px}.reply-item h3 span{float:right;color:var(--gold)}.reply-item small{color:var(--muted);font-size:11px}.reply-item p{color:var(--muted);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:8px 0}.correspondence .pagination{margin-top:16px;flex-wrap:wrap;gap:8px}
+@media(max-width:1000px){.reading-layout{grid-template-columns:minmax(0,1fr);gap:24px}.correspondence{width:100%;max-width:700px;margin:auto}.stationery-sheet.paper{padding:7%;max-width:760px}.stationery-sheet.portrait{max-width:520px}}
+@media(max-width:600px){.reading-view #app{padding:24px 18px}.stationery-sheet.paper{padding:25px 23px;border-radius:10px;box-shadow:0 4px 12px #65543b25,4px -5px 0 #f4eadd,8px -10px 0 #f8f0e5}.stationery-sheet.landscape{min-height:610px;aspect-ratio:auto}.stationery-sheet.portrait{min-height:680px}.stationery-bg{object-fit:cover}.stationery-sheet .letter-content{font-size:16px;line-height:1.9}.sheet-header{margin-bottom:14px}.stationery-sheet .sheet-header h1{font-size:23px}.stationery-sheet .letter-meta{font-size:11px}.correspondence{padding:20px;border-radius:18px}.pattern-options{gap:8px}}
+.stationery-sheet.landscape{height:clamp(540px,43vw,650px)}.stationery-sheet.portrait{height:800px}.reading-body{flex-basis:0;height:0}
+@media(max-width:600px){.stationery-sheet.landscape{height:650px}.stationery-sheet.portrait{height:760px}}
+.reply-icon{width:26px;height:23px;object-fit:contain;filter:brightness(0) invert(1)}
+@media(min-width:1001px){.reading-view .header{padding-top:10px;padding-bottom:10px}.reading-view .brand-stamp{width:60px;height:52px}.reading-view .mode-note{font-size:11px;padding:5px 16px}.reading-view #app{padding:12px 28px 16px}.reading-view .breadcrumbs{margin-bottom:14px}.reading-layout{margin-bottom:12px}.stationery-sheet.landscape{height:clamp(440px,calc(100svh - 280px),650px);min-height:440px;padding:4% 6%}.reading-view .footer{height:100px}.reading-view .campus-group img{height:94px}}
+
+@media(min-width:1001px){.stationery-sheet.landscape{padding:clamp(38px,4.4vw,60px) 7%}}
+
+/* V9: three quiet steps */
+.decoration-page fieldset,.pattern-group{min-inline-size:0;min-width:0;max-width:100%}.pattern-options{width:100%;max-width:100%}
+.write-steps{display:flex;justify-content:center;align-items:center;gap:22px;margin:0 auto 26px;color:#9c8a78;font-size:14px}.write-steps b{font-weight:400;color:#cfbea9}.write-steps [aria-current]{color:#8d493a;font-weight:600}.decoration-page{max-width:980px;margin:auto}.paper-selector-head{display:flex;align-items:center;justify-content:space-between;margin:14px 0 2px}.orientation-tabs{display:flex;gap:6px;background:#ede4d5;padding:4px;border-radius:22px}.orientation-tabs button{border:0;background:transparent;color:#807362;padding:8px 24px;border-radius:20px;cursor:pointer}.orientation-tabs [aria-pressed=true]{background:#fffaf0;color:#8d493a;box-shadow:0 2px 8px #65402013}.pattern-group[hidden]{display:none!important}.pattern-options{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:24px!important;padding:24px 12px 28px!important;scrollbar-width:thin;scrollbar-color:#c7b49c transparent}.pattern-option{flex:0 0 220px!important;scroll-snap-align:center}.pattern-option>span{height:165px!important;padding:10px!important;display:flex!important;align-items:center;justify-content:center;background:#f5eee2!important;border:1px solid transparent!important;border-radius:8px;transition:transform .35s,box-shadow .35s,border-color .35s}.pattern-option img{width:100%!important;height:100%!important;object-fit:contain!important}.pattern-option:has(input:checked)>span{transform:translateY(-8px) rotate(-1deg);border-color:#a16c52!important;box-shadow:0 12px 22px #67492920}.pattern-option:has(input:focus-visible)>span{outline:2px solid #8d493a;outline-offset:4px}.pattern-option:hover>span{transform:translateY(-5px)}[data-orientation-group=portrait] .pattern-option{flex-basis:145px!important}[data-orientation-group=portrait] .pattern-option>span{height:200px!important}.stamp-picker{margin:24px 0;border:0;padding:0}.stamp-options{display:flex;gap:24px;padding:18px 2px}.stamp-options label>span{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px;border:1px solid #dbccb9;border-radius:10px;cursor:pointer}.stamp-options input{position:absolute;opacity:0}.stamp-options label:has(input:checked)>span{border-color:#9b6049;background:#f6eddf;box-shadow:0 5px 16px #65402012}.stamp-options label:has(input:focus-visible)>span{outline:2px solid #8d493a}.letter-stamp{display:inline-flex;width:70px;height:80px;padding:9px;border:3px dotted #b49a77;background:#fff8e7;align-items:center;justify-content:center;transform:rotate(5deg)}.letter-stamp img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}.no-stamp{display:grid;place-items:center;width:70px;height:80px;color:#9c8a78;border:1px dashed #c8b69f}.sheet-header>.letter-stamp{float:right;margin:0 0 12px 15px;width:50px;height:60px}.stamp-options small{font-size:12px;color:#816d59}@media(max-width:600px){.write-steps{gap:8px;font-size:12px}.pattern-option{flex-basis:190px!important}.decoration-page{padding:25px 18px}}@media(prefers-reduced-motion:reduce){.pattern-option>span{transition:none}}
+
+/* V10: more room for the letter itself */
+.stationery-sheet.paper{padding:26px 36px 16px}.stationery-sheet .sheet-header{margin-bottom:12px;padding-bottom:8px}.stationery-sheet .letter-content{line-height:1.85}.stationery-sheet .letter-signature{margin:6px 0}.stationery-sheet .sheet-paging button{padding:5px 0}.reading-main{min-width:0}.reading-main>.actions,.preview-main>.actions{margin-top:18px}.preview-main{max-width:900px;margin:auto}.stamp-options{flex-wrap:wrap;gap:16px}.stamp-options label>span{padding:12px}.letter-stamp.art-stamp,.stamp-options .no-stamp{width:100px;height:100px;flex:none;padding:0;border:0;background:transparent;transform:none}.art-stamp svg{display:block;width:100%;height:100%;overflow:hidden}.stamp-options .no-stamp{border:1px dashed #c8b69f;font-size:12px}.sheet-header>.letter-stamp.art-stamp{width:64px;height:64px;margin:0 0 6px 14px}.envelope-stamp{position:absolute;bottom:17px;right:18px;width:66px;height:66px;transform:rotate(7deg)}.envelope-stamp .letter-stamp{width:100%;height:100%}.envelope-meta{max-width:calc(100% - 100px)}
+@media(min-width:1001px){.stationery-sheet.landscape{height:clamp(480px,calc(100svh - 280px),690px);padding:26px 36px 16px}}
+@media(max-width:600px){.stationery-sheet.paper{padding:22px 23px 14px}.stamp-options{gap:10px}.stamp-options label>span{padding:8px}.stamp-options .letter-stamp.art-stamp,.stamp-options .no-stamp{width:86px;height:86px}.sheet-header>.letter-stamp.art-stamp{width:52px;height:52px}}
+
+@media(min-width:1001px){.mailbox-view .envelope{height:clamp(180px,22vh,210px)}.mailbox-view .envelope-title{height:52px;max-height:52px}}
+/* V11: keep text inside the printed frame, controls outside the paper */
+.stationery-sheet.paper,.stationery-sheet.landscape{padding:clamp(46px,5vw,68px) 8% 34px}
+.stationery-sheet .sheet-header{position:relative;display:flow-root;margin-bottom:14px;padding-bottom:10px}
+.stationery-sheet .sheet-header h1{letter-spacing:.04em;max-width:100%}
+.sheet-header>.letter-stamp.art-stamp{width:48px;height:48px;margin:4px 0 10px 16px;opacity:.7;filter:saturate(.7) sepia(.08);transform:rotate(2deg)}
+.reading-main>.sheet-paging,.preview-main>.sheet-paging{margin:14px auto 0;width:100%;padding:0 8px;min-height:32px}
+.envelope-stamp{width:38px;height:38px;bottom:10px;right:16px;transform:rotate(5deg)}
+.envelope-excerpt{padding-right:0}
+@media(max-width:600px){.stationery-sheet.paper{padding:52px 8% 32px}.sheet-header>.letter-stamp.art-stamp{width:40px;height:40px;margin-left:10px}.envelope-stamp{width:42px;height:42px;bottom:14px;right:18px}}
+</style>
+<style>
+.stationery-sheet .letter-content{white-space:normal}.stationery-sheet .letter-content p{font:inherit;line-height:inherit;text-indent:2em;margin:0;white-space:pre-wrap}.stationery-sheet .letter-content p+p{margin-top:.925em}.stationery-sheet .letter-content p.continued{text-indent:0}
+.reading-layout,.preview-main,#editor{position:relative;isolation:isolate}
+
+
+.correspondence{position:relative;border-radius:8px;background:linear-gradient(130deg,#fffaf0f5,#f8efdef0)}
+@media(max-width:700px){.reading-layout:before,.preview-main:before,.stationery-sheet .letter-content p+p{margin-top:.95em}}
+</style><style></style><style>
+/* V18 — antique correspondence desk */
+body.reading-view,body.writing-view{background:#eee1cb;color:#594432}
+.reading-view .page-surface,.writing-view .page-surface{background:radial-gradient(ellipse at 5% 5%,#b9916040,transparent 35%),radial-gradient(ellipse at 95% 95%,#af80502b,transparent 38%),linear-gradient(120deg,#f4e9d9aa,#fbf3e7aa 50%,#ebdac2aa)}
+.reading-view .page-surface:before,.writing-view .page-surface:before{opacity:.52;mix-blend-mode:multiply}
+.reading-view .header,.writing-view .header{background:#fff8ecdc;border-color:#c7ab7a55}
+.writing-view #app{max-width:1240px;padding-top:25px}.writing-view .breadcrumbs{max-width:920px;margin:0 auto 24px}.write-steps{max-width:780px;padding:13px 24px;border-top:1px solid #b68d5355;border-bottom:1px solid #b68d5355;color:#8d7356;letter-spacing:.06em;background:#fff7e84d}.write-steps [aria-current]{color:#98682f}
+#editor.paper{position:relative;isolation:isolate;max-width:920px;border-radius:3px;padding:58px 70px 42px;border:1px solid #d3b88d;background:radial-gradient(ellipse at 0 0,#be915c1c,transparent 42%),radial-gradient(ellipse at 100% 100%,#cda57422,transparent 44%),linear-gradient(100deg,#fff7e9ee,#faf0e0f5);box-shadow:0 14px 35px #69482125,7px -7px 0 #eee2ce,8px -8px 0 #d7b995,14px -14px 0 #f6ecdb}
+#editor.paper:before{content:'';position:absolute;inset:0;background:url('assets/art-16.png') center/900px;opacity:.18;z-index:-1;pointer-events:none}
+.vintage-frame{position:absolute;inset:20px;pointer-events:none;z-index:-1;border:1px solid #ba955a77;outline:1px solid #c8a87144;outline-offset:5px}.corner{position:absolute;width:70px;height:70px;background:#fbf1e2}.paper-flourish{width:100%;height:100%;stroke:#b38b50;stroke-width:1;opacity:.72}.c0{left:-1px;top:-1px}.c1{right:-1px;top:-1px;transform:rotate(90deg)}.c2{right:-1px;bottom:-1px;transform:rotate(180deg)}.c3{left:-1px;bottom:-1px;transform:rotate(270deg)}
+#editor h1{color:#664731;font-weight:500;letter-spacing:.12em;margin-top:10px}#editor .eyebrow{color:#9e7848;letter-spacing:.3em}#editor .form-field label{color:#80613e;letter-spacing:.12em}#editor .form-field input,#editor .form-field textarea{background:#fffaf16b;border-color:#c9ab7d;border-radius:2px;box-shadow:inset 0 2px 8px #95672b06}#editor .form-field textarea{background:repeating-linear-gradient(transparent 0,transparent 33px,#bca47c20 33px,#bca47c20 34.2px),#fffaf14d;line-height:34.2px;padding-top:10px}#editor .actions{border-top:1px solid #c2a17166;padding-top:20px}.primary{background:linear-gradient(145deg,#b1844d,#936233);border-color:#966935;box-shadow:0 3px 8px #78532916}.pattern-picker{background:#fff9ef55;border-color:#c9ac7d}.pattern-option>span{background:#f4e8d6!important}.stamp-options label>span{background:#fff8ec80;border-radius:3px;border-color:#cdb48b}.stamp-options label:has(input:checked)>span{background:#f3e4cc;border-color:#aa7a43}
+.reading-layout{gap:32px;margin-top:22px}.reading-main{position:relative;isolation:isolate}.reading-main:before{content:'';position:absolute;inset:0 14px 70px -12px;z-index:-1;transform:rotate(-1.3deg);border:1px solid #c5a47c;background:linear-gradient(135deg,#c1a17b44,transparent 55%),#e6d2b5;box-shadow:0 4px 12px #62422120;border-radius:3px}.stationery-sheet.paper{background:#faf0df;box-shadow:0 10px 25px #6c49232b,6px -6px 0 #f6ead7,7px -7px 0 #d5ba94,12px -12px 0 #f2e4cc;border-radius:5px}.stationery-sheet .sheet-header{border-bottom-color:#a7855466}.stationery-sheet .sheet-header h1{color:#503c2b;font-weight:500}.stationery-sheet .letter-content{color:#493c2d}.reader-corner-flower{position:absolute;right:2%;top:0;width:155px;height:42px;overflow:hidden;opacity:.55;pointer-events:none;transform:scaleX(-1)}.reader-corner-flower img{width:155px;max-width:none}.sheet-paging{color:#937047}.sheet-paging button{font-family:var(--serif);text-decoration:none;border-bottom:1px solid #b49a7455;border-radius:0}.correspondence{border:1px solid #d6bd96;border-radius:4px;padding:28px 24px;background:radial-gradient(ellipse at top left,#d6b17f20,transparent 70%),#fff7e9ed;box-shadow:0 10px 24px #6c49231c,inset 0 0 28px #cda97415;outline:1px solid #d5bd943d;outline-offset:-7px}.correspondence h2{font-weight:500;color:#89602f;letter-spacing:.08em;padding-bottom:16px;border-bottom:1px solid #c6a67966}.original-letter{border:1px solid #dcc49d;background:#f1e2c971;border-radius:2px;box-shadow:4px 4px 0 #f1e3cd66}.reply-item{border-bottom-color:#bea07777;padding:20px 0}.reply-item h3{font-weight:500;color:#6d4b2b}.reply-item p{line-height:1.9}.reading-view .footer,.writing-view .footer{background:transparent;border-color:#bea27b55}.reading-view .footer-copy,.writing-view .footer-copy{color:#8f704b}
+@media(max-width:700px){#editor.paper{padding:42px 30px 30px}.vintage-frame{inset:12px}.corner{width:42px;height:42px}.writing-view #app{padding:22px 18px}.write-steps{font-size:11px;padding:12px 8px;gap:8px}.reader-corner-flower{width:100px;height:28px}.reader-corner-flower img{width:100px}.reading-layout{gap:28px}.reading-main:before{left:-5px;right:8px}.correspondence{padding:24px 20px}}
+</style><style>
+/* V19: continuous engraved frame and full-height correspondence desk */
+.vintage-frame{inset:20px;border:1px solid #b4915e;outline:1px solid #b4915e66;outline-offset:5px;border-radius:18px;background:none}
+.vintage-frame i{position:absolute;width:42px;height:42px;border:1px solid #b4915e;border-radius:50%;background:none}
+.vintage-frame i:before,.vintage-frame i:after{content:"";position:absolute;border:1px solid #b4915e99;border-radius:50%;width:23px;height:12px;transform:rotate(-45deg);left:8px;top:13px}.vintage-frame i:after{transform:rotate(45deg)}
+.vintage-frame i:nth-child(1){top:-1px;left:-1px}.vintage-frame i:nth-child(2){top:-1px;right:-1px}.vintage-frame i:nth-child(3){bottom:-1px;right:-1px}.vintage-frame i:nth-child(4){bottom:-1px;left:-1px}
+.stamp-picker{min-width:0}.stamp-toolbar{display:flex;align-items:center;gap:16px;color:#927551;font-size:12px;margin-top:10px}.stamp-toolbar span{margin-right:auto}.stamp-options{display:flex;flex-wrap:nowrap;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#b7976a #e9ddc8;padding:16px 0 20px}.stamp-options label{flex:0 0 calc((100% - 48px)/4);min-width:0;scroll-snap-align:start}.stamp-options label>span{padding:12px;width:100%;aspect-ratio:1;justify-content:center}.stamp-options .letter-stamp.art-stamp{width:100%;height:100%;max-width:130px;max-height:130px}
+.desk-decor{display:none;position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}.reading-view .desk-decor,.writing-view .desk-decor{display:block}.page-surface{position:relative}.reading-view #app,.writing-view #app{position:relative;z-index:1}.old-envelope{position:absolute;left:3%;top:65px;width:48%;height:68%;transform:rotate(-6deg);background:linear-gradient(32deg,transparent 49.7%,#9f795c66 50%,transparent 50.3%),linear-gradient(148deg,transparent 49.7%,#9f795c55 50%,transparent 50.3%),linear-gradient(100deg,#c6a27a,#e4c9a8);border:1px solid #b5936d;box-shadow:0 5px 15px #68421d30;border-radius:3px}.desk-blossom{position:absolute;left:-36px;bottom:80px;width:235px;height:72px;overflow:hidden;transform:rotate(-30deg);opacity:.75}.desk-blossom img{width:235px;max-width:none}.desk-postcard{position:absolute;right:-25px;bottom:-28px;width:160px;height:170px;transform:rotate(-14deg);background:#faf3e7;padding:10px;box-shadow:0 3px 10px #5e382744}.desk-postcard img{width:100%;height:100%;object-fit:cover}.desk-seal{position:absolute;right:13px;top:5px;width:108px;height:108px;border:3px double #8c6d4f;border-radius:50%;transform:rotate(12deg);text-align:center;padding:13px 4px;color:#8c6d4f;font:10px Georgia;opacity:.65}.desk-seal small,.desk-seal b,.desk-seal span{display:block;margin:4px}.desk-seal small{font-size:19px}.petal{position:absolute;width:15px;height:8px;background:#d99e9270;border-radius:100% 0 100% 0;box-shadow:0 2px 3px #9b69551a}.petal-a{left:4%;top:42%;transform:rotate(-24deg)}.petal-b{right:29%;bottom:110px;transform:rotate(32deg)}.petal-c{left:35%;bottom:40px;transform:rotate(-45deg)}
+.sheet-cancel{position:absolute;right:15%;top:32px;border:1px solid #93744c88;border-radius:50%;width:70px;height:70px;display:grid;place-content:center;text-align:center;font:9px/1.6 Georgia;color:#8c704e99;transform:rotate(-16deg);pointer-events:none}.sheet-cancel span{position:absolute;left:62px;top:20px;font-size:20px;letter-spacing:-4px;white-space:nowrap}.reader-corner-flower{width:195px;height:52px;opacity:.75}.reader-corner-flower img{width:195px}.correspondence h2:before{content:'❦';margin-right:10px;color:#ba9865}.stationery-sheet:after{content:'';position:absolute;left:8%;right:8%;bottom:4px;height:42px;background:url('assets/art-22.png') center bottom/contain no-repeat;opacity:.18;pointer-events:none}.reading-view .footer-copy{background:radial-gradient(ellipse,#f2e5d1 40%,transparent 72%)}
+body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .header{display:none}.reading-view .page-surface{height:100%;min-height:0}.reading-view #app{display:flex;flex-direction:column;min-height:0;max-width:1480px;padding:18px 5% 0;margin:auto;width:100%}.reading-view .breadcrumbs{flex:none;margin:0 0 22px;height:20px}.reading-view .reading-layout{flex:1;min-height:0;width:100%;margin:0;grid-template-columns:minmax(0,1fr) minmax(230px,30%);gap:28px;align-items:stretch}.reading-view .reading-main{display:flex;flex-direction:column;min-height:0}.reading-view .stationery-sheet.paper{height:auto!important;min-height:0;flex:1;aspect-ratio:auto;width:100%;padding:40px 7% 38px}.reading-view .stationery-sheet.portrait{max-width:590px}.reading-view .reading-body{min-height:0}.reading-view .sheet-paging{margin:8px auto 0;min-height:32px}.reading-view .reading-main>.actions{margin:3px 0 0;min-height:0}.reading-view .reading-main>.actions:empty{display:none}.reading-view .reading-main>.actions .button{padding:7px 22px;min-height:34px}.reading-view .correspondence{min-height:0;overflow:auto;padding:22px 20px}.reading-view .footer{height:84px;flex:none;border:0}.reading-view .campus-group img{height:80px}.reading-view .footer-copy{font-size:12px}.reading-view .footer-copy span{margin-top:4px}.reading-view .letter-content{font-size:clamp(15px,1.35vw,18px)}.reading-view .sheet-header h1{font-size:clamp(22px,2vw,30px)}.reading-view .preview-main{display:flex;flex:1;flex-direction:column;min-height:0;width:100%}.reading-view .write-steps{margin-bottom:12px;padding:8px}.reading-view .preview-main>.actions{margin-top:4px}
+@media(max-width:700px){.reading-view #app{padding:15px 18px 0}.reading-view .reading-layout{grid-template-columns:minmax(0,1fr)}.reading-view .correspondence{display:none}.reading-view .stationery-sheet.paper{padding:36px 8% 30px}.reading-view .footer{height:65px}.reading-view .sheet-header h1{font-size:20px}.reading-view .letter-content{font-size:16px}.desk-postcard{width:90px;height:110px}.desk-seal{width:70px;height:70px;font-size:7px;padding:6px}.desk-seal small{font-size:10px}.vintage-frame{inset:12px}.vintage-frame i{width:28px;height:28px}.vintage-frame i:before,.vintage-frame i:after{width:16px;height:8px;left:5px;top:9px}.stamp-options{gap:8px}.stamp-options label{flex-basis:calc((100% - 24px)/4)}.stamp-options label>span{padding:5px}.sheet-cancel{width:54px;height:54px;font-size:7px;top:21px}}
+
+.writing-view .old-envelope{left:10%;top:185px;width:43%;height:530px}.reading-view .stationery-sheet.paper{padding-top:60px}.reading-view .campus-group img{filter:sepia(1) saturate(.6) brightness(.7);opacity:.65}.vintage-frame i{border:0;border-radius:0}.vintage-frame i:before{width:30px;height:30px;border-radius:4px 80% 4px 80%;transform:rotate(0);left:4px;top:4px}.vintage-frame i:after{width:19px;height:19px;border-radius:50% 50% 3px 50%;left:8px;top:8px;transform:rotate(0)}.vintage-frame i:nth-child(2){transform:rotate(90deg)}.vintage-frame i:nth-child(3){transform:rotate(180deg)}.vintage-frame i:nth-child(4){transform:rotate(270deg)}
+</style><style>
+/* V20: restore the supplied artwork and the original corner flourishes. */
+.reading-view .campus-group img{filter:none;opacity:1}
+.desk-seal.detailed-seal{border:0;border-radius:0;padding:0;width:124px;height:124px;object-fit:contain;opacity:.78;right:12px;top:0;transform:rotate(12deg)}
+.sheet-cancel{border:0;border-radius:0;width:84px;height:84px;top:28px;right:16%;opacity:.72;display:block;transform:rotate(-16deg)}.sheet-cancel img{display:block;width:100%;height:100%;object-fit:contain}.sheet-cancel svg{position:absolute;left:70px;top:22px;width:82px;height:42px;stroke:#a28157;stroke-width:1.2}
+.correspondence h2{display:flex;align-items:center;gap:8px}.correspondence h2:before{content:none}.ginkgo-icon{width:34px;height:40px;flex:none}
+.vintage-frame{inset:26px;border:0;outline:0;border-radius:0;background:linear-gradient(#b38b50,#b38b50) center top/calc(100% - 116.66px) 1px no-repeat,linear-gradient(#b38b50,#b38b50) center bottom/calc(100% - 116.66px) 1px no-repeat,linear-gradient(#b38b50,#b38b50) left center/1px calc(100% - 116.66px) no-repeat,linear-gradient(#b38b50,#b38b50) right center/1px calc(100% - 116.66px) no-repeat;opacity:.72}
+.vintage-frame:before{content:'';position:absolute;inset:4.667px;background:linear-gradient(#b38b50,#b38b50) center top/calc(100% - 107.33px) 1px no-repeat,linear-gradient(#b38b50,#b38b50) center bottom/calc(100% - 107.33px) 1px no-repeat,linear-gradient(#b38b50,#b38b50) left center/1px calc(100% - 107.33px) no-repeat,linear-gradient(#b38b50,#b38b50) right center/1px calc(100% - 107.33px) no-repeat}
+.vintage-frame .corner{width:70px;height:70px;background:none}.vintage-frame .paper-flourish{opacity:1;stroke-width:1.4}.vintage-frame .c0{left:-5.833px;top:-5.833px}.vintage-frame .c1{right:-5.833px;top:-5.833px}.vintage-frame .c2{right:-5.833px;bottom:-5.833px}.vintage-frame .c3{left:-5.833px;bottom:-5.833px}
+@media(max-width:700px){.vintage-frame{inset:18px}.sheet-cancel{width:64px;height:64px;top:25px}.desk-seal.detailed-seal{width:90px;height:90px}.ginkgo-icon{width:28px;height:34px}}
+</style></head>
+<body>
+  <header class="header">
+    <a class="brand" href="luojia-home.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
+    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">公共来信</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
+    <div class="account"><span id="user-name"></span><button id="account-button" class="button primary" type="button">登录</button></div>
+  </header>
+  <div class="page-surface"><div class="desk-decor" aria-hidden="true"><div class="old-envelope"></div><div class="desk-blossom"><img src="assets/art-3.png" alt=""></div><span class="petal petal-a"></span><span class="petal petal-b"></span><span class="petal petal-c"></span></div>
+
+  <main id="app" tabindex="-1"><p class="empty">信箱正在准备中……</p></main>
+  <footer class="footer"><div class="footer-copy">在珞珈，每一封信，都是生活的注脚。<span>LUOJIA POST OFFICE</span></div><div class="campus-window" aria-hidden="true"><div class="campus-track"><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div></div></div></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <button class="dialog-close" type="button" aria-label="关闭登录">×</button>
+    <p class="eyebrow">LUOJIA POST OFFICE</p><h2 id="auth-title">回到你的信箱</h2>
+    <div id="auth-body"></div>
+  </dialog>
+  <dialog id="choice-dialog" aria-labelledby="choice-title"></dialog>
+  <script type="module">
+// 明确切换模式，真实接口失败时绝不自动切换到演示数据。
+const config = Object.freeze({
+  mode: 'demo', // 'demo' | 'api'
+  apiBase: '/api/v1',
+  pageSize: 6,
+});
+
+const charCount = (text = '') => Array.from(text).length;
+const excerpt = (text = '') => Array.from(text.replace(/\s+/gu, ' ').trim()).slice(0, 120).join('');
+const escapeHTML = (text = '') => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function validateLetter(letter, { draft = false } = {}) {
+  const errors = {};
+  const title = charCount(draft ? letter.title : letter.title.trim());
+  const content = charCount(draft ? letter.content : letter.content.trim());
+  if (!draft && (title < 2 || title > 80)) errors.title = '标题请写 2–80 个字符。';
+  if (!draft && (content < 20 || content > 2000)) errors.content = '正文请写 20–2000 个字符。';
+  if (draft && title > 80) errors.title = '标题最多 80 个字符。';
+  if (draft && content > 2000) errors.content = '正文最多 2000 个字符。';
+  if (charCount(letter.penName || '') > 30) errors.penName = '署名最多 30 个字符。';
+  if (!letter.patternId) errors.patternId = '信纸尚未准备好，请稍后重试。';
+  return errors;
+}
+
+function letterPayload(letter, { draft = false, update = false, privateEnabled = false } = {}) {
+  if (letter.visibility === 'private' && !privateEnabled) throw new Error('仅自己可见暂不可用，未发送任何内容。');
+  const common = {
+    ...(privateEnabled ? { visibility: letter.visibility || 'public' } : {}),
+    title: draft ? letter.title : letter.title.trim(), content: draft ? letter.content : letter.content.trim(),
+    recipientType: 'wall', recipientUserId: null,
+    penName: letter.penName?.trim() || null, isAnonymous: Boolean(letter.isAnonymous),
+    locationId: null, patternId: letter.patternId,
+    allowResponses: letter.allowResponses ?? false, allowReplies: letter.visibility === 'private' ? false : letter.allowReplies ?? true,
+  };
+  return update
+    ? { ...common, submitForReview: !draft }
+    : { ...common, parentLetterId: letter.parentLetterId || null, saveAsDraft: draft };
+}
+
+function statusLabel(letter) {
+  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'待审核', published:'已公开', returnedForEdit:'草稿', private:'仅自己可见' })[letter.workflowState] || '状态待确认';
+  if (letter.status === 'deleted') return '已删除';
+  if (letter.status === 'draft') return '草稿';
+  if (letter.status === 'active' && letter.visibility === 'public') {
+    if (letter.publishedAt) return '已公开';
+    if (letter.submittedAt) return '待审核';
+  }
+  if (letter.status === 'active' && letter.visibility === 'private') return '仅自己可见';
+  return '状态待确认';
+}
+
+// 同一次创建超时后复用 Key；更改内容后再创建才换 Key。
+function createSubmissionKey(getUUID = () => crypto.randomUUID()) {
+  let signature, key;
+  return {
+    for(payload) {
+      const next = JSON.stringify(payload);
+      if (signature !== next) { signature = next; key = getUUID(); }
+      return key;
+    },
+    clear() { signature = key = undefined; },
+  };
+}
+
+class ApiError extends Error {
+  constructor(message, { status = 0, code, fieldErrors = {}, requestId, retryAfter = 0 } = {}) {
+    super(message); Object.assign(this, { status, code, fieldErrors, requestId, retryAfter });
+  }
+}
+
+class ApiClient {
+  constructor(base, fetcher = globalThis.fetch.bind(globalThis)) {
+    this.base = base.replace(/\/$/, ''); this.fetcher = fetcher;
+    this.csrfToken = null; this.user = null;
+  }
+  async request(path, { method = 'GET', body, idempotencyKey, auth = true, retried = false } = {}) {
+    const writing = !['GET', 'HEAD'].includes(method);
+    if (writing && auth && !this.csrfToken && this.user) await this.refreshCsrf();
+    if (writing && auth && !this.csrfToken) {
+      throw new ApiError('请重新登录后继续，已经写下的内容会保留。', { status: 401, code: 'SESSION_REAUTH' });
+    }
+    const headers = { Accept: 'application/json' };
+    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (writing && auth) headers['X-CSRF-Token'] = this.csrfToken;
+    if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
+    let response;
+    try {
+      response = await this.fetcher(`${this.base}${path}`, {
+        method, headers, credentials: 'include',
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+        signal: AbortSignal.timeout(12000),
+      });
+    } catch {
+      throw new ApiError('连接没有完成，请检查网络后重试。内容仍在当前页面。');
+    }
+    let result;
+    try { result = await response.json(); }
+    catch { throw new ApiError('服务暂时未返回可用数据，请稍后重试。', { status: response.status }); }
+    if (!response.ok || result.code !== 0) {
+      if (writing && auth && response.status === 403 && result.code === 40302 && !retried) {
+        // 只重试明确的 CSRF 错误；并发请求共用恢复，保持请求体与幂等键。
+        if (this.csrfToken === headers['X-CSRF-Token']) await this.refreshCsrf();
+        return this.request(path, { method, body, idempotencyKey, auth, retried: true });
+      }
+      if (response.status === 401) { this.user = null; this.csrfToken = null; }
+      const retry = response.headers.get('Retry-After');
+      const retryAfter = /^\d+$/.test(retry || '') ? Number(retry) : Math.max(0, Math.ceil((Date.parse(retry) - Date.now()) / 1000)) || 0;
+      throw new ApiError(response.status >= 500 ? '服务暂时不可用，请稍后重试。' : (result.message || '操作没有完成，请重试。'), {
+        status: response.status, code: result.code, fieldErrors: result.data?.fieldErrors || {},
+        requestId: result.requestId || response.headers.get('X-Request-Id'), retryAfter,
+      });
+    }
+    return result.data;
+  }
+  async refreshCsrf() {
+    if (!this.csrfRefresh) {
+      this.csrfRefresh = this.request('/auth/csrf').then(data => {
+        if (!data?.csrfToken) throw new ApiError('登录验证信息不完整，请稍后重试。');
+        this.csrfToken = data.csrfToken;
+        return this.csrfToken;
+      }).finally(() => { this.csrfRefresh = null; });
+    }
+    return this.csrfRefresh;
+  }
+  async session() {
+    try { this.user = await this.request('/auth/me'); await this.refreshCsrf(); return this.user; }
+    catch (error) { if (error.status === 401) return null; throw error; }
+  }
+  async login({ account, password }) {
+    const data = await this.request('/auth/login', { method: 'POST', body: { account, password }, auth: false });
+    this.user = data.user; this.csrfToken = data.csrfToken; return this.user;
+  }
+  async register({ username, password, displayName }) {
+    const data = await this.request('/auth/register', { method: 'POST', body: { username, password, displayName }, auth: false });
+    this.user = data.user; this.csrfToken = data.csrfToken; return this.user;
+  }
+  async logout() { await this.request('/auth/logout', { method: 'POST' }); this.user = null; this.csrfToken = null; }
+  metadata() { return this.request('/metadata'); }
+  list({ mine = false, page = 1, pageSize = 6, drafts = false, workflowState } = {}) {
+    const query = new URLSearchParams({ page, pageSize });
+    if (mine && (workflowState === 'draft' || drafts)) query.set('status', 'draft');
+    else if (mine && workflowState) query.set('workflowState', workflowState);
+    if (!mine) query.set('sort', 'latest');
+    return this.request(`${mine ? '/me/letters' : '/letters'}?${query}`);
+  }
+  detail(id) { return this.request(`/letters/${encodeURIComponent(id)}`); }
+  replies(id, { page = 1, pageSize = 6 } = {}) {
+    return this.request(`/letters/${encodeURIComponent(id)}/replies?${new URLSearchParams({ page, pageSize })}`);
+  }
+  reviewQueue({ page = 1, pageSize = 6 } = {}) {
+    return this.request(`/admin/letters?${new URLSearchParams({ page, pageSize })}`);
+  }
+  review(id, action, reason) {
+    return this.request(`/admin/letters/${encodeURIComponent(id)}/review`, { method: 'POST', body: { action, ...(reason ? { reason } : {}) } });
+  }
+  remove(id) { return this.request(`/letters/${encodeURIComponent(id)}`, { method: 'DELETE' }); }
+  save(payload, { id, key } = {}) {
+    return this.request(id ? `/letters/${encodeURIComponent(id)}` : '/letters', {
+      method: id ? 'PATCH' : 'POST', body: payload, idempotencyKey: id ? undefined : key,
+    });
+  }
+}
+
+const stationeryCatalog = [
+  {
+    "id": "pat_ui_landscape_1",
+    "name": "横版 · 图案 1",
+    "orientation": "landscape",
+    "design": 1,
+    "previewUrl": "assets/art-25.webp"
+  },
+  {
+    "id": "pat_ui_landscape_2",
+    "name": "横版 · 图案 2",
+    "orientation": "landscape",
+    "design": 2,
+    "previewUrl": "assets/art-26.webp"
+  },
+  {
+    "id": "pat_ui_landscape_3",
+    "name": "横版 · 图案 3",
+    "orientation": "landscape",
+    "design": 3,
+    "previewUrl": "assets/art-27.webp"
+  },
+  {
+    "id": "pat_ui_landscape_4",
+    "name": "横版 · 图案 4",
+    "orientation": "landscape",
+    "design": 4,
+    "previewUrl": "assets/art-28.webp"
+  },
+  {
+    "id": "pat_ui_landscape_5",
+    "name": "横版 · 图案 5",
+    "orientation": "landscape",
+    "design": 5,
+    "previewUrl": "assets/art-29.webp"
+  },
+  {
+    "id": "pat_ui_landscape_6",
+    "name": "横版 · 图案 6",
+    "orientation": "landscape",
+    "design": 6,
+    "previewUrl": "assets/art-30.webp"
+  },
+  {
+    "id": "pat_ui_portrait_1",
+    "name": "竖版 · 图案 1",
+    "orientation": "portrait",
+    "design": 1,
+    "previewUrl": "assets/art-31.webp"
+  },
+  {
+    "id": "pat_ui_portrait_2",
+    "name": "竖版 · 图案 2",
+    "orientation": "portrait",
+    "design": 2,
+    "previewUrl": "assets/art-32.webp"
+  },
+  {
+    "id": "pat_ui_portrait_3",
+    "name": "竖版 · 图案 3",
+    "orientation": "portrait",
+    "design": 3,
+    "previewUrl": "assets/art-33.webp"
+  },
+  {
+    "id": "pat_ui_portrait_4",
+    "name": "竖版 · 图案 4",
+    "orientation": "portrait",
+    "design": 4,
+    "previewUrl": "assets/art-34.jpg"
+  },
+  {
+    "id": "pat_ui_portrait_5",
+    "name": "竖版 · 图案 5",
+    "orientation": "portrait",
+    "design": 5,
+    "previewUrl": "assets/art-35.webp"
+  },
+  {
+    "id": "pat_ui_portrait_6",
+    "name": "竖版 · 图案 6",
+    "orientation": "portrait",
+    "design": 6,
+    "previewUrl": "assets/art-36.webp"
+  }
+];
+function safePatternURL(url) { if (typeof url === 'string' && url.startsWith('blob:')) return url;
+  if (typeof url !== 'string') return '';
+  return /^(assets\/|\.\.\/|\/(?!\/)|https?:\/\/|data:image\/(png|jpeg|webp);base64,)/i.test(url) ? url : '';
+}
+function resolvePattern(pattern, available = []) {
+  return available.find(item => item.id === pattern?.id) || pattern || {};
+}
+
+// 按浏览器实际行高分页；不修改正文，不拆开 Emoji 组合。
+function fillParagraphs(target, value, continued = false) {
+  const parts = value.split(/\n+/);
+  target.replaceChildren();
+  parts.forEach((part,i) => {
+    if(!part.trim()) return;
+    const p = document.createElement('p');
+    p.textContent = part.replace(/^[\s\u3000]+/, '');
+    if(i===0 && continued) p.className='continued';
+    target.append(p);
+  });
+}
+function mountLetterReader(sheet) {
+  if (!sheet) return () => {};
+  const box = sheet.querySelector('.reading-body');
+  const text = sheet.querySelector('.letter-content');
+  const original = text.textContent;
+  const units = typeof Intl.Segmenter === 'function'
+    ? Array.from(new Intl.Segmenter('zh', {granularity:'grapheme'}).segment(original), x => x.segment)
+    : Array.from(original);
+  const prev = sheet.querySelector('[data-page-prev]'), next = sheet.querySelector('[data-page-next]');
+  const counter = sheet.querySelector('.paper-page-count');
+
+  const paging = sheet.querySelector('.sheet-paging');
+  sheet.insertAdjacentElement('afterend', paging);
+  paging.style.maxWidth = getComputedStyle(sheet).maxWidth;
+  let pages = [], index = 0, animation, frame, lastSize = '';
+  const display = (animate = false, backwards = false) => {
+    fillParagraphs(text, pages[index]?.text || '', pages[index]?.continued);
+    counter.textContent = `${index + 1} / ${pages.length || 1}`;
+    prev.disabled = index === 0; next.disabled = index === pages.length - 1;
+
+    animation?.cancel();
+    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      animation = box.animate([
+        {transform:`perspective(1000px) rotateY(${backwards ? -7 : 7}deg)`,opacity:.35},
+        {transform:'perspective(1000px) rotateY(0)',opacity:1}
+      ],{duration:700,easing:'cubic-bezier(.22,.61,.36,1)'});
+    }
+  };
+  const paginate = () => {
+    if (!sheet.isConnected) return;
+    
+    const size = `${box.clientWidth}:${box.clientHeight}:${getComputedStyle(text).fontSize}`;
+    if (size === lastSize) return;
+    lastSize = size;
+    const anchor = pages[index]?.start || 0;
+    const probe = text.cloneNode(false);
+    probe.setAttribute('aria-hidden','true');
+    Object.assign(probe.style,{position:'absolute',visibility:'hidden',pointerEvents:'none',width:`${box.clientWidth}px`,height:'auto',minHeight:'0',margin:'0',inset:'0 auto auto 0'});
+    box.append(probe); pages = [];
+    let start = 0;
+    while (start < units.length) {
+      let low = start + 1, high = units.length, end = start;
+      while (low <= high) {
+        const middle = Math.floor((low + high) / 2);
+        fillParagraphs(probe, units.slice(start,middle).join(''), start > 0 && units[start-1] !== '\n');
+        if (probe.getBoundingClientRect().height <= box.clientHeight - 1) { end = middle; low = middle + 1; }
+        else high = middle - 1;
+      }
+      end = Math.max(start + 1,end);
+      // 优先在页尾附近的段落或句尾处分开，保留所有空白。
+      if (end < units.length) {
+        for (let boundary = end; boundary > start + (end-start)*.94; boundary--) {
+          if (/[\n。！？.!?]/u.test(units[boundary-1])) { end = boundary; break; }
+        }
+      }
+      pages.push({start,text:units.slice(start,end).join(''),continued:start > 0 && units[start-1] !== '\n'}); start = end;
+    }
+    probe.remove();
+    if (!pages.length) pages = [{start:0,text:''}];
+    index = Math.max(0,pages.findLastIndex(page => page.start <= anchor));
+    display();
+  };
+  const turn = delta => {const destination = index + delta;if (destination < 0 || destination >= pages.length) return;index = destination;display(true,delta<0);};
+  prev.addEventListener('click',()=>turn(-1));next.addEventListener('click',()=>turn(1));
+  const observer = new ResizeObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(paginate);});
+  observer.observe(box);paginate();
+  document.fonts?.ready.then(()=>{lastSize='';paginate();});
+  return () => {observer.disconnect();cancelAnimationFrame(frame);animation?.cancel();};
+}
+
+
+const demoPattern = stationeryCatalog[0];
+const samples = [["想把那天的晚霞寄给你", "上周傍晚，从图书馆出来的时候，天边忽然变成了很浅的橘色。我本来已经低头点开了待办清单，走到台阶前，又把手机放回了口袋。那片云实在太慢了，慢得让人不好意思继续赶路。\n\n你以前总说，要给一天留一点发呆的时间。我当时觉得这句话很奢侈，课表、作业、实验报告，把每个空隙都填得满满的，好像只要停下来，就会落后于谁。可是那天我真的坐了一会儿，背包放在脚边，听见有人在楼下讨论晚饭，有人的水杯碰在栏杆上，发出清脆的一声。\n\n旁边坐着两个女生，共用一副耳机。其中一个把手机举起来拍天空，另一个伸手替她挡住镜头前晃动的背带。我不知道她们在听什么歌，却忽然想起，我们以前也会为了拍一张没有路人的照片，在同一个地方等很久。最后照片没拍好，倒把彼此笑弯腰的样子记得很清楚。\n\n后来风有点凉，我去买了一份晚饭。窗口的阿姨问我要不要加辣，我照例说一点点，又想起你每次都替我补一句：她说的一点点，是真的一点点。现在没人替我解释了，我倒也学会自己多说一句。原来长大有时候不是特别了不起的事，只是终于能把这些小小的需求说明白。\n\n回宿舍的路上，天空已经暗下来了。我翻了翻相册，发现刚才那张照片拍得很普通，远没有亲眼看见的好看。本来想删掉，手指停了一下，还是留下了。画面里有一角台阶，有模糊的人影，还有我那天确实坐下来休息过的证据。\n\n写这封信的时候，室友正在找她的充电线，楼道里有人刚洗完衣服回来。生活没有突然变得顺利，明天也还有没做完的事。但我想告诉你，我今天有好好吃饭，有抬头看天，也有在某个很普通的瞬间想起你。\n\n等下次见面，我们再找一个地方坐坐吧。不必等到所有事情都忙完，也不用提前想好要聊什么。", "晚归的人"], ["食堂最后一份热汤", "那天实验结束得很晚，我到食堂时，好几个窗口已经收拾好了。地上还有刚拖过的水痕，椅子一张张收在桌边。我站在门口犹豫，想着要不要回宿舍泡一碗面。\n\n阿姨看见我，隔着玻璃问了一句：“还没吃饭呀？”我点点头，忽然觉得有些不好意思，像是自己来得太迟，打扰了她下班。她没有催我，打开旁边的锅盖，说还有汤，米饭也能盛一点。\n\n热汤端到手里，眼镜立刻起了一层雾。我摘下眼镜，发现桌子对面还有一个同样晚来的同学。他埋头吃饭，书包拉链都没来得及拉好，一角打印纸露在外面。我们谁也没说话，只在阿姨拿来两双筷子时，一起说了声谢谢。\n\n那顿饭其实很简单，菜也不是我平时最喜欢的。可我吃得很慢，连碗底的一点汤都喝完了。离开时阿姨已经换下围裙，我说“您辛苦了”，她摆摆手，提醒我外面起风，把外套穿上。\n\n我一直以为值得写进信里的，应该是特别重要的事情。后来才发现，一顿晚饭、一句随口的关心，也能把很疲惫的一天接住。如果这封信恰好被你读到，希望你今天也能按时吃饭。忙的时候尤其要记得。", "一位珞珈来客"], ["致一起走过雨天的朋友", "还记得我们共撑一把伞走回宿舍的那个下午吗？雨是突然下起来的，出门时明明还有太阳。我们站在教学楼门口，分别翻了一遍书包，最后只找到你那把有点歪的小伞。\n\n你说挤一挤总能回去。我说当然可以，结果刚走出两步，我的鞋就踩进了水坑。那声响太清楚了，你没忍住笑，我也跟着笑起来。前一节课没听明白的题、刚收到的修改意见，忽然都变得没那么要紧。\n\n路上我们认真讨论过怎么撑伞才公平。你往左挪一点，我往右靠一点，伞尖碰到树叶，水又落下来，最后发现两个人的肩膀还是一样湿。我们索性不再调整，专心避开积水，却总在刚说完“这边没水”的时候，再踩中一个小坑。\n\n经过便利店，你提议进去避一会儿。门口挤着几个没带伞的人，大家轮流往外看，像在等待一场没有时间表的演出散场。你买了两盒牛奶，把温的那盒递给我。我握着盒子，听你讲起中学时一次更狼狈的淋雨经历，讲到最夸张的地方，还要腾出一只手比画。\n\n后来雨稍微小了，我们继续往前走。你突然问我，最近是不是不太开心。我记得自己沉默了一会儿，才说有一点。原来有些事情在聊天框里反复打字也说不出口，在两个人并肩走路、谁也不用看着谁的时候，反而可以慢慢讲出来。\n\n你没有马上告诉我该怎么做，也没有说这些事情不值得难过。你只是把伞往我这边偏了一点，问：“那后来呢？”我一直记得这句话。它让我知道，我不必赶快把故事讲成一个已经解决的问题。\n\n到宿舍楼下，我们站着聊了很久。雨水顺着伞骨往下滴，你的袖口湿了一大片，我的鞋也彻底没救了。分别的时候你说，回去先换袜子，其他事情明天再想。我后来真的照做了，洗完热水澡，坐在桌前，第一次没有逼自己立刻恢复精神。\n\n如今每次经过那条路，我都会想起那个下午。我们没做什么特别的事，不过是一起走了一段路，买了两盒牛奶，说了一些平常不肯说的话。可那天之后，我知道自己可以在不那么好的时候给你发消息。\n\n这封信写到这里，窗外又有雨声了。希望你身边有伞，有干燥的袜子，也有愿意听你说“后来呢”的人。下次如果碰巧又只带了一把伞，我们就慢一点走。", "小满"], ["路灯亮起的时候", "我喜欢路灯刚亮起来的那几分钟。天空还留着一点蓝，树影已经深下去了，灯光落在路面上，看起来像有人提前铺好了回去的路。\n\n今天下课以后，我没有直接回宿舍，绕着校园多走了一段。有人抱着书快步经过，有人拎着晚饭，一边走一边提醒电话那头的人：“我知道，已经吃了。”走近了才听见，袋子里的餐盒还在轻轻碰响。原来我们都很擅长先让家里放心，再处理自己的晚饭。\n\n一个小朋友在前面追着影子跑。他每跑到一盏灯下面，影子就换一个方向，他便停下来，认真找一找。大人没有催，只拎着东西在后面慢慢跟着。我在他们后面走了一小段，忽然也低头看了看自己的影子。\n\n我给家里打了个电话。其实没有什么新鲜事，妈妈说阳台上的衣服终于晒干了，我说今天的课有点难。我们把这些小事讲完，又各自安静了一会儿。她问是不是累了，我说还好，正在往回走。\n\n挂断电话后，路已经走到尽头。宿舍楼的窗户亮着，有人从楼上喊朋友的名字。我站了一下，才进门。今天没有发生值得庆祝的大事，但这条路、这通电话，还有楼上那声招呼，让我觉得自己确实属于这里。", "山下"], ["今天也向前走了一点", "这周过得有点慢。有一道题，我来回看了三次，笔记写得很整齐，脑子里却还是乱的。每次听见旁边同学说“这个很简单”，我都想把那一页轻轻翻过去，假装自己也懂了。\n\n今天终于鼓起勇气问了出来。我原本准备了很长的解释，想证明自己不是完全没学，结果对方拿过草稿纸，说：“我们从这里重新画一下。”没有谁笑我，我们只是把条件一条条写出来，再把遗漏的那一步补上。\n\n弄懂的瞬间也没有想象中激动。我先是愣了一下，随后特别想笑：原来我一直卡在这里。回宿舍前，我买了一杯热豆浆，站在路边慢慢喝完，当作这件小事的奖励。\n\n所以给今天留一封短信。以后再遇到不会的东西，希望我能记住，开口问一句并不会让之前的努力失效。今天只前进了一点点，但这一步是真的。", "慢慢来"], ["留一盏灯等你", "你发消息说今晚还要晚一点回来，我看见的时候，正准备关掉桌上的灯。于是把灯罩转了个方向，让光落在靠门的那一小块地方。这样你进来找拖鞋，就不用拿着手机照来照去了。\n\n桌上有一个小面包，是傍晚顺手买的。本来想问你要不要，又怕你忙起来忘记看消息，就挑了你常吃的那一种。袋口没有拆，放在你的杯子旁边。要是不饿，留到明早也可以。\n\n还记得刚住进来的时候，我们彼此都很客气。谁晚睡一点，谁早起一点，都要提前说好多句不好意思。后来慢慢熟悉了，才知道你找不到东西时会先在原地转一圈，我遇到难题时会不停地拧笔帽。很多事情不用问，就能猜个大概。\n\n前几天你回来，看见我还坐在桌前，也没问我为什么没睡，只把一颗糖放到键盘边上。我当时正在赶报告，随口说了谢谢。后来拆糖纸的时候，已经过了十二点。我突然觉得，那颗糖比任何“加油”都有用，因为它不要求我立刻变得精神，只是让我嘴里有一点甜。\n\n我们说好，等这一阵忙完，就去操场走走。其实不必等到哪一天完全空闲，找个普通的晚上也行。不聊成绩，不排计划，随便说说今天遇到了什么人，或者一起安静走两圈。\n\n我先睡了，灯给你留着。回来轻一点，不是怕你吵醒我，是门最近有点响，楼道里总能听见。面包记得拿，明天见。", "室友"], ["在书页里遇见秋天", "翻开借来的书，里面夹着一张旧书签。边角已经磨圆了，背面用铅笔写着一句话：记得看看窗外。我不知道是上一位读者留下的，还是已经跟着这本书走过很多人的书桌。\n\n于是我真的抬起头。窗外那棵树有几片叶子黄了，风吹过来的时候，叶背会翻出浅一点的颜色。前几周它是不是也这样，我竟然完全想不起来。我每天都坐在差不多的位置，却好像从来没有仔细看过它。\n\n那天下午，我只读了十几页。不是因为书不好看，而是某个段落让我想起了很久以前的事情。小时候去旧书店，父亲总会给我一点零钱，让我自己挑一本。我挑得很慢，看封面，也看有没有插图，最后常常选中最厚的那本，觉得这样比较划算。\n\n父亲没有纠正过这种挑法。他站在旁边翻报纸，等我抱着书过来，才帮我看看有没有缺页。买完书，我们会在回家的路上分一袋刚出炉的点心。我一边吃一边急着翻书，他提醒我手上有油，我就把书举得远一点，自以为这样便能两全。\n\n上大学以后，我读书越来越像在完成什么任务。要做笔记，要记住观点，要觉得自己没有浪费时间。有时一页看了很久，脑子里却只剩下还有多少页没读。那张书签让我停了一下，想起自己原本也会因为一个有意思的故事，愿意在旧书店待上一整个下午。\n\n我把书合上，出去走了一会儿。路边有一片叶子落在长椅上，叶脉很清楚，我看了几秒，没有捡走。随后去买了点心，给父亲发了一张照片。他过了好一会儿才回复，问我是不是又只顾着吃甜的，没有好好吃饭。\n\n等回到座位，我重新翻开那一页。这次没有划线，也没有急着总结，只慢慢读下去。书里写到一场告别，我想起家门口那条路，忽然读懂了一点以前略过去的地方。\n\n还书时，我把书签放回原来的位置，没有添字。也许下一位读者正好需要这句话，也许它会一直安静地夹在那里。不管怎样，我已经在那个下午看过窗外了。原来秋天不是突然来的，只是我终于有空认出它。", "书页之间"]];
+const stampCatalog = [{"id": "stamp_1", "src": "assets/art-38.png", "box": [140, 152, 1265, 1238, 1536, 1536]}, {"id": "stamp_2", "src": "assets/art-39.jpg", "box": [145, 220, 970, 840, 1280, 1280]}, {"id": "stamp_3", "src": "assets/art-40.png", "box": [64, 70, 1925, 1909, 2048, 2048]}, {"id": "stamp_4", "src": "assets/art-41.jpg", "box": [0, 0, 1279, 1287, 1279, 1287]}, {"id": "stamp_5", "src": "assets/art-42.jpg", "box": [0, 0, 1126, 1439, 1126, 1439]}, {"id": "stamp_6", "src": "assets/art-43.png", "box": [0, 0, 2048, 2048, 2048, 2048]}];
+const seeds = samples.map(([title, content, name], i) => ({
+  id: `let_demo_${i + 1}`, stampId: stampCatalog[({3:5,5:3})[i] ?? (i % stampCatalog.length)].id, title, content, excerpt: excerpt(content),
+  author: { displayName: name, isAnonymous: false }, recipient: { type: 'wall', user: null },
+  location: null, pattern: demoPattern, status: 'active', visibility: 'public',
+  submittedAt: '2026-10-17T09:00:00Z', publishedAt: `2026-10-${17-i}T10:00:00Z`,
+  createdAt: '2026-10-01T09:00:00Z', updatedAt: '2026-10-17T09:00:00Z',
+  allowReplies: true, parentLetterId: null, resonanceCount: 0, favoriteCount: 0, responseCount: 0, replyCount: 0,
+  isResonated: false, isFavorited: false, canEdit: false, canDelete: false, canForward: false,
+}));
+const demoReplies = [
+  { ...seeds[2], id:'let_demo_reply_1', parentLetterId:'let_demo_1', title:'愿下一次相遇，不必匆忙', content:'读到你写晚霞的那一段，我也想起了一次下课后的傍晚。那天我和朋友坐在路边分一袋饼干，聊的全是些没什么意义的小事，谁也没想着拍照。后来我们各自忙起来，才发现那个下午已经很久没有重来过了。\n\n前两天我给她发消息，问最近怎么样。她回了一张加班时的晚饭照片，我回了一张书桌。没有长篇的问候，也没有约定什么时候一定见面，我们就这样交换了彼此生活里很普通的一角。我却觉得，比翻看过去的照片更让人安心。\n\n你说不必等到所有事情都忙完，我很喜欢这句话。总想着等准备得更好一点再联系，反而把好多能说的话都放凉了。这封回信也是这样，我原本想写得漂亮一些，最后还是决定先告诉你：我认真读完了，也准备给一个很久没见的人打个电话。\n\n希望下一次你抬头看天时，身边正好有人可以一起看。如果只有自己，也请替我多坐一会儿。', excerpt:'谢谢你，让我也想起了那个夏天。有些人，也许会在更高处再相遇。' },
+  { ...seeds[3], id:'let_demo_reply_2', parentLetterId:'let_demo_1', title:'我也记得那阵晚风', excerpt:'有些心事，写下来就有了回声。原来在同一阵晚风里，我们都曾认真生活。' },
+];
+const storageKey = 'luojia.demo.letters.v1';
+
+class DemoService {
+  constructor(storage = localStorage, sessionStorageRef = sessionStorage) {
+    this.storage = storage; this.sessionStorage = sessionStorageRef; this.keys = new Map();
+    this.user = null; this.csrfToken = null;
+  }
+  rows() {
+    let rows;
+    try { rows = JSON.parse(this.storage.getItem(storageKey) || '[]'); }
+    catch { throw new ApiError('本机演示数据无法读取，请保留数据并联系开发者。'); }
+    if (!Array.isArray(rows) || rows.some(row => !row || typeof row.id !== 'string' || typeof row.title !== 'string' || typeof row.content !== 'string')) {
+      throw new ApiError('本机演示数据格式不正确，未覆盖原有内容。');
+    }
+    return rows;
+  }
+  async session() {
+    if (this.sessionStorage.getItem('luojia.demo.signedIn') === 'true') await this.login();
+    return this.user;
+  }
+  async login() {
+    this.sessionStorage.setItem('luojia.demo.signedIn', 'true');
+    this.user = { id: 'usr_demo', displayName: '演示来客', role: 'user' }; this.csrfToken = 'demo-only'; return this.user;
+  }
+  async logout() { this.sessionStorage.removeItem('luojia.demo.signedIn'); this.user = null; this.csrfToken = null; }
+  async metadata() { return { locations: [], patterns: stationeryCatalog }; }
+  async list({ mine = false, drafts = false, workflowState, page = 1, pageSize = 6 } = {}) {
+    if (mine && !this.user) throw new ApiError('请先使用演示身份。', { status: 401 });
+    let rows = mine ? this.rows() : seeds;
+    if (workflowState === 'draft' || drafts) rows = rows.filter(row => row.status === 'draft');
+    else if (workflowState) rows = rows.filter(row => (row.workflowState || (row.status === 'draft' ? 'draft' : 'pendingReview')) === (workflowState || 'draft'));
+    if (mine) rows = [...rows].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+    return { items: rows.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total: rows.length, hasMore: page * pageSize < rows.length };
+  }
+  async detail(id) {
+    const row = seeds.find(row => row.id === id) || demoReplies.find(row => row.id === id) || (this.user && this.rows().find(row => row.id === id));
+    if (!row) throw new ApiError('这封信暂时无法查看。', { status: 404 });
+    return structuredClone(row);
+  }
+  async replies(id, { page = 1, pageSize = 6 } = {}) {
+    await this.detail(id);
+    const rows = demoReplies.filter(row => row.parentLetterId === id);
+    return { items: rows.slice((page-1)*pageSize,page*pageSize), page, pageSize, total: rows.length, hasMore: page*pageSize < rows.length };
+  }
+  async remove(id) {
+    if (!this.user) throw new ApiError('请先登录。', { status: 401 });
+    const rows = this.rows();
+    const row = rows.find(item => item.id === id);
+    if (!row || row.status !== 'draft') throw new ApiError('草稿暂时无法删除。', { status: 404 });
+    try { this.storage.setItem(storageKey, JSON.stringify(rows.filter(item => item.id !== id))); }
+    catch { throw new ApiError('暂时未能删除，请稍后再试。'); }
+  }
+  async save(payload, { id, key } = {}) {
+    if (!this.user) throw new ApiError('请先使用演示身份。', { status: 401 });
+    if (!id && this.keys.has(key)) return this.detail(this.keys.get(key));
+    const rows = this.rows();
+    const previous = id ? rows.find(row => row.id === id) : null;
+    if (id && (!previous || previous.status !== 'draft' && previous.visibility !== 'private' && !previous.publishedAt)) throw new ApiError('只能继续编辑自己的草稿。', { status: 409 });
+    if (previous) payload = { ...previous, penName: previous.author?.displayName, isAnonymous: previous.author?.isAnonymous, ...payload };
+    const draft = id ? !payload.submitForReview : payload.saveAsDraft;
+    const now = new Date().toISOString();
+    const privateLetter = payload.visibility === 'private';
+    const row = {
+      ...seeds[0], ...previous, id: id || `let_local_${crypto.randomUUID()}`, ...payload,
+      author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '演示来客', isAnonymous: payload.isAnonymous },
+      recipient: { type: 'wall', user: null }, pattern: stationeryCatalog.find(pattern => pattern.id === payload.patternId) || previous?.pattern || demoPattern,
+      excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
+      workflowState: draft ? 'draft' : privateLetter ? 'private' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: null,
+      submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
+      canEdit: draft || privateLetter, canDelete: true, canForward: false,
+    };
+    // 演示存储与真实接口完全隔离，不保存账号口令或 token。
+    const next = [row, ...rows.filter(item => item.id !== row.id)];
+    try { this.storage.setItem(storageKey, JSON.stringify(next)); }
+    catch { throw new ApiError('浏览器未能保存，请检查存储空间。内容仍在编辑器中。'); }
+    if (!id) this.keys.set(key, row.id);
+    return structuredClone(row);
+  }
+}
+
+const e=escapeHTML;
+
+const demo = config.mode === 'demo';
+const service = demo ? new DemoService() : new ApiClient(config.apiBase);
+const app = document.querySelector('#app');
+const dialog = document.querySelector('#auth-dialog');
+const state = { editor: null, dirty: false, metadata: null, busy: false, render: 0, list: '#/mailbox', positions: new Map(), selected: null, register: false };
+const submission = createSubmissionKey();
+let toastTimer, cooldownUntil = 0;
+let disposeReader = () => {};
+const route = () => {
+  const [path, query] = (location.hash.slice(1) || '/mailbox').split('?');
+  return { path, params: new URLSearchParams(query) };
+};
+const date = value => value && Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat('zh-CN', { year:'numeric',month:'2-digit',day:'2-digit' }).format(new Date(value)) : '日期待确认';
+const empty = (title, text, action = '') => `<section class="empty"><h2>${e(title)}</h2><p>${e(text)}</p>${action}</section>`;
+const button = (text, action, primary = false) => `<button type="button" class="button ${primary ? 'primary' : ''}" data-action="${action}">${text}</button>`;
+const ownEditor = () => ({ id: null, stampId: 'stamp_1', title: '', content: '', penName: '', isAnonymous: false, patternId: state.metadata?.patterns[0]?.id || '', parentLetterId: null, parentTitle: '', visibility: 'public', allowReplies: true });
+
+
+function toast(message) {
+  const box = document.querySelector('#toast'); box.textContent = message; box.classList.add('visible');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => box.classList.remove('visible'), 4200);
+}
+function updateAccount() {
+  document.querySelector('#user-name').textContent = service.user?.displayName || '';
+  document.querySelector('#account-button').textContent = '登录';
+  document.querySelector('#account-button').hidden = Boolean(service.user);
+  document.querySelector('[data-nav=admin]').hidden = service.user?.role !== 'admin';
+}
+function navigate(hash) { if (hash === location.hash) render(); else location.hash = hash; }
+function errorText(error) {
+  if (error.status === 429) { cooldownUntil = Date.now() + Math.max(error.retryAfter || 30, 1) * 1000; return `操作较频繁，请 ${Math.ceil((cooldownUntil-Date.now())/1000)} 秒后再试。`; }
+  return `${error.message || '操作未完成，请稍后重试。'}${error.requestId ? `（编号 ${error.requestId}）` : ''}`;
+}
+function canRequest() {
+  if (Date.now() < cooldownUntil) { toast(`请 ${Math.ceil((cooldownUntil-Date.now())/1000)} 秒后再试。`); return false; }
+  return true;
+}
+function showError(error) {
+  const box = app.querySelector('.form-error');
+  if (box) box.textContent = errorText(error); else toast(errorText(error));
+  for (const [key, value] of Object.entries(error.fieldErrors || {})) {
+    const element = [...app.querySelectorAll('[data-error]')].find(el => el.dataset.error === key);
+    if (element) element.textContent = value;
+  }
+  if (error.status === 401) { updateAccount(); openAuth(); }
+}
+function setBusy(value) {
+  state.busy = value;
+  app.querySelectorAll('[data-mutate]').forEach(el => { el.disabled = value; el.setAttribute('aria-busy', String(value)); });
+  app.querySelectorAll('#editor input, #editor textarea, #editor select').forEach(el => { el.disabled = value || (el.name === 'allowReplies' && state.editor?.visibility === 'private'); });
+}
+function authNeeded() {
+  if (!service.user) { openAuth(); return true; }
+  return false;
+}
+async function metadata() {
+  if (!state.metadata) state.metadata = await service.metadata();
+  if (!state.metadata.patterns?.length) throw new Error('暂时没有可用信纸，请稍后重试。');
+  return state.metadata;
+}
+function titleBlock(title, intro, action = '') {
+  return `<div class="breadcrumbs"><a href="luojia-home.html">首页 / 信箱</a><a href="luojia-home.html">返回首页 ↗</a></div><div class="page-heading"><div><p class="eyebrow">LETTERS FROM LUOJIA</p><h1>${title}</h1><p class="intro">${intro}</p></div>${action}</div>`;
+}
+function card(letter, mine) {
+  return `<button class="envelope ${matchMedia('(hover: none)').matches && state.selected === letter.id ? 'revealed' : ''}" type="button" data-letter="${e(letter.id)}" aria-label="${e(letter.title || '未命名草稿')}，按 Enter 阅读全文" aria-describedby="summary-${e(letter.id)}">
+    ${mine ? `<span class="badge">${e(statusLabel(letter))}</span>` : ''}
+    <span class="envelope-title">${e(letter.title || '未命名草稿')}</span><span class="envelope-excerpt" id="summary-${e(letter.id)}">${e(letter.excerpt || '这封信还在慢慢写。')}</span>
+    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(letter.publishedAt ? date(letter.publishedAt) : letter.visibility === 'private' ? '仅自己可见' : '尚未公开')}</span><span class="envelope-stamp" aria-hidden="true">${stampMarkup(letter.stampId)}</span>
+  </button>`;
+}
+async function mailbox(params, mine, token) {
+  const page = Math.max(1, Number(params.get('page')) || 1), workflowState = ['draft','pendingReview','published',...(demo ? ['private'] : [])].includes(params.get('filter')) ? params.get('filter') : '';
+  if (mine && !service.user) {
+    app.innerHTML = empty('你的信，都在这里', '登录后查看自己保存的草稿和提交的信件。', button('登录', 'login', true)); return;
+  }
+  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '') + '<div class="letter-grid" aria-label="正在加载">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
+  const result = await service.list({ mine, workflowState, page, pageSize: config.pageSize });
+  if (token !== state.render) return;
+  const base = mine ? '/mine' : '/mailbox';
+  const paging = p => `#${base}?page=${p}${workflowState ? `&filter=${workflowState}` : ''}`;
+  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['pendingReview','待审核'],['published','已公开'],...(demo ? [['private','仅自己可见']] : [])].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${workflowState === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
+  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '') + tabs +
+    `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
+    (result.items.length ? `<div class="letter-grid">${result.items.map(item => card(item, mine)).join('')}</div>` : empty(mine ? '这里还没有信' : '信箱暂时安静', mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
+    `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
+  state.list = location.hash || '#/mailbox';
+  requestAnimationFrame(() => window.scrollTo(0, state.positions.get(state.list) || 0));
+}
+function paper(letter, preview = false) {
+  const pattern = resolvePattern(letter.pattern || { id: letter.patternId }, state.metadata?.patterns || []);
+  const orientation = pattern.orientation === 'portrait' ? 'portrait' : 'landscape';
+  const source = safePatternURL(pattern.previewUrl);
+  return `<article class="paper stationery-sheet ${orientation}">${source ? `<img class="stationery-bg" src="${e(source)}" alt="">` : ''}<div class="reader-corner-flower" aria-hidden="true"><img src="assets/art-3.png" alt=""></div><div class="sheet-cancel" aria-hidden="true"><img src="assets/art-19.png" alt=""><svg viewBox="0 0 100 50" fill="none"><path d="M0 10Q12 0 25 10T50 10T75 10T100 10M0 22Q12 12 25 22T50 22T75 22T100 22M0 34Q12 24 25 34T50 34T75 34T100 34"/></svg></div><div class="sheet-header">${stampMarkup(letter.stampId)}<p class="eyebrow">A LETTER FOR YOU</p>${letter.parentLetterId ? `<p class="parent-note">回信${letter.parentTitle ? ` · ${e(letter.parentTitle)}` : ''}${!preview ? `　<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信</a>` : ''}</p>` : ''}
+  <h1>${e(letter.title || '未命名草稿')}</h1><div class="letter-meta"><span>署名：${e(letter.author?.displayName || '匿名来客')}</span>${!preview ? `<span>${e(date(letter.publishedAt || letter.updatedAt || letter.createdAt))}</span><span class="badge">${e(statusLabel(letter))}</span>` : `<span>${letter.visibility === 'private' ? '仅自己可见 · 不公开' : '寄往公共信箱 · 审核后公开'}</span>`}</div></div>
+  <div class="reading-body"><div class="letter-content">${e(letter.content)}</div></div>
+  <nav class="sheet-paging" aria-label="信纸翻页"><button class="text-button" type="button" data-page-prev>← 上一页</button><span class="paper-page-count" role="status"></span><button class="text-button" type="button" data-page-next>下一页 →</button></nav>`;
+}
+function patternPicker() {
+ const patterns=state.metadata.patterns.filter(p => p.previewUrl !== "assets/art-44.webp");
+ const chosen=patterns.find(p=>p.id===state.editor.patternId);
+ const orientation=chosen?.orientation || 'landscape';
+ return `<fieldset class="pattern-picker"><legend>选一张信纸</legend><div class="paper-selector-head"><div class="orientation-tabs">${[['landscape','横版'],['portrait','竖版']].map(([id,label])=>`<button type="button" data-orientation="${id}" aria-pressed="${orientation===id}">${label}</button>`).join('')}</div><div><button type="button" class="text-button" data-slide="-1" aria-label="向前浏览信纸">←</button><button type="button" class="text-button" data-slide="1" aria-label="向后浏览信纸">→</button></div></div>${['landscape','portrait','other'].map(o=>{const items=patterns.filter(p=>(p.orientation||'other')===o);return items.length?`<div class="pattern-group" data-orientation-group="${o}" ${o!==orientation?'hidden':''}><div class="pattern-options">${items.map((p,i)=>`<label class="pattern-option"><input aria-label="${o==='portrait'?'竖版':'横版'}信纸，第${i+1}款" type="radio" name="patternId" value="${e(p.id)}" ${p.id===state.editor.patternId?'checked':''}><span><img src="${e(safePatternURL(p.previewUrl))}" alt="" loading="lazy"></span></label>`).join('')}</div></div>`:''}).join('')}<p class="help">左右滑动，挑一张与你的心情相配的信纸。</p></fieldset>`;
+}
+async function detail(id, token, params) {
+  app.innerHTML = empty('正在取信', '请稍等片刻。');
+  const letter = await service.detail(id);
+  if (token !== state.render) return;
+  state.currentLetter = letter;
+  app.innerHTML = `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a></div>` + '<div class="reading-layout"><div class="reading-main">' + paper(letter) +
+    `</article><div class="actions">${letter.canEdit ? button(letter.publishedAt ? '再次编辑' : '继续写信', 'edit', true) : ''}${letter.status === 'draft' && letter.canDelete ? button('删除草稿', 'delete-draft') : ''}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('<img class="reply-icon" src="assets/art-45.svg" alt="">回一封信', 'reply', true) : ''}</div></div><aside class="correspondence"><h2>这封信的往返</h2><div class="original-letter"><span class="badge">${letter.parentLetterId ? '回信' : '原信'}</span><h3>${e(letter.title)}</h3><p>${e(letter.author?.displayName || '匿名来客')}</p>${letter.parentLetterId ? `<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信 →</a>` : ''}</div><div id="reply-list" aria-live="polite"><p class="help">${letter.parentLetterId ? '可返回原信查看其他往返信件。' : '这封信尚无公开的回信。'}</p></div></aside></div>`;
+  disposeReader = mountLetterReader(app.querySelector('.stationery-sheet'));
+  if (!demo && service.user?.role === 'admin' && letter.status === 'active' && letter.visibility === 'public' && !letter.publishedAt && letter.submittedAt) {
+    app.insertAdjacentHTML('beforeend', `<section class="paper review-panel"><h2>审核这封信</h2><p class="form-error" role="alert"></p><div class="actions">${button('审核通过','approve-review',true)}</div></section>`);
+    app.querySelectorAll('.review-panel button').forEach(el => el.dataset.mutate = '');
+  }
+  if (letter.status === 'active' && letter.publishedAt && !letter.parentLetterId) {
+    const page = Math.max(1, Number(params.get('replyPage')) || 1);
+    app.querySelector('#reply-list').textContent = '正在取回信……';
+    try {
+      const result = await service.replies(id, { page, pageSize: config.pageSize });
+      if (token !== state.render) return;
+      const href = p => `#/letter/${encodeURIComponent(id)}?replyPage=${p}`;
+      app.querySelector('#reply-list').innerHTML = (result.items.length ? `<div class="reply-items">${result.items.map(item => `<a class="reply-item" href="#/letter/${encodeURIComponent(item.id)}"><h3>${e(item.title)} <span aria-hidden="true">→</span></h3><small>${e(item.author?.displayName || '匿名来客')}</small><p>${e(item.excerpt || '')}</p></a>`).join('')}</div>` : '<p class="help">还没有公开的回信。</p>') +
+        `<nav class="pagination">${page > 1 ? `<a class="button" href="${href(page-1)}">上一页回信</a>` : ''}${result.hasMore ? `<a class="button" href="${href(page+1)}">下一页回信</a>` : ''}</nav>`;
+    } catch (error) {
+      if (token === state.render) app.querySelector('#reply-list').innerHTML = `<p class="form-error">${e(errorText(error))}</p>${button('重试','retry')}`;
+    }
+  }
+}
+async function reviewQueue(params, token) {
+  if (!service.user) { app.innerHTML = empty('审核工作台', '请使用管理员账号登录。', button('登录','login',true)); return; }
+  if (demo || service.user.role !== 'admin') { app.innerHTML = empty('无法进入审核工作台', '此入口仅供管理员使用。'); return; }
+  app.innerHTML = empty('正在读取待审核信件', '请稍等片刻。');
+  const page = Math.max(1, Number(params.get('page')) || 1);
+  const result = await service.reviewQueue({ page, pageSize: config.pageSize });
+  if (token !== state.render) return;
+  state.list = location.hash;
+  app.innerHTML = titleBlock('待审核信件','审核通过后，其他人才能读到这封信。') +
+    (result.items.length ? `<div class="letter-grid">${result.items.map(item => card(item,true)).join('')}</div>` : empty('暂时没有待审核信件','可以稍后再来看看。')) +
+    `<nav class="pagination">${page > 1 ? `<a class="button" href="#/admin?page=${page-1}">上一页</a>` : ''}${result.hasMore ? `<a class="button" href="#/admin?page=${page+1}">下一页</a>` : ''}</nav>`;
+}
+async function reviewLetter() {
+  if (state.busy || !canRequest() || authNeeded()) return;
+  setBusy(true);
+  try {
+    await service.review(state.currentLetter.id, 'approve');
+    toast('审核已通过。');
+    navigate('#/admin');
+  } catch (error) { showError(error); }
+  finally { setBusy(false); }
+}
+async function write(token) {
+  app.innerHTML = empty('正在铺开信纸', '请稍等片刻。');
+  await metadata();
+  if (token !== state.render) return;
+  state.editor ||= ownEditor();
+  state.editor.patternId ||= state.metadata.patterns[0].id;
+  const value = state.editor;
+  app.innerHTML = steps(0) + `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a><span>${value.id ? '继续写草稿' : '写一封信'}</span></div><form id="editor" class="paper" novalidate><div class="vintage-frame" aria-hidden="true"><span class="corner c0"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c1"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c2"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c3"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span></div><p class="eyebrow">WORDS WORTH KEEPING</p><h1>${route().params.get('theme') === 'time' ? '时光信笺' : '写下此刻的心事'}</h1>${route().params.get('theme') === 'time' ? '<p class="help">写给过去的自己，也写给未来的你。记下此刻的成长、困惑与期待。</p>' : ''}
+    ${value.parentLetterId ? `<p class="parent-note">回信 · ${e(value.parentTitle || '原信')}</p>` : ''}
+    <div class="form-field"><label for="letter-title">标题</label><input id="letter-title" name="title" value="${e(value.title)}" autocomplete="off" aria-describedby="title-error"><div class="field-error" id="title-error" data-error="title"></div></div>
+    <div class="form-field"><label for="letter-content">正文</label><textarea id="letter-content" name="content" placeholder="见字如面……" aria-describedby="content-error">${e(value.content)}</textarea><div class="form-meta"><span id="word-count">${charCount(value.content)} / 2000</span></div><div class="field-error" id="content-error" data-error="content"></div></div>
+    <div class="signature-row"><div class="form-field"><label for="pen-name">署名</label><input id="pen-name" name="penName" value="${e(value.penName)}" autocomplete="off"><div class="field-error" data-error="penName"></div></div>
+    <label class="check-label"><input type="checkbox" name="isAnonymous" ${value.isAnonymous ? 'checked' : ''}> 匿名展示</label></div>
+    <p class="saved-note" role="status"></p><p class="form-error" role="alert"></p>
+    <div class="actions"><button type="button" class="button" data-action="save" data-mutate>保存草稿</button><button type="submit" class="button primary" data-mutate>下一步 · 装点信件</button></div></form>`;
+  setBusy(state.busy);
+}
+function steps(active) {
+  return `<nav class="write-steps" aria-label="写信进度">${['写下心里话','装点这封信','预览信件'].map((label,i)=>`<span ${i===active?'aria-current="step"':''}>${i+1}　${label}</span>`).join('<b>—</b>')}</nav>`;
+}
+async function decorate(token) {
+  if (!state.editor) { navigate('#/write'); return; }
+  await metadata(); if(token !== state.render) return;
+  const value=state.editor;
+  app.innerHTML=steps(1)+`<form id="editor" class="paper decoration-page" novalidate><div class="vintage-frame" aria-hidden="true"><span class="corner c0"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c1"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c2"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c3"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span></div><p class="eyebrow">A LITTLE CARE, BEFORE IT LEAVES</p><h1>给心事挑一件外衣</h1>
+    ${patternPicker()}${stampPicker()}
+    <fieldset class="letter-settings"><legend>这封信的设置</legend>
+      <div class="form-field"><label for="visibility">谁可以看这封信</label><select id="visibility" name="visibility"><option value="public" ${value.visibility !== 'private' ? 'selected' : ''}>公开 · 与人分享</option><option value="private" ${value.visibility === 'private' ? 'selected' : ''} ${demo ? '' : 'disabled'}>私密 · 仅自己可见${demo ? '' : '（暂不可用）'}</option></select></div>
+      <label class="check-label"><input type="checkbox" name="allowReplies" ${value.visibility !== 'private' && value.allowReplies !== false ? 'checked' : ''} ${value.visibility === 'private' ? 'disabled' : ''}> 允许别人回信</label><p class="help" id="reply-setting-note">${value.visibility === 'private' ? '私密信件只留给自己，不接收别人的回信。' : '关闭后，别人仍能阅读公开信件，但不能给它写回信。'}</p>
+    </fieldset>
+
+  <p class="saved-note" role="status"></p><p class="form-error" role="alert"></p><div class="actions"><a class="button" href="#/write" data-continue>上一步</a><button type="button" class="button" data-action="save" data-mutate>保存草稿</button><button class="button primary" type="submit">下一步 · 预览信件</button></div></form>`;
+  setBusy(state.busy);
+}
+function stampPicker() {
+ if(!stampCatalog.some(p=>p.id===state.editor.stampId))state.editor.stampId=stampCatalog[0].id;
+ return `<fieldset class="stamp-picker"><legend>选一张邮票</legend><div class="stamp-toolbar"><span>左右滑动，挑选一枚邮票</span><button type="button" class="text-button" data-stamp-slide="-1" aria-label="向左浏览邮票">←</button><button type="button" class="text-button" data-stamp-slide="1" aria-label="向右浏览邮票">→</button></div><div class="stamp-options">${stampCatalog.map((p,i)=>`<label><input type="radio" name="stampId" aria-label="选择邮票 ${i+1}" value="${p.id}" ${state.editor.stampId===p.id?'checked':''}><span>${stampMarkup(p.id)}</span></label>`).join('')}</div></fieldset>`;
+}
+function stampMarkup(id) {
+ if (!id || id==='none') return '';
+ const item=stampCatalog.find(p=>p.id===id);
+ if(item){const [x,y,w,h,iw,ih]=item.box;return `<span class="letter-stamp art-stamp"><svg viewBox="${x} ${y} ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="校园邮票"><image href="${item.src}" width="${iw}" height="${ih}"/></svg></span>`;}
+ if(id==='campus'){const source=document.querySelector('.brand-stamp img')?.src;return source?`<span class="letter-stamp"><img src="${e(source)}" alt="珞珈建筑邮票"></span>`:'';}
+ return '';
+}
+function preview() {
+  if (!state.editor) { navigate('#/write'); return; }
+  const letter = state.editor;
+  app.innerHTML = steps(2) + `<div class="breadcrumbs"><a href="#/decorate" data-continue>← 返回装点</a><span>寄出前，再读一遍</span></div><div class="preview-main">` + paper({ ...letter, author: { displayName: letter.isAnonymous ? '匿名来客' : letter.penName || service.user?.displayName || '珞珈来客' } }, true) +
+    `</article><p class="form-error" role="alert"></p><div class="actions"><a href="#/decorate" class="button" data-continue>返回装点</a><button type="button" class="button primary" data-action="submit" data-mutate>${letter.visibility === 'private' ? '保存为私密信件' : '确认寄出'}</button></div></div>`;
+  disposeReader = mountLetterReader(app.querySelector('.stationery-sheet'));
+}
+async function render() {
+  disposeReader(); disposeReader = () => {};
+  renderedHash = location.hash || '#/mailbox';
+  const token = ++state.render;
+  const { path, params } = route();
+  document.body.classList.toggle('reading-view', path.startsWith('/letter/') || path === '/preview');
+  document.body.classList.toggle('writing-view', ['/write','/decorate','/preview'].includes(path));
+  document.body.classList.toggle('mailbox-view', path === '/mailbox' || path === '/mine');
+  document.querySelectorAll('[data-nav]').forEach(el => {
+    if (path.startsWith('/' + el.dataset.nav)) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
+  });
+  window.scrollTo(0, 0);
+  try {
+    if (path === '/mailbox' || path === '/mine') await mailbox(params, path === '/mine', token);
+    else if (path.startsWith('/letter/')) await detail(decodeURIComponent(path.slice(8)), token, params);
+    else if (path === '/admin') await reviewQueue(params, token);
+    else if (path === '/write') await write(token);
+    else if (path === '/decorate') await decorate(token);
+    else if (path === '/preview') preview();
+    else app.innerHTML = empty('这条路暂时没有信', '回到信箱继续看看吧。', '<a class="button" href="#/mailbox">返回信箱</a>');
+  } catch (error) {
+    if (token !== state.render) return;
+    app.innerHTML = empty(error.status === 404 ? '这封信暂时无法查看' : '暂时没有取到信', errorText(error), button('重试', 'retry') + ' <a class="button" href="#/mailbox">返回信箱</a>');
+    if (error.status === 401) { updateAccount(); openAuth(); }
+  }
+}
+function validate(draft) {
+  const errors = validateLetter(state.editor, { draft });
+  app.querySelectorAll('[data-error]').forEach(el => { el.textContent = errors[el.dataset.error] || ''; });
+  app.querySelectorAll('[name]').forEach(el => el.setAttribute('aria-invalid', String(Boolean(errors[el.name]))));
+  if (Object.keys(errors).length) {
+    app.querySelector('[aria-invalid=true]')?.focus();
+    if (!app.querySelector('[data-error]')) toast(Object.values(errors)[0]);
+    return false;
+  }
+  return true;
+}
+async function save(draft) {
+  if (state.busy || !state.editor || !canRequest() || !validate(draft) || authNeeded()) return false;
+  if (!demo && state.editor.visibility === 'private') { showError(new Error('仅自己可见暂不可用，未发送任何内容。')); return false; }
+  setBusy(true);
+  const payload = letterPayload(state.editor, { draft, update: Boolean(state.editor.id), privateEnabled: demo });
+  if (demo) payload.stampId = state.editor.stampId || 'none';
+  try {
+    const letter = await service.save(payload, { id: state.editor.id, key: submission.for(payload) });
+    state.dirty = false; submission.clear();
+    if (draft) {
+      state.editor.id = letter.id;
+      const message = demo ? '草稿已保存在此浏览器。' : '草稿已保存。';
+      const note = app.querySelector('.saved-note'); if (note) note.textContent = message;
+      toast(message);
+    } else {
+      state.editor = null;
+      toast(payload.visibility === 'private' ? '私密信件已保存在此浏览器。' : '已提交，等待审核。');
+      navigate('#/mine');
+    }
+    return true;
+  } catch (error) { showError(error); return false; }
+  finally { setBusy(false); }
+}
+async function startFrom(letter, edit) {
+  if (state.busy) { toast('正在保存，请稍等片刻。'); return; }
+  if (state.dirty) { await requestLeave(() => startFrom(letter, edit)); return; }
+  await metadata();
+  if (edit && letter.publishedAt && letter.visibility === 'public') {
+    if (leaving) return;
+    leaving = true;
+    try {
+      const choice = await choose('收回草稿箱，再继续写？', '确认后，这封信将不再公开，已保存的正文会保留。修改完成后，可重新提交审核。', [['cancel','取消'],['edit','收回并编辑',true]]);
+      if (choice !== 'edit') return;
+      setBusy(true);
+      letter = await service.save({ title: letter.title, submitForReview: false }, { id: letter.id });
+      state.currentLetter = letter;
+    } finally { setBusy(false); leaving = false; }
+  }
+  state.editor = edit ? { id: letter.id, stampId: letter.stampId || 'stamp_1', title: letter.title, content: letter.content, penName: letter.author?.isAnonymous ? '' : letter.author?.displayName || '', isAnonymous: Boolean(letter.author?.isAnonymous), patternId: letter.pattern?.id || state.metadata.patterns[0].id, parentLetterId: letter.parentLetterId, parentTitle: '', visibility: letter.visibility || 'public', allowReplies: letter.allowReplies, allowResponses: letter.allowResponses }
+    : { ...ownEditor(), parentLetterId: letter.id, parentTitle: letter.title };
+  state.dirty = false; submission.clear(); navigate('#/write');
+}
+
+app.addEventListener('input', event => {
+  if (!event.target.closest('#editor') || !state.editor) return;
+  const input = event.target;
+  state.editor[input.name] = input.type === 'checkbox' ? input.checked : input.value;
+  input.removeAttribute('aria-invalid');
+  const error = [...app.querySelectorAll('[data-error]')].find(el => el.dataset.error === input.name);
+  if (error) error.textContent = '';
+  state.dirty = true;
+  if (input.name === 'visibility') {
+    const control = app.querySelector('[name=allowReplies]');
+    control.disabled = input.value === 'private';
+    control.checked = input.value !== 'private' && state.editor.allowReplies !== false;
+    app.querySelector('#reply-setting-note').textContent = input.value === 'private' ? '私密信件只留给自己，不接收别人的回信。' : '关闭后，别人仍能阅读公开信件，但不能给它写回信。';
+  }
+  if (app.querySelector('#word-count')) app.querySelector('#word-count').textContent = `${charCount(state.editor.content)} / 2000`;
+  app.querySelector('.saved-note').textContent = '有尚未保存的修改';
+});
+app.addEventListener('submit', event => {
+  if (event.target.id !== 'editor') return;
+  event.preventDefault(); if (validate(false)) navigate(route().path === '/write' ? '#/decorate' : '#/preview');
+});
+app.addEventListener('click', async event => {
+  const orientationButton=event.target.closest('[data-orientation]');
+  if(orientationButton) {
+    app.querySelectorAll('[data-orientation]').forEach(b=>b.setAttribute('aria-pressed',String(b===orientationButton)));
+    app.querySelectorAll('[data-orientation-group]').forEach(g=>g.hidden=g.dataset.orientationGroup!==orientationButton.dataset.orientation);
+    return;
+  }
+  const stampSlide=event.target.closest('[data-stamp-slide]'); if(stampSlide){const row=app.querySelector('.stamp-options');row.scrollBy({left:Number(stampSlide.dataset.stampSlide)*row.clientWidth/2,behavior:'smooth'});return;}
+  const slide=event.target.closest('[data-slide]');
+  if(slide) {const strip=app.querySelector('.pattern-group:not([hidden]) .pattern-options');strip?.scrollBy({left:Number(slide.dataset.slide)*strip.clientWidth*.75,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return;}
+
+  const envelope = event.target.closest('[data-letter]');
+  if (envelope) {
+    app.querySelectorAll('.revealed').forEach(el => el.classList.remove('revealed'));
+    state.selected = envelope.dataset.letter;
+    if (matchMedia('(hover: none)').matches) envelope.classList.add('revealed');
+    return;
+  }
+  const action = event.target.closest('[data-action]')?.dataset.action;
+  try {
+    if (action === 'login') openAuth();
+    if (action === 'retry' && canRequest()) render();
+    if (action === 'delete-draft') await deleteDraft();
+    if (action === 'save') await save(true);
+    if (action === 'submit') await save(false);
+    if (action === 'reply') await startFrom(state.currentLetter, false);
+    if (action === 'edit') await startFrom(state.currentLetter, true);
+    if (action === 'approve-review') await reviewLetter();
+  } catch (error) { showError(error); }
+  if (!action && !event.target.closest('a,button,input,textarea')) {
+    state.selected = null; app.querySelectorAll('.revealed').forEach(el => el.classList.remove('revealed'));
+  }
+});
+function openLetter(element) {
+  state.positions.set(location.hash || '#/mailbox', window.scrollY);
+  state.selected = element.dataset.letter;
+  navigate(`#/letter/${encodeURIComponent(element.dataset.letter)}`);
+}
+app.addEventListener('dblclick', event => { const card = event.target.closest('[data-letter]'); if (card) openLetter(card); });
+app.addEventListener('keydown', event => {
+  const card = event.target.closest('[data-letter]');
+  if (card && event.key === 'Enter') { event.preventDefault(); openLetter(card); }
+  if (event.key === 'Escape') { state.selected = null; app.querySelectorAll('.revealed').forEach(el => el.classList.remove('revealed')); }
+});
+let lastTouch;
+app.addEventListener('pointerup', event => {
+  if (event.pointerType !== 'touch') return;
+  const card = event.target.closest('[data-letter]'); if (!card) return;
+  const now = performance.now();
+  if (lastTouch?.id === card.dataset.letter && now - lastTouch.time < 380) { openLetter(card); lastTouch = null; }
+  else lastTouch = { id: card.dataset.letter, time: now };
+});
+
+function openAuth() {
+  document.querySelector('#auth-body').innerHTML = demo
+    ? '<p>当前是本机交互演示。使用演示身份即可测试保存和模拟提交，无需输入真实账号或密码。</p><button class="button primary" data-demo-login type="button">使用演示身份</button><p class="form-error" role="alert"></p>'
+    : `<form id="auth-form"><p class="help">${service.user ? '为继续当前操作，请重新验证登录。内容会保留。' : '登录后继续保存或寄信。'}</p><div class="form-field"><label for="account">用户名</label><input id="account" name="account" required minlength="3" maxlength="32" autocomplete="username" pattern="[A-Za-z0-9_]+"></div>${state.register ? '<div class="form-field"><label for="display-name">显示名称</label><input id="display-name" name="displayName" required maxlength="30" autocomplete="nickname"></div>' : ''}<div class="form-field"><label for="password">密码</label><input id="password" name="password" type="password" required minlength="8" maxlength="128" autocomplete="${state.register ? 'new-password' : 'current-password'}"></div><p class="form-error" role="alert"></p><div class="dialog-actions"><button class="text-button" type="button" data-auth-switch>${state.register ? '已有账号，去登录' : '还没有账号？注册'}</button><button class="button primary" type="submit">${state.register ? '注册' : '登录'}</button></div></form>`;
+  if (!dialog.open) dialog.showModal();
+}
+async function authenticate(action) {
+  if (!canRequest() || dialog.dataset.busy === 'true') return;
+  dialog.dataset.busy = 'true'; dialog.querySelectorAll('button').forEach(b => b.disabled = true);
+  try { await action(); dialog.close(); document.querySelector('#auth-body').innerHTML = ''; updateAccount(); if (route().path !== '/write') await render(); toast('已登录，可以继续刚才的操作。'); }
+  catch (error) { dialog.querySelector('.form-error').textContent = errorText(error); }
+  finally { dialog.dataset.busy = 'false'; dialog.querySelectorAll('button').forEach(b => b.disabled = false); }
+}
+dialog.addEventListener('click', event => {
+  if (event.target.closest('.dialog-close')) dialog.close();
+  if (event.target.closest('[data-auth-switch]')) { state.register = !state.register; openAuth(); }
+  if (event.target.closest('[data-demo-login]')) authenticate(() => service.login());
+});
+dialog.addEventListener('submit', event => {
+  event.preventDefault(); const data = Object.fromEntries(new FormData(event.target));
+  authenticate(() => state.register ? service.register({ username: data.account.toLowerCase(), password: data.password, displayName: data.displayName }) : service.login({ account: data.account.toLowerCase(), password: data.password }));
+});
+document.querySelector('#account-button').addEventListener('click', () => { if (!service.user) openAuth(); });
+
+let renderedHash = location.hash || '#/mailbox';
+let leaving = false;
+const isEditorRoute = hash => ['/write','/decorate','/preview'].includes(hash.replace(/^#/, '').split('?')[0]);
+function choose(title, message, options) {
+  const modal = document.querySelector('#choice-dialog');
+  modal.innerHTML = `<h2 id="choice-title">${title}</h2><p>${message}</p><div class="dialog-actions">${options.map(([value,label,primary]) => `<button type="button" class="button ${primary ? 'primary' : ''}" data-choice="${value}">${label}</button>`).join('')}</div>`;
+  return new Promise(resolve => {
+    const finish = value => { modal.removeEventListener('click', click); modal.removeEventListener('cancel', cancel); modal.close(); resolve(value); };
+    const click = event => { const value = event.target.closest('[data-choice]')?.dataset.choice; if (value) finish(value); };
+    const cancel = event => { event.preventDefault(); finish('cancel'); };
+    modal.addEventListener('click', click); modal.addEventListener('cancel', cancel); modal.showModal();
+    modal.querySelector('[data-choice=cancel]')?.focus();
+  });
+}
+async function requestLeave(action) {
+  if (leaving || state.busy) return;
+  if (!state.dirty) { await action(); return; }
+  leaving = true;
+  try {
+    const choice = await choose('这封信还没有保存', '离开前，要先保存草稿吗？暂不保存将离开此页，本次未保存的修改不会保留。', [['save','保存',true],['discard','暂不保存'],['cancel','继续编辑']]);
+    if (choice === 'cancel') return;
+    if (choice === 'save' && !await save(true)) return;
+    state.dirty = false; state.editor = null; submission.clear();
+    await action();
+  } finally { leaving = false; }
+}
+async function deleteDraft() {
+  if (state.busy || leaving) return;
+  const letter = state.currentLetter;
+  if (!letter || letter.status !== 'draft' || !letter.canDelete) return;
+  leaving = true;
+  try {
+    const choice = await choose('删除这封草稿？', '删除后，这封草稿将不再保留。', [['cancel','取消'],['delete','删除',true]]);
+    if (choice !== 'delete') return;
+    setBusy(true);
+    await service.remove(letter.id);
+    if (state.editor?.id === letter.id) { state.editor = null; state.dirty = false; }
+    toast('草稿已删除。'); navigate('#/mine');
+  } catch (error) { showError(error); }
+  finally { setBusy(false); leaving = false; }
+}
+window.addEventListener('hashchange', () => {
+  const target = location.hash || '#/mailbox';
+  if (state.dirty && isEditorRoute(renderedHash) && !isEditorRoute(target)) {
+    history.replaceState(null, '', renderedHash);
+    requestLeave(() => navigate(target));
+  } else render();
+});
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[href]');
+  if (!link || event.ctrlKey || event.metaKey || event.shiftKey || link.target === '_blank') return;
+  const href = link.getAttribute('href');
+  const newLetter = href === '#/write' && !link.hasAttribute('data-continue');
+  const leavingEditor = state.dirty && isEditorRoute(renderedHash) && !isEditorRoute(href);
+  if (!newLetter && !leavingEditor) return;
+  event.preventDefault();
+  requestLeave(() => {
+    if (newLetter) { state.editor = null; state.dirty = false; submission.clear(); }
+    if (href.startsWith('#')) navigate(href); else location.assign(href);
+  });
+}, true);
+window.addEventListener('beforeunload', event => { if (state.dirty) { event.preventDefault(); event.returnValue = ''; } });
+
+window.requestLuojiaLeave=requestLeave;
+try { const key='luojia.v17.stampSwap'; if(!localStorage.getItem(key)){for(let j=0;j<localStorage.length;j++){const k=localStorage.key(j);if(!k.startsWith('luojia')||k===key)continue;const raw=localStorage.getItem(k);if(!raw.includes('let_demo_4'))continue;const data=JSON.parse(raw);const walk=o=>{if(!o||typeof o!=='object')return;if(o.id==='let_demo_4')o.stampId='stamp_6';if(o.id==='let_demo_6')o.stampId='stamp_4';Object.values(o).forEach(walk)};walk(data);localStorage.setItem(k,JSON.stringify(data));}localStorage.setItem(key,'1');}}catch{}
+await service.session().catch(error => toast(errorText(error)));
+updateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get('login') === '1') openAuth();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="珞珈烟火邮局 · 功能介绍 / 创作初衷 / 团队介绍">
+<title>珞珈烟火邮局 · 关于我们</title>
+<style>
+  :root{
+    --paper:#fcf8ef; --card:#fffaf0; --ink:#4d3b2f; --muted:#826e59;
+    --gold:#a36720; --gold-soft:#c98b34; --line:#dfc99f; --line-soft:#ece0c8;
+    --glow:rgba(219,164,66,.28);
+    --serif:'STKaiti','KaiTi','Songti SC','SimSun',serif;
+    --sans:'Microsoft YaHei','PingFang SC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:url("纹理.png");
+    background-size:900px auto;
+    color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.8;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--serif); font-weight:400; letter-spacing:.04em}
+  a{color:inherit; text-decoration:none}
+  button{font:inherit; cursor:pointer}
+
+  /* ---------- Header (marketing nav) ---------- */
+  .header{
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    padding:18px max(28px,6vw);
+    background:#fffdf8; border-bottom:1px solid #efe4cf;
+    position:sticky; top:0; z-index:30;
+  }
+  .brand{display:flex; align-items:center; gap:12px; white-space:nowrap}
+  .brand-mark{
+    width:42px; height:46px; border:1px solid #bc9b69; outline:1px solid #bc9b69;
+    outline-offset:3px; display:grid; place-items:center; font-size:24px; color:#7c543a;
+  }
+  .brand-name{font:24px var(--serif); letter-spacing:2px; line-height:1.1}
+  .brand-name small{display:block; font:9px Georgia,serif; letter-spacing:2px; color:var(--gold); margin-top:6px}
+  .header nav{display:flex; gap:26px; font-size:15px}
+  .header nav a{padding:8px 2px; color:var(--muted); transition:color .18s}
+  .header nav a[aria-current=page]{color:var(--gold); border-bottom:2px solid var(--gold)}
+  .header nav a:hover{color:var(--gold)}
+  .login{
+    border:1px solid #ccb184; background:var(--gold); color:#fff;
+    border-radius:7px; padding:9px 20px; min-height:42px; transition:transform .15s, box-shadow .18s;
+  }
+  .login:active{transform:translateY(1px)}
+
+  /* ---------- Page shell ---------- */
+  .back{
+    display:inline-flex; align-items:center; gap:6px; margin:22px max(28px,6vw) 0;
+    color:var(--gold); font-size:14px;
+  }
+  .layout{
+    display:grid; grid-template-columns:1fr;
+    gap:22px; max-width:1440px; margin:16px auto 56px; padding:0 max(24px,4vw);
+    align-items:start;
+  }
+  /* ABOUT sub-nav — translucent horizontal bar */
+  .side{
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    background:rgba(255,255,255,.42);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    border:1px solid rgba(207,178,128,.38);
+    border-radius:14px;
+    padding:11px 20px;
+    box-shadow:0 8px 22px rgba(120,91,43,.06);
+  }
+  .side .side-title{
+    font:13px Georgia,serif; letter-spacing:3px; color:var(--muted);
+    margin:0; padding-right:16px; border-right:1px solid var(--line-soft); white-space:nowrap;
+  }
+  .side ul{list-style:none; margin:0; padding:0; display:flex; gap:6px; flex-wrap:wrap}
+  .side li a{
+    display:inline-block; padding:8px 16px; border-radius:999px;
+    color:var(--muted); font-size:15px; transition:color .18s, background .18s;
+  }
+  .side li a[aria-current=page]{
+    color:var(--gold); background:rgba(163,103,32,.12);
+    font-family:var(--serif); font-size:15px;
+  }
+  .side li a:hover{color:var(--gold); background:rgba(163,103,32,.08)}
+
+  /* ---------- Content card ---------- */
+  .card{
+    position:relative; isolation:isolate; overflow:hidden;
+    background:var(--card);
+    border:1px solid var(--line-soft);
+    border-radius:18px;
+    box-shadow:0 18px 50px rgba(120,91,43,.10);
+    padding:clamp(30px,3.4vw,54px);
+    min-height:680px;
+  }
+  /* corner ornaments */
+  .ornament{position:absolute; z-index:0; pointer-events:none; user-select:none}
+  .orn-pen{top:-6px; left:-10px; width:230px; opacity:.95}
+  .orn-envelope{bottom:-14px; right:-6px; width:260px; opacity:.96}
+  .orn-wensu{top:clamp(70px,9vw,130px); right:clamp(14px,2.4vw,46px); width:clamp(220px,24vw,360px); opacity:.78; transform:rotate(-6deg)}
+  .card > .content{position:relative; z-index:1}
+
+  .eyebrow{
+    font:11px Georgia,serif; letter-spacing:4px; color:var(--gold);
+    text-transform:uppercase; margin:0 0 14px;
+  }
+  .lede-title{font-size:clamp(30px,3.6vw,42px); line-height:1.4; margin:0 0 18px; color:var(--ink)}
+  .lede{font-size:16px; color:var(--muted); max-width:60ch; line-height:1.95}
+  .rule{height:1px; background:linear-gradient(to right,var(--line),transparent); border:0; margin:30px 0}
+
+  /* feature / belief blocks (shared) */
+  .feat{display:grid; grid-template-columns:64px 1fr; gap:22px; padding:20px 0; border-bottom:1px dashed var(--line-soft)}
+  .feat:last-of-type{border-bottom:0}
+  .feat-icon{
+    width:64px; height:64px; border-radius:14px; display:grid; place-items:center;
+    background:linear-gradient(160deg,#fbeed5,#f6e6c8); border:1px solid #e7d4ad;
+    box-shadow:inset 0 1px 0 #fff;
+  }
+  .feat-icon svg{width:32px; height:32px}
+  .feat h3{font-size:23px; margin:2px 0 8px; color:var(--ink)}
+  .feat .tag{
+    display:inline-block; font:12px var(--sans); color:var(--gold);
+    border:1px solid #e2c79a; border-radius:20px; padding:2px 12px; margin-left:10px;
+    vertical-align:middle; letter-spacing:1px;
+  }
+  .feat p{margin:0; color:var(--muted); font-size:15px; line-height:1.9}
+  .feat p .hl{color:var(--gold)}
+
+  /* 3-step flow */
+  .steps-wrap{margin-top:8px}
+  .steps-head{font-size:21px; font-family:var(--serif); margin:0 0 22px; color:var(--ink)}
+  .steps{display:flex; align-items:stretch; gap:0; flex-wrap:wrap}
+  .step{flex:1; min-width:160px; text-align:center; padding:0 14px; position:relative}
+  .step .num{
+    width:54px; height:54px; margin:0 auto 14px; border-radius:50%;
+    display:grid; place-items:center; font:22px var(--serif); color:var(--gold);
+    background:var(--card); border:1px solid var(--line); box-shadow:0 6px 16px var(--glow);
+  }
+  .step h4{font:18px var(--serif); margin:0 0 6px; color:var(--ink); font-weight:400}
+  .step p{font-size:13px; color:var(--muted); margin:0; line-height:1.7}
+  .step:not(:last-child)::after{
+    content:""; position:absolute; top:27px; right:-8px; width:18px; height:2px;
+    background:repeating-linear-gradient(90deg,var(--line) 0 5px,transparent 5px 9px);
+  }
+
+  /* showcase */
+  .show-head{font-size:21px; font-family:var(--serif); margin:0 0 6px; color:var(--ink)}
+  .show-sub{font-size:14px; color:var(--muted); margin:0 0 24px}
+  .show-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .show-grid.lg{grid-template-columns:repeat(2,1fr)}
+  .show-item{
+    background:#fffdf6; border:1px solid var(--line-soft); border-radius:12px;
+    padding:14px; text-align:center; box-shadow:0 8px 22px rgba(120,91,43,.07);
+    transition:transform .25s, box-shadow .25s;
+  }
+  .show-item:hover{transform:translateY(-4px); box-shadow:0 14px 30px rgba(120,91,43,.14)}
+  .show-item img{width:100%; height:150px; object-fit:contain; border-radius:8px}
+  .show-item .cap{display:block; margin-top:10px; font:13px var(--sans); color:var(--muted)}
+  .show-item .cap b{color:var(--ink); font-weight:600; font-family:var(--serif); font-size:15px}
+
+  /* pull quote */
+  .quote{
+    margin:6px 0 0; padding:22px 26px;
+    border-left:3px solid var(--gold);
+    background:linear-gradient(90deg,rgba(163,103,32,.07),transparent);
+    border-radius:0 12px 12px 0;
+    font:19px var(--serif); line-height:1.95; color:var(--ink);
+  }
+  .quote .by{display:block; margin-top:12px; font:13px var(--sans); color:var(--muted); letter-spacing:1px}
+
+  /* team grid */
+  .team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:6px}
+  .member{
+    display:flex; gap:16px; align-items:flex-start;
+    background:#fffdf6; border:1px solid var(--line-soft); border-radius:14px;
+    padding:18px; box-shadow:0 8px 22px rgba(120,91,43,.07);
+    transition:transform .25s, box-shadow .25s;
+  }
+  .member:hover{transform:translateY(-4px); box-shadow:0 14px 30px rgba(120,91,43,.14)}
+  .member .ava{
+    flex:0 0 72px; width:72px; height:72px; border-radius:50%; overflow:hidden;
+    border:2px solid #e6cf9f; box-shadow:0 6px 16px var(--glow); background:#fff;
+  }
+  .member .ava img{display:block; width:100%; height:100%; object-fit:cover}
+  .member h3{margin:2px 0 4px; font-size:20px; color:var(--ink)}
+  .member .role{font:12px var(--sans); color:var(--gold); letter-spacing:1px; margin-bottom:8px}
+  .member p{margin:0; font-size:14px; color:var(--muted); line-height:1.8}
+
+  .closing{
+    margin-top:36px; text-align:center; font:20px var(--serif); color:var(--ink);
+    line-height:1.9;
+  }
+  .closing .accent{color:var(--gold)}
+
+  /* footer */
+  .footer{
+    border-top:1px solid var(--line); padding:30px 24px 0; overflow:hidden;
+    position:relative; isolation:isolate; min-height:200px;
+    background:rgba(252,248,239,.2);
+  }
+  .footer-copy{
+    position:relative; z-index:1; text-align:center; color:#77614b; line-height:1.8;
+    font-family:var(--serif); letter-spacing:1px; padding-bottom:14px;
+    text-shadow:0 1px 7px #fffaf0,0 0 14px #fffaf0;
+  }
+  .footer-copy span{display:block; font:10px Georgia,serif; letter-spacing:3px; color:var(--muted); margin-top:6px}
+  .campus-window{position:absolute; inset:auto 0 0; height:170px; overflow:hidden; pointer-events:none;
+    mask-image:linear-gradient(to bottom,transparent,black 22%,black 90%,transparent)}
+  .campus-window img{width:100%; height:100%; object-fit:cover; object-position:bottom; mix-blend-mode:multiply; opacity:.72}
+
+  /* panel switching */
+  .panel{display:none}
+  .panel.active{display:block; animation:fade .35s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  @media(max-width:860px){
+    .layout{grid-template-columns:1fr; gap:20px}
+    .side{padding:10px 16px; gap:12px}
+    .side .side-title{padding-right:12px}
+    .show-grid,.show-grid.lg{grid-template-columns:repeat(2,1fr)}
+    .orn-wensu{display:none}
+    .team-grid{grid-template-columns:1fr; max-width:440px; margin:6px auto 0; width:100%}
+    .member{flex-direction:column; align-items:center; text-align:center; gap:12px}
+  }
+  @media(max-width:520px){
+    .header{flex-wrap:wrap; gap:14px; padding:14px 20px}
+    .header nav{order:3; width:100%; justify-content:center; gap:18px; font-size:13px}
+    .brand-name{font-size:19px}
+    .orn-pen{width:150px} .orn-envelope{width:170px}
+    .feat{grid-template-columns:1fr; gap:12px} .feat-icon{width:52px;height:52px}
+    .show-grid,.show-grid.lg{grid-template-columns:1fr}
+  }
+
+.header nav{flex-wrap:wrap;align-items:center;gap:18px}.nav-pending{opacity:.5;font-size:14px}.about-write-link{color:var(--gold);text-underline-offset:5px}.about-write-link:hover{text-decoration:underline}.panel[hidden]{display:none!important}a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:5px}@media(max-width:860px){.header{flex-wrap:wrap;gap:16px}.header nav{order:3;flex:0 0 100%;justify-content:center;gap:12px;font-size:13px}.header nav a,.nav-pending{white-space:nowrap}.side{min-width:0}.member{min-width:0}}
+</style>
+<style> .flower-only{top:0;left:0;width:230px;height:65px;overflow:hidden;pointer-events:none}.flower-only img{display:block;width:230px;max-width:none}.card #panel-features>.lede{max-width:64em;width:calc(100% - 220px);text-wrap:pretty}.orn-wensu{width:190px;right:20px;top:140px}.stamp-showcase{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.stamp-showcase .show-item{padding:12px}.stamp-showcase svg{display:block;width:100%;max-width:100px;aspect-ratio:1;margin:auto}.footer{height:150px;min-height:150px;position:relative;overflow:hidden;padding:0;display:grid;place-items:center;background:transparent}.footer-copy{position:relative;z-index:2;text-shadow:0 0 10px #fff9ed}.campus-window{position:absolute;inset:0;height:150px;overflow:hidden;pointer-events:none;background:none}.campus-window:before,.campus-window:after,.footer:before,.footer:after{display:none}.campus-track{display:flex;width:max-content;height:100%;opacity:.72;animation:campus-drift 80s linear infinite}.campus-group{display:flex;align-items:flex-end;flex:none;gap:45px;padding-right:45px}.campus-group img{height:140px;width:auto;max-width:none;object-fit:contain;mix-blend-mode:multiply}.footer-copy span{display:block}@keyframes campus-drift{to{transform:translateX(-50%)}}@media(prefers-reduced-motion:reduce){.campus-track{animation:none}}@media(max-width:900px){.card #panel-features>.lede{width:100%}.orn-wensu{display:none}.stamp-showcase{gap:6px}.stamp-showcase .show-item{padding:5px}}</style><style>.brand-stamp{position:relative;display:block;width:70px;height:60px;isolation:isolate;filter:drop-shadow(0 1px 1px rgba(91,61,32,.1))}
+.brand-stamp .stamp-frame{position:absolute;inset:0;width:100%;height:100%}
+.brand-stamp img{position:absolute;left:14%;top:17%;width:72%;height:66%;object-fit:contain;mix-blend-mode:multiply}
+.brand-stamp .stamp-postmark{position:absolute;right:-5%;top:-4%;width:55%;height:60%;color:#795137;opacity:.25;transform:rotate(-14deg);pointer-events:none}
+@media(max-width:600px){.brand-stamp{width:54px;height:47px}.brand{gap:10px}}</style></head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <a class="brand" href="luojia-home.html">
+      <span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span>
+      <span class="brand-name">珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span>
+    </a>
+<nav aria-label="主导航"><a href="luojia-home.html">首页</a><a href="luojia-letters.html#/mailbox">珞珈印记</a><a href="luojia-letters.html#/write?theme=time">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="luojia-about.html#features" aria-current="page">关于我们</a></nav>
+    <a class="login" href="luojia-letters.html?login=1#/mailbox">登录</a>
+  </header>
+
+  <a class="back" href="luojia-home.html">← 返回首页</a>
+
+  <!-- ===== Layout ===== -->
+  <div class="layout">
+
+    <!-- ABOUT sub-nav -->
+    <aside class="side">
+      <div class="side-title">ABOUT</div>
+      <ul>
+        <li><a href="#features" data-target="features" aria-current="page">功能介绍</a></li>
+        <li><a href="#purpose" data-target="purpose">创作初衷</a></li>
+        <li><a href="#team" data-target="team">团队介绍</a></li>
+      </ul>
+    </aside>
+
+    <!-- content card -->
+    <main class="card">
+      <span class="ornament flower-only" aria-hidden="true"><img src="assets/art-3.png" alt=""></span>
+      <img class="ornament orn-envelope" src="assets/art-4.png" alt="" aria-hidden="true">
+      <img class="ornament orn-wensu" src="assets/art-5.png" alt="" aria-hidden="true">
+
+      <div class="content">
+
+        <!-- ===== Panel: 功能介绍 ===== -->
+        <section class="panel active" id="panel-features">
+          <p class="eyebrow">Features · 功能介绍</p>
+          <h1 class="lede-title">把心事，折进一封<br>可以寄出的信</h1>
+          <p class="lede">珞珈烟火邮局，是写给珞珈山下的人的信箱。你可以用一张信纸、一枚邮票，把说不出口的话寄给陌生人；<br>也可以收到远方的回信，在字里行间，与另一个灵魂见字如面。</p>
+
+          <hr class="rule">
+
+          <section>
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+              </div>
+              <div>
+                <h3>落笔成笺<span class="tag">写信</span></h3>
+                <p>挑选喜欢的<span class="hl">信纸与邮票</span>，留下署名或隐去姓名做个匿名寄信人。二十到两千字，装进信封刚刚好。</p>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+              </div>
+              <div>
+                <h3>珞珈信箱<span class="tag">寄信</span></h3>
+                <p>把信寄到<span class="hl">公共信箱</span>，让同在这座山脚下的人读到。每一封公开的信，都是一面被认真对待的墙。</p>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+              </div>
+              <div>
+                <h3>见字如面<span class="tag">回信</span></h3>
+                <p>读到触动你的文字，可以写一封<span class="hl">回信</span>。一来一往之间，陌生也能长成一段温柔的对话。</p>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <div>
+                <h3>温柔把关<span class="tag">审核</span></h3>
+                <p>信件经<span class="hl">审核</span>后才会公开，既守住边界，也留住温度。想再修改时，可以先收回草稿箱，写好后重新提交。</p>
+              </div>
+            </div>
+          </section>
+
+          <hr class="rule">
+
+          <div class="steps-wrap">
+            <h2 class="steps-head">三步，把想说的寄出去</h2>
+            <div class="steps">
+              <div class="step">
+                <div class="num">一</div>
+                <h4>写下心里话</h4>
+                <p>写正文、留署名，慢慢表达</p>
+              </div>
+              <div class="step">
+                <div class="num">二</div>
+                <h4>装点这封信</h4>
+                <p>选信纸、贴邮票，设置可见范围</p>
+              </div>
+              <div class="step">
+                <div class="num">三</div>
+                <h4>预览，再寄出</h4>
+                <p>先读一遍，再确认保存或提交</p>
+              </div>
+            </div>
+          </div>
+
+          <hr class="rule">
+
+          <section>
+            <h2 class="show-head">信纸与邮票</h2>
+            <p class="show-sub">横竖随心，邮票各异——让每一封信都有自己的样子。</p>
+            <div class="show-grid lg">
+              <div class="show-item">
+                <img src="assets/art-6.png" alt="横版信纸">
+                <span class="cap"><b>横版信笺</b> · 适合长信与碎念</span>
+              </div>
+              <div class="show-item">
+                <img src="assets/art-7.png" alt="竖版信纸">
+                <span class="cap"><b>竖版信笺</b> · 适合短句与诗</span>
+              </div>
+            </div>
+            <div class="show-grid stamp-showcase" style="margin-top:18px"><div class="show-item"><svg viewBox="140 152 1265 1238" preserveAspectRatio="none" role="img" aria-label="邮票"><image href="assets/art-38.png" width="1536" height="1536"/></svg></div><div class="show-item"><svg viewBox="145 220 970 840" preserveAspectRatio="none" role="img" aria-label="邮票"><image href="assets/art-39.jpg" width="1280" height="1280"/></svg></div><div class="show-item"><svg viewBox="64 70 1925 1909" preserveAspectRatio="none" role="img" aria-label="邮票"><image href="assets/art-40.png" width="2048" height="2048"/></svg></div><div class="show-item"><svg viewBox="0 0 1279 1287" preserveAspectRatio="none" role="img" aria-label="邮票"><image href="assets/art-41.jpg" width="1279" height="1287"/></svg></div><div class="show-item"><svg viewBox="0 0 1126 1439" preserveAspectRatio="none" role="img" aria-label="邮票"><image href="assets/art-42.jpg" width="1126" height="1439"/></svg></div><div class="show-item"><svg viewBox="0 0 2048 2048" preserveAspectRatio="none" role="img" aria-label="邮票"><image href="assets/art-43.png" width="2048" height="2048"/></svg></div></div></section>
+
+          <p class="closing">在珞珈，<span class="accent">每一封信，都是生活的注脚。</span><br><a class="about-write-link" href="luojia-letters.html#/write">现在，去写你的第一封吧。 →</a></p>
+        </section>
+
+        <!-- ===== Panel: 创作初衷 ===== -->
+        <section class="panel" id="panel-purpose">
+          <p class="eyebrow">Our Story · 创作初衷</p>
+          <h1 class="lede-title">让写信，重新成为<br>一件被认真对待的小事</h1>
+          <p class="lede">在微信秒回、表情包横行的时代，我们想给「慢一点表达」留一个位置。珞珈烟火邮局，始于一个朴素的念头——如果有一面墙，能让人把说不出口的话写下来、寄出去，会不会也有人愿意停下来读，并写一封回信？</p>
+
+          <hr class="rule">
+
+          <section>
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              </div>
+              <div>
+                <h3>慢，是一种诚意<span class="tag">我们相信</span></h3>
+                <p>写信不必急着发送，也无需催促回复。落笔前的犹豫、删了又写，本身<span class="hl">也是一种认真</span>。我们把这份慢，当成对彼此的尊重。</p>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <h3>陌生，也能温柔<span class="tag">我们鼓励</span></h3>
+                <p>我们鼓励把信寄给<span class="hl">不认识的人</span>。陌生让人卸下防备，也让人更诚实——有些话，恰恰只能写给未曾谋面的人。</p>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+              </div>
+              <div>
+                <h3>校园，是最好的背景<span class="tag">我们所在</span></h3>
+                <p>珞珈的樱花、老图书馆、牌坊，都是信里<span class="hl">天然的字句</span>。我们把这方风景，也一并寄了出去。</p>
+              </div>
+            </div>
+
+            <div class="feat">
+              <div class="feat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a36720" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h8M8 14h5"/></svg>
+              </div>
+              <div>
+                <h3>见字如面<span class="tag">我们更想要</span></h3>
+                <p>比起一个点赞，我们更想要<span class="hl">一封回信</span>。一来一往之间，陌生才能长成一段温柔的对话。</p>
+              </div>
+            </div>
+          </section>
+
+          <hr class="rule">
+
+          <blockquote class="quote">
+            “我们开这间邮局，不为寄出什么重物。<br>只是替你，把想说的，好好说了一遍。”
+            <span class="by">—— 珞珈烟火邮局 · 写在最初</span>
+          </blockquote>
+
+          <p class="closing">这间邮局<span class="accent">没有邮戳，也不送货上门。</span><br>但它替你，把心事折叠成了信。</p>
+        </section>
+
+        <!-- ===== Panel: 团队介绍 ===== -->
+        <section class="panel" id="panel-team">
+          <p class="eyebrow">The Team · 团队介绍</p>
+          <h1 class="lede-title">是一群，<br>愿意替你把信写好的人</h1>
+          <p class="lede">我们都是珞珈山下计算机学院的学生，因为同一个念头聚在一起：让表达慢一点，也让心意重一点。下面是这间邮局背后，常驻的几个名字。</p>
+
+          <hr class="rule">
+
+          <section class="team-grid">
+            <div class="member">
+              <div class="ava"><img src="assets/art-11.jpg" alt="Katrina- 头像"></div>
+              <div>
+                <h3>Katrina-</h3>
+                <div class="role">前端</div>
+                <p>把界面一行行码出来的人，把草图里的想法做成了能点的页面。她说，她写前端时总惦记着，屏幕那头写信的人，用起来是不是能安心一点。</p>
+              </div>
+            </div>
+
+            <div class="member">
+              <div class="ava"><img src="assets/art-12.jpg" alt="独眼_Zoe 头像"></div>
+              <div>
+                <h3>独眼_Zoe</h3>
+                <div class="role">后端</div>
+                <p>守在服务器那一端的独眼守望者，让每封信都找到回家的路。她说，看不见的可靠，也是一种温柔。</p>
+              </div>
+            </div>
+
+            <div class="member">
+              <div class="ava"><img src="assets/art-13.png" alt="Pie派 头像"></div>
+              <div>
+                <h3>Pie派</h3>
+                <div class="role">UI 设计</div>
+                <p>包办信纸与邮票，让一张纸也有表情。她说，希望每一次点开界面，都能让人感觉到一点温度。</p>
+              </div>
+            </div>
+          </section>
+
+          <p class="closing">除此之外，还有许多匿名的寄信人，<br>他们，也是我们的一部分。</p>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer"><div class="footer-copy">在珞珈，每一封信，都是生活的注脚。<span>LUOJIA POST OFFICE</span></div><div class="campus-window" aria-hidden="true"><div class="campus-track"><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div></div></div></footer>
+
+  <script src="assets/art-15.js" defer></script>
+
+</body>
+</html>
