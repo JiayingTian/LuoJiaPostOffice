@@ -63,8 +63,11 @@ class MyLetterSummary(LetterSummary):
         "pendingReview",
         "published",
         "returnedForEdit",
+        "private",
     ]
     review_note: str | None = None
+    created_at: datetime
+    updated_at: datetime
 
 
 class PaginationData(APIModel):
@@ -108,6 +111,7 @@ class LetterCreateRequest(APIModel):
     content: str = Field(default="", max_length=2000)
     recipient_type: Literal["wall", "user"] = "wall"
     recipient_user_id: str | None = None
+    visibility: Literal["public", "private"] = "public"
     parent_letter_id: str | None = None
     pen_name: str | None = Field(default=None, max_length=30)
     is_anonymous: bool = False
@@ -123,6 +127,7 @@ class LetterUpdateRequest(APIModel):
     content: str | None = Field(default=None, max_length=2000)
     recipient_type: Literal["wall", "user"] | None = None
     recipient_user_id: str | None = None
+    visibility: Literal["public", "private"] | None = None
     pen_name: str | None = Field(default=None, max_length=30)
     is_anonymous: bool | None = None
     location_id: str | None = None
@@ -139,13 +144,45 @@ class LetterUpdateRequest(APIModel):
         return self
 
 
+REVIEW_REASON_TAGS = (
+    "色情低俗",
+    "暴力血腥",
+    "仇恨歧视与骚扰",
+    "违法违规内容",
+    "垃圾信息与恶意广告",
+)
+ReviewReason = Literal[
+    "色情低俗",
+    "暴力血腥",
+    "仇恨歧视与骚扰",
+    "违法违规内容",
+    "垃圾信息与恶意广告",
+]
+
+
 class ReviewRequest(APIModel):
     action: Literal["approve", "returnForEdit", "delete"]
-    reason: str | None = Field(default=None, max_length=300)
+    reason: ReviewReason | None = None
 
     @model_validator(mode="after")
     def require_reason(self) -> "ReviewRequest":
-        if self.action in {"returnForEdit", "delete"}:
-            if not self.reason or not self.reason.strip():
-                raise ValueError("退回修改或删除时必须填写原因")
+        reason = self.reason.strip() if self.reason else None
+        if self.action == "returnForEdit" and reason not in REVIEW_REASON_TAGS:
+            raise ValueError("退回原因必须选择预设标签")
+        if self.action == "delete" and reason not in REVIEW_REASON_TAGS:
+            raise ValueError("删除原因必须选择预设标签")
+        if self.action == "approve" and reason is not None:
+            raise ValueError("审核通过时不能填写退回原因")
+        self.reason = reason
         return self
+
+
+class UserPublicListData(PaginationData):
+    items: list[UserPublic]
+
+
+class UserPublicListResponse(APIModel):
+    code: int = 0
+    message: str = "success"
+    data: UserPublicListData
+    request_id: str

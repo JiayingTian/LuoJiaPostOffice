@@ -38,9 +38,11 @@ test('review labels use real backend states and safe fallback', () => {
 test('letter text is escaped before rendering', () => {
   assert.equal(escapeHTML('<img src=x onerror="alert(1)">'), '&lt;img src=x onerror=&quot;alert(1)&quot;&gt;');
 });
-test('private choice cannot leak through the public-only live contract',()=>{
-  assert.throws(()=>letterPayload({...draft,visibility:'private'}),/仅自己可见暂不可用/);
-  const payload=letterPayload({...draft,visibility:'private',allowReplies:true},{privateEnabled:true});
+test('private delivery requires an explicit recipient and disables public replies',()=>{
+  assert.throws(()=>letterPayload({...draft,visibility:'private'}),/私人投递暂不可用/);
+  assert.ok(validateLetter({...draft,visibility:'private'}).recipientUsername);
+  const payload=letterPayload({...draft,visibility:'private',recipientUsername:'test_user_b',recipientUserId:'usr_b',allowReplies:true},{privateEnabled:true});
   assert.equal(payload.visibility,'private');assert.equal(payload.allowReplies,false);
+  assert.equal(payload.recipientType,'user');assert.equal(payload.recipientUserId,'usr_b');
   assert.equal('visibility' in letterPayload({...draft,visibility:'public'}),false);
 });

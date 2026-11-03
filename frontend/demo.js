@@ -84,7 +84,7 @@ export class DemoService {
     const row = {
       ...seeds[0], ...previous, id: id || `let_local_${crypto.randomUUID()}`, ...payload,
       author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '演示来客', isAnonymous: payload.isAnonymous },
-      recipient: { type: 'wall', user: null }, pattern: demoPattern,
+      recipient: privateLetter ? { type: 'user', user: { id: payload.recipientUserId || 'usr_demo_recipient', username: 'demo_recipient', displayName: '演示收件人', avatarUrl: null } } : { type: 'wall', user: null }, pattern: demoPattern,
       excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
       workflowState: draft ? 'draft' : privateLetter ? 'private' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: null,
       submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,

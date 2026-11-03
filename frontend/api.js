@@ -79,6 +79,12 @@ export class ApiClient {
     if (!mine) query.set('sort', 'latest');
     return this.request(`${mine ? '/me/letters' : '/letters'}?${query}`);
   }
+  inbox({ page = 1, pageSize = 6 } = {}) {
+    return this.request(`/me/inbox?${new URLSearchParams({ page, pageSize })}`);
+  }
+  searchUsers(keyword, { page = 1, pageSize = 20 } = {}) {
+    return this.request(`/users/search?${new URLSearchParams({ keyword, page, pageSize })}`);
+  }
   detail(id) { return this.request(`/letters/${encodeURIComponent(id)}`); }
   replies(id, { page = 1, pageSize = 6 } = {}) {
     return this.request(`/letters/${encodeURIComponent(id)}/replies?${new URLSearchParams({ page, pageSize })}`);

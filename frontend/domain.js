@@ -11,16 +11,17 @@ export function validateLetter(letter, { draft = false } = {}) {
   if (draft && title > 80) errors.title = '标题最多 80 个字符。';
   if (draft && content > 2000) errors.content = '正文最多 2000 个字符。';
   if (charCount(letter.penName || '') > 30) errors.penName = '署名最多 30 个字符。';
+  if (letter.visibility === 'private' && !(letter.recipientUsername || '').trim()) errors.recipientUsername = '请填写收件人的用户名。';
   if (!letter.patternId) errors.patternId = '信纸尚未准备好，请稍后重试。';
   return errors;
 }
 
 export function letterPayload(letter, { draft = false, update = false, privateEnabled = false } = {}) {
-  if (letter.visibility === 'private' && !privateEnabled) throw new Error('仅自己可见暂不可用，未发送任何内容。');
+  if (letter.visibility === 'private' && !privateEnabled) throw new Error('私人投递暂不可用，未发送任何内容。');
   const common = {
     ...(privateEnabled ? { visibility: letter.visibility || 'public' } : {}),
     title: draft ? letter.title : letter.title.trim(), content: draft ? letter.content : letter.content.trim(),
-    recipientType: 'wall', recipientUserId: null,
+    recipientType: letter.visibility === 'private' ? 'user' : 'wall', recipientUserId: letter.visibility === 'private' ? letter.recipientUserId : null,
     penName: letter.penName?.trim() || null, isAnonymous: Boolean(letter.isAnonymous),
     locationId: null, patternId: letter.patternId,
     allowResponses: letter.allowResponses ?? false, allowReplies: letter.visibility === 'private' ? false : letter.allowReplies ?? true,
@@ -31,14 +32,14 @@ export function letterPayload(letter, { draft = false, update = false, privateEn
 }
 
 export function statusLabel(letter) {
-  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'待审核', published:'已公开', returnedForEdit:'草稿', private:'仅自己可见' })[letter.workflowState] || '状态待确认';
+  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'待审核', published:'已公开', returnedForEdit:'草稿', private:'私密已投递' })[letter.workflowState] || '状态待确认';
   if (letter.status === 'deleted') return '已删除';
   if (letter.status === 'draft') return '草稿';
   if (letter.status === 'active' && letter.visibility === 'public') {
     if (letter.publishedAt) return '已公开';
     if (letter.submittedAt) return '待审核';
   }
-  if (letter.status === 'active' && letter.visibility === 'private') return '仅自己可见';
+  if (letter.status === 'active' && letter.visibility === 'private') return '私密已投递';
   return '状态待确认';
 }
 

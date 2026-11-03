@@ -1,14 +1,20 @@
 from typing import Literal
 
 from fastapi import APIRouter, Depends, Query, Request
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import AuthContext, get_auth_context
 from app.core.database import get_db
 from app.models import Letter
-from app.schemas.letter import MyLetterListData, MyLetterListResponse
+from app.schemas.letter import (
+    LetterListData,
+    LetterListResponse,
+    MyLetterListData,
+    MyLetterListResponse,
+)
 from app.services.letters import (
+    build_letter_summary,
     build_my_letter_summary,
     get_workflow_state,
     validate_page,
@@ -29,6 +35,7 @@ def list_my_letters(
         "pendingReview",
         "published",
         "returnedForEdit",
+        "private",
     ]
     | None = Query(default=None, alias="workflowState"),
     auth_context: AuthContext = Depends(get_auth_context),
@@ -62,6 +69,46 @@ def list_my_letters(
                 build_my_letter_summary(database_session, item)
                 for item in page_items
             ],
+            page=page,
+            page_size=page_size,
+            total=total,
+            has_more=page * page_size < total,
+        ),
+        request_id=request.state.request_id,
+    )
+
+
+@router.get("/inbox", response_model=LetterListResponse)
+def list_my_inbox(
+    request: Request,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, alias="pageSize", ge=1, le=50),
+    auth_context: AuthContext = Depends(get_auth_context),
+    database_session: Session = Depends(get_db),
+) -> LetterListResponse:
+    validate_page(page, page_size)
+    conditions = (
+        Letter.recipient_user_id == auth_context.user.id,
+        Letter.visibility == "private",
+        Letter.status == "active",
+        Letter.deleted_at.is_(None),
+    )
+    total = int(
+        database_session.scalar(
+            select(func.count()).select_from(Letter).where(*conditions)
+        )
+        or 0
+    )
+    letters = database_session.scalars(
+        select(Letter)
+        .where(*conditions)
+        .order_by(Letter.updated_at.desc(), Letter.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+    return LetterListResponse(
+        data=LetterListData(
+            items=[build_letter_summary(database_session, item) for item in letters],
             page=page,
             page_size=page_size,
             total=total,
