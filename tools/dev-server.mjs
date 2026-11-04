@@ -32,6 +32,10 @@ const server = http.createServer(async (req,res) => {
     res.writeHead(200, { 'Content-Type':'text/javascript; charset=utf-8', 'Cache-Control':'no-store' });
     res.end(`export const config = Object.freeze(${JSON.stringify({mode,apiBase,pageSize:6})});`); return;
   }
+  if (url.pathname === '/frontend/runtime-config.js') {
+    res.writeHead(200, { 'Content-Type':'text/javascript; charset=utf-8', 'Cache-Control':'no-store' });
+    res.end(`window.__LUOJIA_CONFIG__ = Object.freeze(${JSON.stringify({mode,apiBase,pageSize:6})});`); return;
+  }
   let path;
   try { path = decodeURIComponent(url.pathname); } catch { res.writeHead(400); res.end(); return; }
   const allowed = path.startsWith('/frontend/') || path.startsWith('/pictures/') || ['/index.html','/styles.css','/script.js','/favicon.svg'].includes(path);
