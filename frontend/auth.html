@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="珞珈烟火邮局 · 登录 / 注册">
+<title>登录 · 珞珈烟火邮局</title>
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark" aria-hidden="true">🏯</span>
+      <span class="brand-name">珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="../index.html">首页</a>
+      <a href="index.html#/calendar">时光信笺</a>
+      <a href="index.html#/mailbox">珞珈印记</a>
+      <a href="about.html">关于我们</a>
+    </nav>
+    <button class="login" type="button" aria-current="page">登录</button>
+  </header>
+
+  <!-- ===== 主体分栏 ===== -->
+  <main class="auth-wrap">
+
+    <!-- 左：插画 + 萌角色 -->
+    <section class="auth-art" id="authArt" aria-hidden="true">
+      <img class="orn-pen" src="assets/auth-pen.png" alt="">
+      <img class="orn-wensu" src="assets/auth-wensu.png" alt="">
+      <div class="art-inner">
+        <p class="art-eyebrow">Welcome to Luojia Post</p>
+        <h2 class="art-title">慢一点寄信，<br><span class="accent">重一点心意</span></h2>
+        <p class="art-sub">珞珈山下，烟火邮局的小信使们已经等你好久了。写下第一封信，让时间开始为你记账。</p>
+        <div class="mascots">
+          <!-- 邮箱小邮差 -->
+          <div class="mascot m-post">
+            <span class="slot"></span><span class="flag"></span>
+            <div class="face">
+              <span class="eye l"><span class="pupil"></span></span>
+              <span class="eye r"><span class="pupil"></span></span>
+              <span class="blush l"></span><span class="blush r"></span>
+              <span class="mouth"></span>
+            </div>
+            <span class="back"></span>
+          </div>
+          <!-- 信封宝宝 -->
+          <div class="mascot m-env">
+            <span class="stamp"></span>
+            <div class="face">
+              <span class="eye l"><span class="pupil"></span></span>
+              <span class="eye r"><span class="pupil"></span></span>
+              <span class="blush l"></span><span class="blush r"></span>
+              <span class="mouth"></span>
+            </div>
+            <span class="back"></span>
+          </div>
+          <!-- 蓝帽猫（呼应 Katrina） -->
+          <div class="mascot m-cat">
+            <span class="ear l"></span><span class="ear r"></span>
+            <div class="face">
+              <span class="eye l"><span class="pupil"></span></span>
+              <span class="eye r"><span class="pupil"></span></span>
+              <span class="blush l"></span><span class="blush r"></span>
+              <span class="mouth"></span>
+            </div>
+            <span class="back"></span>
+          </div>
+          <!-- 抱月刺猬（呼应 Pie） -->
+          <div class="mascot m-hedge">
+            <span class="spike s1"></span><span class="spike s2"></span><span class="spike s3"></span>
+            <div class="face">
+              <span class="eye l"><span class="pupil"></span></span>
+              <span class="eye r"><span class="pupil"></span></span>
+              <span class="blush l"></span><span class="blush r"></span>
+              <span class="mouth"></span>
+            </div>
+            <span class="back"></span>
+          </div>
+        </div>
+        <div class="mood" id="moodLabel"><span class="dot"></span>📮 珞珈邮局的小信使们陪你登录</div>
+        <img class="orn-env" src="assets/auth-envelope.png" alt="">
+      </div>
+    </section>
+
+    <!-- 右：登录 / 注册 卡片 -->
+    <div class="auth-card-col">
+      <section class="auth-card">
+        <div class="content">
+
+          <div class="view-tabs" role="tablist">
+            <button class="view-tab is-active" data-form="login" type="button" role="tab" aria-selected="true">登录</button>
+            <button class="view-tab" data-form="register" type="button" role="tab" aria-selected="false">注册</button>
+          </div>
+
+          <!-- ===== 登录面板 ===== -->
+          <div class="panel" id="panelLogin">
+            <h3 class="panel-title">欢迎回来</h3>
+            <p class="panel-sub">用你的邮局账号，拆开属于时间的信。</p>
+            <form id="formLogin" novalidate>
+              <div class="fld">
+                <label for="li-user">用户名</label>
+                <div class="inp-wrap">
+                  <input id="li-user" name="username" type="text" autocomplete="username" placeholder="例如 luojia2026" inputmode="text" minlength="3" maxlength="32" required>
+                </div>
+                <p class="hint">支持 <b>小写字母、数字和下划线（_）</b>。</p>
+              </div>
+              <div class="fld">
+                <label for="li-pass">密码</label>
+                <div class="inp-wrap">
+                  <input id="li-pass" name="password" type="password" autocomplete="current-password" placeholder="输入密码" minlength="8" maxlength="128" required>
+                  <button class="toggle" type="button" data-toggle aria-label="显示密码">👁</button>
+                </div>
+                <p class="hint">支持 <b>大小写字母、数字</b> 与特殊字符（如 @ # _ . !）。</p>
+              </div>
+              <div class="row-opt">
+                <span>登录状态由安全 Cookie 保存</span>
+                <a href="#" id="forgot-password">忘记密码？</a>
+              </div>
+              <p class="form-error" id="login-error" role="alert"></p>
+              <button class="btn-gold" type="submit">登 录</button>
+            </form>
+            <p class="switch-tip">还没有账号？<a href="#" data-goto="register">免费注册 →</a></p>
+          </div>
+
+          <!-- ===== 注册面板 ===== -->
+          <div class="panel" id="panelRegister" hidden>
+            <h3 class="panel-title">开通你的邮局</h3>
+            <p class="panel-sub">取一个只属于你的名字，开始写信吧。</p>
+            <form id="formRegister" novalidate>
+              <div class="fld">
+                <label for="re-user">用户名</label>
+                <div class="inp-wrap">
+                  <input id="re-user" name="username" type="text" autocomplete="username" placeholder="例如 luojia2026" inputmode="text" minlength="3" maxlength="32" required>
+                </div>
+                <p class="hint">支持 <b>小写字母、数字和下划线（_）</b>。</p>
+              </div>
+              <div class="fld">
+                <label for="re-display">显示名称</label>
+                <div class="inp-wrap">
+                  <input id="re-display" name="displayName" type="text" autocomplete="nickname" placeholder="大家看到的称呼" maxlength="30" required>
+                </div>
+              </div>
+              <div class="fld">
+                <label for="re-pass">密码</label>
+                <div class="inp-wrap">
+                  <input id="re-pass" name="password" type="password" autocomplete="new-password" placeholder="设置密码" minlength="8" maxlength="128" required>
+                  <button class="toggle" type="button" data-toggle aria-label="显示密码">👁</button>
+                </div>
+                <div class="strength" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+                <p class="hint">支持 <b>大小写字母、数字</b> 与特殊字符（如 @ # _ . !）；建议 8 位以上更稳妥。</p>
+              </div>
+              <div class="fld">
+                <label for="re-pass2">确认密码</label>
+                <div class="inp-wrap">
+                  <input id="re-pass2" name="password2" type="password" autocomplete="new-password" placeholder="再次输入密码" minlength="8" maxlength="128" required>
+                  <button class="toggle" type="button" data-toggle aria-label="显示密码">👁</button>
+                </div>
+              </div>
+              <p class="form-error" id="register-error" role="alert"></p>
+              <button class="btn-gold" type="submit">注 册</button>
+            </form>
+            <p class="switch-tip">已有账号？<a href="#" data-goto="login">直接登录 →</a></p>
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="campus-window"><img src="assets/auth-campus.svg" alt=""></div>
+    <p class="footer-copy">珞珈烟火邮局 · 让表达慢一点，也让心意重一点<span>LUOJIA FIREWORKS POST OFFICE</span></p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var art   = document.getElementById('authArt');
+  var label = document.getElementById('moodLabel');
+  var toast = document.getElementById('toast');
+
+  /* ---------- 萌角色眼睛跟随 + 偷看/害羞 ---------- */
+  var MAXR = 5;
+  var eyes = [];
+  document.querySelectorAll('.eye').forEach(function(eye){
+    eyes.push({eye:eye, pupil:eye.querySelector('.pupil'), blinkUntil:0});
+  });
+  var mode = 'idle';
+  var mouse = {x: window.innerWidth/2, y: window.innerHeight/2};
+  var modes = {
+    idle: '📮 珞珈邮局的小信使们陪你登录',
+    peek: '👀 偷看中…你打字好认真',
+    shy:  '🙈 哎呀呀，密码不许看^_^'
+  };
+  function setMode(m){
+    if(mode === m) return;
+    mode = m;
+    art.classList.toggle('peek', m === 'peek');
+    art.classList.toggle('shy',  m === 'shy');
+    label.innerHTML = '<span class="dot"></span>' + (modes[m] || modes.idle);
+  }
+  window.addEventListener('mousemove', function(e){ mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  function draw(){
+    var t = Date.now();
+    for(var i=0;i<eyes.length;i++){
+      var o = eyes[i];
+      var r = o.eye.getBoundingClientRect();
+      var cx = r.left + r.width/2, cy = r.top + r.height/2;
+      var dx = 0, dy = 0;
+      if(mode === 'shy'){
+        dx = -MAXR*0.55; dy = -MAXR*0.9;          // 转头不看（朝左上）
+      } else {
+        dx = mouse.x - cx; dy = mouse.y - cy;       // 跟随鼠标
+        var len = Math.hypot(dx,dy) || 1;
+        var k = Math.min(MAXR, len) / len;
+        dx *= k; dy *= k;
+      }
+      var blink = t < o.blinkUntil;
+      o.pupil.style.transform = 'translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+dy.toFixed(1)+'px)) scaleY('+(blink?0.12:1)+')';
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+  // 随机眨眼
+  (function blinkLoop(){
+    var o = eyes[Math.floor(Math.random()*eyes.length)];
+    if(o) o.blinkUntil = Date.now() + 130;
+    setTimeout(blinkLoop, 1400 + Math.random()*3600);
+  })();
+
+  /* ---------- 萌角色状态：由「焦点字段」与「密码是否明文」共同决定 ---------- */
+  var focusedField = null;     // 'username' | 'password' | null
+  var passwordShown = false;   // 是否有密码处于明文
+  function refreshMascot(){
+    if(focusedField === 'username') setMode('peek');  // 用户名：偷看中
+    else if(passwordShown)          setMode('shy');   // 明文密码：转过去不看
+    else                           setMode('idle');   // 隐藏密码/空闲：自由看（随鼠标）
+  }
+  function activeField(){ return document.activeElement && document.activeElement.matches('.fld input'); }
+  document.querySelectorAll('.fld input').forEach(function(inp){
+    inp.addEventListener('focus', function(){
+      focusedField = (inp.name === 'username') ? 'username' : 'password';
+      refreshMascot();                                    // 输入焦点只切换「偷看」，不触发密码看/不看
+    });
+    inp.addEventListener('blur', function(){
+      setTimeout(function(){
+        if(!activeField()){ focusedField = null; refreshMascot(); }
+      }, 10);
+    });
+  });
+
+  /* ---------- 显示/隐藏密码：触发小信使「看 / 不看」切换 ---------- */
+  document.querySelectorAll('[data-toggle]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var inp = btn.closest('.fld').querySelector('input');
+      var willShow = inp.type === 'password';             // 当前隐藏 → 即将明文
+      if(willShow){
+        inp.type = 'text'; inp.dataset.show = '1';
+        btn.textContent = '🙈'; btn.setAttribute('aria-label','隐藏密码');
+        passwordShown = true;
+      } else {
+        inp.type = 'password'; inp.dataset.show = '0';
+        btn.textContent = '👁'; btn.setAttribute('aria-label','显示密码');
+        passwordShown = false;
+      }
+      refreshMascot();                                    // 关键：由「显示/隐藏密码」按钮触发眼神切换
+    });
+  });
+
+  /* ---------- 用户名：仅小写字母 a–z ---------- */
+  document.querySelectorAll('input[name="username"]').forEach(function(u){
+    u.addEventListener('input', function(){
+      var v = u.value.toLowerCase().replace(/[^a-z]/g, '');
+      if(v !== u.value){
+        u.value = v;
+        u.classList.add('invalid');
+        clearTimeout(u._t);
+        u._t = setTimeout(function(){ u.classList.remove('invalid'); }, 600);
+        showToast('用户名只能用小写字母 a–z');
+      }
+    });
+  });
+
+  /* ---------- 密码强度（仅注册） ---------- */
+  var rePass = document.getElementById('re-pass');
+  var bars = document.querySelectorAll('#panelRegister .strength i');
+  if(rePass){
+    rePass.addEventListener('input', function(){
+      var v = rePass.value, score = 0;
+      if(/[a-z]/.test(v)) score++;
+      if(/[A-Z]/.test(v)) score++;
+      if(/[0-9]/.test(v)) score++;
+      if(/[^A-Za-z0-9]/.test(v)) score++;
+      bars.forEach(function(b,idx){ b.className = idx < score ? 'on'+(idx+1) : ''; });
+    });
+  }
+
+  /* ---------- 标签 / 面板切换 ---------- */
+  var tabs = document.querySelectorAll('.view-tab');
+  var panels = { login: document.getElementById('panelLogin'), register: document.getElementById('panelRegister') };
+  function switchForm(name){
+    tabs.forEach(function(t){ var on = t.dataset.form === name; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', on); });
+    panels.login.hidden = name !== 'login';
+    panels.register.hidden = name !== 'register';
+    // 切换标签时重置密码显隐与焦点状态
+    focusedField = null; passwordShown = false;
+    document.querySelectorAll('[data-toggle]').forEach(function(b){
+      var i = b.closest('.fld').querySelector('input');
+      i.type = 'password'; i.dataset.show = '0';
+      b.textContent = '👁'; b.setAttribute('aria-label','显示密码');
+    });
+    refreshMascot();
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ switchForm(t.dataset.form); }); });
+  document.querySelectorAll('[data-goto]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); switchForm(a.dataset.goto); });
+  });
+
+  /* ---------- 提交（设计演示，无后端） ---------- */
+  function showToast(msg){
+    toast.textContent = msg; toast.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+  }
+  document.getElementById('formLogin').addEventListener('submit', function(e){
+    e.preventDefault();
+    var u = document.getElementById('li-user').value, p = document.getElementById('li-pass').value;
+    if(!u || !p){ showToast('请填写用户名和密码 💌'); return; }
+    showToast('（设计演示）登录请求已提交，欢迎回来 '+u+' 📮');
+  });
+  document.getElementById('formRegister').addEventListener('submit', function(e){
+    e.preventDefault();
+    var u = document.getElementById('re-user').value;
+    var p = document.getElementById('re-pass').value;
+    var p2 = document.getElementById('re-pass2').value;
+    if(!u){ showToast('请先取一个用户名 💌'); return; }
+    if(p.length < 8){ showToast('密码至少 8 位更安全～'); return; }
+    if(p !== p2){ showToast('两次输入的密码不一致'); return; }
+    showToast('（设计演示）账号 '+u+' 已开通，去写第一封信吧 ✉️');
+  });
+})();
+</script>
+</body>
+</html>

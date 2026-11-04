@@ -1,0 +1,290 @@
+/* =====================================================================
+   珞珈烟火邮局 · 登录 / 注册页样式 luojia-auth.css
+   风格与三页（功能介绍/创作初衷/团队介绍）及《base.css》保持一致：
+   奶油米纸底 + 金棕点缀 + 楷/宋标题 + 虚线分隔 + 校园剪影页脚。
+   新增：左「插画+萌角色」区 / 右「登录·注册」卡片。
+   ===================================================================== */
+
+:root{
+  --paper:#fcf8ef;        /* 页面底色：奶油米 */
+  --card:#fffaf0;         /* 内容卡片：奶白 */
+  --ink:#4d3b2f;          /* 正文墨棕 */
+  --muted:#826e59;        /* 次要文字 */
+  --gold:#a36720;         /* 主点缀金棕 */
+  --gold-soft:#c98b34;
+  --line:#dfc99f;         /* 实线分隔 */
+  --line-soft:#ece0c8;    /* 虚线/浅分隔 */
+  --glow:rgba(219,164,66,.28);
+  --serif:'STKaiti','KaiTi','Songti SC','SimSun',serif;   /* 标题：楷/宋 */
+  --sans:'Microsoft YaHei','PingFang SC',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0; padding:0}
+body{
+  background:var(--paper);
+  background-image:url("assets/auth-texture.png");
+  background-size:900px auto;
+  color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh; display:flex; flex-direction:column;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--serif); font-weight:400; letter-spacing:.04em}
+a{color:inherit; text-decoration:none}
+button{font:inherit; cursor:pointer}
+
+/* ---------- 顶部导航 Header（与站内一致） ---------- */
+.header{
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+  padding:18px max(28px,6vw);
+  background:#fffdf8; border-bottom:1px solid #efe4cf;
+  position:sticky; top:0; z-index:30;
+}
+.brand{display:flex; align-items:center; gap:12px; white-space:nowrap}
+.brand-mark{
+  width:42px; height:46px; border:1px solid #bc9b69; outline:1px solid #bc9b69;
+  outline-offset:3px; display:grid; place-items:center; font-size:24px; color:#7c543a;
+}
+.brand-name{font:24px var(--serif); letter-spacing:2px; line-height:1.1}
+.brand-name small{display:block; font:9px Georgia,serif; letter-spacing:2px; color:var(--gold); margin-top:6px}
+.header nav{display:flex; gap:26px; font-size:15px}
+.header nav a{padding:8px 2px; color:var(--muted); transition:color .18s}
+.header nav a[aria-current=page]{color:var(--gold); border-bottom:2px solid var(--gold)}
+.header nav a:hover{color:var(--gold)}
+.login{
+  border:1px solid #ccb184; background:var(--gold); color:#fff;
+  border-radius:7px; padding:9px 20px; min-height:42px; transition:transform .15s, box-shadow .18s;
+}
+.login:active{transform:translateY(1px)}
+
+/* ---------- 主体分栏 ---------- */
+.auth-wrap{
+  flex:1; display:grid; grid-template-columns:1.04fr .96fr;
+  min-height:calc(100vh - 132px);
+}
+
+/* ===== 左侧：插画 + 萌角色 ===== */
+.auth-art{
+  position:relative; overflow:hidden; isolation:isolate;
+  background-color:#fbf1da;
+  background-image:url("assets/auth-texture.png"),
+    radial-gradient(120% 90% at 18% 0%, #fff7e6 0%, rgba(255,247,230,0) 58%),
+    linear-gradient(160deg,#fdf3df 0%, #f7eacc 55%, #f3e3c2 100%);
+  background-size:900px auto, cover, cover;
+  background-blend-mode:multiply, normal, normal;
+  box-shadow:inset -18px 0 34px -24px rgba(120,91,43,.32);   /* 柔化右边界，替代硬分割线 */
+  display:flex; flex-direction:column; justify-content:center;
+  padding:clamp(30px,4vw,64px);
+}
+.auth-art .orn-pen{position:absolute; top:-10px; left:-12px; width:240px; opacity:.9; z-index:0; pointer-events:none}
+.auth-art .orn-wensu{position:absolute; bottom:clamp(70px,13vw,170px); right:clamp(6px,2vw,34px); width:clamp(190px,20vw,290px); opacity:.68; transform:rotate(-6deg); z-index:2; pointer-events:none}
+.auth-art .orn-env{display:block; position:relative; left:50%; transform:translateX(-50%); width:clamp(440px,120%,560px); margin:22px 0 6px; opacity:.92; z-index:0; pointer-events:none}
+
+.art-inner{position:relative; z-index:1; max-width:460px; margin:0 auto; text-align:center; width:100%}
+.art-eyebrow{font:11px Georgia,serif; letter-spacing:5px; color:var(--gold); text-transform:uppercase; margin:0 0 14px}
+.art-title{font-size:clamp(28px,3.4vw,40px); line-height:1.45; margin:0 0 16px; color:var(--ink)}
+.art-title .accent{color:var(--gold)}
+.art-sub{font-size:15px; color:var(--muted); line-height:1.95; margin:0 auto 30px; max-width:34ch}
+
+/* 萌角色排排站 */
+.mascots{
+  display:flex; justify-content:center; gap:clamp(14px,2.4vw,34px);
+  margin:6px 0 14px; perspective:760px;
+  transition:transform .35s cubic-bezier(.34,1.4,.5,1);
+}
+.auth-art.peek .mascots{transform:translateY(-6px)}
+.auth-art.shy .mascots{transform:none}   /* 取消倾斜，改由每个小信使转身背对 */
+
+.mascot{
+  position:relative; width:84px; height:84px;
+  transform-style:preserve-3d; transition:transform .55s cubic-bezier(.34,1.4,.5,1);
+}
+/* 正面元素：默认面向前，转身后随父级翻转而隐藏 */
+.mascot .face,
+.mascot .ear, .mascot .slot, .mascot .flag, .mascot .stamp, .mascot .spike{
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+}
+.mascot .face{
+  position:absolute; inset:0; border-radius:50%;
+  background:var(--mc,#ffe9c7); border:2px solid rgba(120,91,43,.18);
+  box-shadow:0 10px 22px rgba(120,91,43,.14);
+  display:flex; align-items:center; justify-content:center;
+}
+/* 背面：转身后看到的后脑勺（邮戳样式） */
+.mascot .back{
+  position:absolute; inset:0; border-radius:50%;
+  background:var(--mc,#ffe9c7); border:2px solid rgba(120,91,43,.18);
+  box-shadow:0 10px 22px rgba(120,91,43,.14);
+  transform:rotateY(180deg); backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.mascot .back::before{content:""; width:30px; height:30px; border:2px solid rgba(120,91,43,.26); border-radius:50%}
+.mascot .back::after{content:""; position:absolute; width:8px; height:8px; border-radius:50%; background:var(--gold)}
+/* 明文密码 → 小信使整只转过身去（背对），而不是倾斜 */
+.auth-art.shy .mascot{transform:rotateY(180deg)}
+/* 眼睛 */
+.mascot .eye{
+  position:absolute; top:34%; width:20px; height:22px; border-radius:50%;
+  background:#fff; border:1.5px solid rgba(120,91,43,.35); overflow:hidden;
+}
+.mascot .eye.l{left:24%} .mascot .eye.r{right:24%}
+.mascot .pupil{
+  position:absolute; left:50%; top:50%; width:10px; height:11px; border-radius:50%;
+  background:#3a2c22; transform:translate(-50%,-50%);
+  transition:transform .04s linear;
+}
+.mascot .pupil::after{content:""; position:absolute; left:2px; top:1px; width:3px; height:3px; border-radius:50%; background:#fff; opacity:.85}
+/* 腮红 + 嘴 */
+.mascot .blush{position:absolute; top:56%; width:13px; height:8px; border-radius:50%; background:rgba(224,120,90,.32)}
+.mascot .blush.l{left:18%} .mascot .blush.r{right:18%}
+.mascot .mouth{position:absolute; top:62%; left:50%; width:18px; height:9px; transform:translateX(-50%);
+  border-bottom:2px solid rgba(120,91,43,.5); border-radius:0 0 18px 18px}
+/* 角色区分装饰 */
+.mascot .ear{position:absolute; top:-9px; width:0; height:0; border-left:13px solid transparent; border-right:13px solid transparent; border-bottom:22px solid var(--mc,#ffe9c7); filter:drop-shadow(0 -1px 0 rgba(120,91,43,.18))}
+.mascot .ear.l{left:12px; transform:rotate(-12deg)} .mascot .ear.r{right:12px; transform:rotate(12deg)}
+.mascot .slot{position:absolute; top:14%; left:50%; transform:translateX(-50%); width:34px; height:7px; border-radius:4px; background:rgba(120,91,43,.35)}
+.mascot .flag{position:absolute; top:6%; right:14%; width:5px; height:22px; background:var(--gold); border-radius:3px}
+.mascot .stamp{position:absolute; top:14%; right:16%; width:16px; height:18px; background:#fff; border:2px solid var(--gold); border-radius:3px; transform:rotate(8deg)}
+.mascot .spike{position:absolute; top:-7px; width:0; height:0; border-left:7px solid transparent; border-right:7px solid transparent; border-bottom:14px solid var(--mc,#cdb089)}
+.mascot .spike.s1{left:18px; transform:rotate(-18deg)} .mascot .spike.s2{left:50%; margin-left:-7px} .mascot .spike.s3{right:18px; transform:rotate(18deg)}
+
+/* 角色配色 */
+.m-post{--mc:#bfe3d2} .m-env{--mc:#fff0d2} .m-cat{--mc:#ffe1c4} .m-hedge{--mc:#d8c2a0}
+
+/* 心情气泡 */
+.mood{
+  display:inline-flex; align-items:center; gap:8px; min-height:30px;
+  font:14px var(--serif); color:var(--ink);
+  background:rgba(255,255,255,.62); border:1px solid var(--line-soft);
+  border-radius:999px; padding:6px 18px; box-shadow:0 6px 16px rgba(120,91,43,.08);
+  transition:opacity .25s;
+}
+.mood .dot{width:8px; height:8px; border-radius:50%; background:var(--gold); animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:.4; transform:scale(.8)} 50%{opacity:1; transform:scale(1.2)}}
+
+/* ===== 右侧：登录 / 注册 卡片 ===== */
+.auth-card-col{
+  position:relative;
+  background-image:linear-gradient(90deg, rgba(243,227,194,.5), rgba(243,227,194,0) 22%), url("assets/auth-texture.png");
+  background-size:auto, 900px auto;
+  display:flex; align-items:center; justify-content:center; padding:clamp(28px,3.6vw,56px);
+}
+.auth-card{
+  position:relative; isolation:isolate; overflow:hidden;
+  width:100%; max-width:440px;
+  background:var(--card); border:1px solid var(--line-soft); border-radius:20px;
+  box-shadow:0 22px 60px rgba(120,91,43,.12);
+  padding:clamp(28px,3vw,40px);
+}
+.auth-card > .content{position:relative; z-index:1}
+
+/* 标签切换（与站内 view-tabs 一致） */
+.view-tabs{display:inline-flex; gap:4px; background:rgba(223,201,159,.18); border-radius:999px; padding:5px; margin-bottom:24px}
+.view-tab{
+  border:0; background:transparent; color:var(--muted);
+  padding:9px 26px; border-radius:999px; font-size:15px; transition:all .2s;
+}
+.view-tab.is-active{background:var(--gold); color:#fff; box-shadow:0 6px 16px var(--glow)}
+
+.panel-title{font-size:26px; margin:0 0 6px; color:var(--ink)}
+.panel-sub{font-size:14px; color:var(--muted); margin:0 0 24px}
+
+/* 表单字段 */
+.fld{margin-bottom:18px}
+.fld > label{display:block; font-size:14px; color:var(--ink); margin-bottom:7px; letter-spacing:.02em}
+.fld .inp-wrap{position:relative}
+.fld input{
+  width:100%; height:48px; padding:0 46px 0 16px;
+  font-size:15px; color:var(--ink);
+  background:#fffdf8; border:1.5px solid var(--line-soft); border-radius:12px;
+  outline:none; transition:border-color .18s, box-shadow .18s;
+}
+.fld input::placeholder{color:#b9a888}
+.fld input:focus{border-color:var(--gold); box-shadow:0 0 0 4px var(--glow)}
+.fld input.invalid{border-color:#c0563f; box-shadow:0 0 0 4px rgba(192,86,63,.14)}
+.fld .toggle{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:34px; height:34px; border:0; border-radius:9px; background:transparent;
+  font-size:17px; color:var(--muted); display:grid; place-items:center;
+}
+.fld .toggle:hover{background:rgba(223,201,159,.25); color:var(--gold)}
+.fld .hint{font-size:12.5px; color:var(--muted); margin-top:7px; line-height:1.6}
+.fld .hint b{color:var(--gold); font-weight:600}
+.fld .hint.err{color:#c0563f}
+.form-error{min-height:1.8em; margin:4px 0 12px; color:#a34131; font-size:13px}
+
+/* 密码强度 */
+.strength{display:flex; gap:6px; margin-top:9px}
+.strength i{flex:1; height:6px; border-radius:3px; background:var(--line-soft); transition:background .25s}
+.strength i.on1{background:#d98b6a} .strength i.on2{background:#d9b46a} .strength i.on3{background:#b9c46a} .strength i.on4{background:#7fae5a}
+
+/* 行内选项 */
+.row-opt{display:flex; align-items:center; justify-content:space-between; margin:6px 0 22px; font-size:13.5px}
+.row-opt label{display:inline-flex; align-items:center; gap:7px; color:var(--muted); cursor:pointer}
+.row-opt input{width:16px; height:16px; accent-color:var(--gold)}
+.row-opt a{color:var(--gold)}
+
+/* 主按钮 */
+.btn-gold{
+  width:100%; height:50px; border:0; border-radius:13px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-soft));
+  color:#fff; font-size:16px; letter-spacing:.08em; font-family:var(--serif);
+  box-shadow:0 10px 24px var(--glow); transition:transform .15s, box-shadow .2s;
+}
+.btn-gold:hover{box-shadow:0 14px 30px rgba(219,164,66,.45)}
+.btn-gold:active{transform:translateY(1px)}
+.btn-gold:disabled{cursor:wait; opacity:.65; box-shadow:none}
+
+/* 第三方登录（暂未采用，保留备用）
+.divider{display:flex; align-items:center; gap:14px; margin:22px 0; color:var(--muted); font-size:13px}
+.divider::before,.divider::after{content:""; flex:1; height:1px; background:linear-gradient(to right,transparent,var(--line-soft),transparent)}
+.oauth{display:flex; gap:12px; justify-content:center}
+.oauth button{
+  flex:1; height:46px; border:1.5px solid var(--line-soft); border-radius:12px;
+  background:#fffdf8; color:var(--muted); font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:border-color .18s, color .18s;
+}
+.oauth button:hover{border-color:var(--gold); color:var(--gold)}
+*/
+
+.switch-tip{text-align:center; font-size:13.5px; color:var(--muted); margin-top:20px}
+.switch-tip a{color:var(--gold); font-family:var(--serif)}
+
+/* 轻量提示 toast */
+.toast{
+  position:fixed; left:50%; bottom:38px; transform:translateX(-50%) translateY(20px);
+  background:var(--ink); color:#fff; font-size:14px; padding:12px 22px; border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:all .3s; z-index:60;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+/* ---------- 页脚（校园剪影） ---------- */
+.footer{
+  border-top:1px solid var(--line); padding:30px 24px 0; overflow:hidden;
+  position:relative; isolation:isolate; min-height:170px; background:rgba(252,248,239,.2);
+}
+.footer-copy{
+  position:relative; z-index:1; text-align:center; color:#77614b; line-height:1.8;
+  font-family:var(--serif); letter-spacing:1px; padding-bottom:14px;
+  text-shadow:0 1px 7px #fffaf0,0 0 14px #fffaf0;
+}
+.footer-copy span{display:block; font:10px Georgia,serif; letter-spacing:3px; color:var(--muted); margin-top:6px}
+.campus-window{position:absolute; inset:auto 0 0; height:150px; overflow:hidden; pointer-events:none;
+  mask-image:linear-gradient(to bottom,transparent,black 22%,black 90%,transparent)}
+.campus-window img{width:100%; height:100%; object-fit:cover; object-position:bottom; mix-blend-mode:multiply; opacity:.72}
+
+/* ---------- 响应式 ---------- */
+@media(max-width:900px){
+  .auth-wrap{grid-template-columns:1fr; min-height:auto}
+  .auth-art{border-right:0; border-bottom:1px solid var(--line-soft); padding:40px 24px 44px}
+  .auth-art .orn-wensu{display:none}
+  .auth-card-col{padding:34px 22px 48px}
+}
+@media(max-width:520px){
+  .header{flex-wrap:wrap; gap:14px; padding:14px 20px}
+  .header nav{order:3; width:100%; justify-content:center; gap:16px; font-size:13px}
+  .brand-name{font-size:19px}
+  .mascot{width:68px; height:68px}
+  .mascots{gap:14px}
+  .auth-art .orn-pen{width:150px} .auth-art .orn-env{width:150px}
+}
