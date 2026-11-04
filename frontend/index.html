@@ -678,6 +678,10 @@ function updateAccount() {
   document.querySelector('[data-nav=admin]').hidden = service.user?.role !== 'admin';
 }
 function navigate(hash) { if (hash === location.hash) render(); else location.hash = hash; }
+function goToAuth() {
+  const next = location.hash && location.hash !== '#/mailbox' ? location.hash : '#/mine';
+  location.href = `auth.html?next=${encodeURIComponent(next)}`;
+}
 function errorText(error) {
   if (error.status === 429) { cooldownUntil = Date.now() + Math.max(error.retryAfter || 30, 1) * 1000; return `操作较频繁，请 ${Math.ceil((cooldownUntil-Date.now())/1000)} 秒后再试。`; }
   return error.message || '操作未完成，请稍后重试。';
@@ -1077,7 +1081,7 @@ app.addEventListener('click', async event => {
   }
   const action = event.target.closest('[data-action]')?.dataset.action;
   try {
-    if (action === 'login') openAuth();
+    if (action === 'login') goToAuth();
     if (action === 'retry' && canRequest()) render();
     if (action === 'delete-draft') await deleteDraft();
     if (action === 'save') await save(true);
@@ -1134,7 +1138,7 @@ dialog.addEventListener('submit', event => {
   authenticate(() => state.register ? service.register({ username: data.account.toLowerCase(), password: data.password, displayName: data.displayName }) : service.login({ account: data.account.toLowerCase(), password: data.password }));
 });
 document.querySelector('#account-button').addEventListener('click', async () => {
-  if (!service.user) { openAuth(); return; }
+  if (!service.user) { goToAuth(); return; }
   await requestLeave(async () => {
     const control = document.querySelector('#account-button');
     control.disabled = true;
@@ -1213,7 +1217,7 @@ window.addEventListener('beforeunload', event => { if (state.dirty) { event.prev
 window.requestLuojiaLeave=requestLeave;
 try { const key='luojia.v17.stampSwap'; if(!localStorage.getItem(key)){for(let j=0;j<localStorage.length;j++){const k=localStorage.key(j);if(!k.startsWith('luojia')||k===key)continue;const raw=localStorage.getItem(k);if(!raw.includes('let_demo_4'))continue;const data=JSON.parse(raw);const walk=o=>{if(!o||typeof o!=='object')return;if(o.id==='let_demo_4')o.stampId='stamp_6';if(o.id==='let_demo_6')o.stampId='stamp_4';Object.values(o).forEach(walk)};walk(data);localStorage.setItem(k,JSON.stringify(data));}localStorage.setItem(key,'1');}}catch{}
 await service.session().catch(error => toast(errorText(error)));
-updateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get('login') === '1' && !service.user) openAuth();
+updateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get('login') === '1' && !service.user) goToAuth();
 
 </script>
 </body>

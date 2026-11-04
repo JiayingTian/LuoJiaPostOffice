@@ -249,7 +249,7 @@
       <span class="brand-name">珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span>
     </a>
 <nav aria-label="主导航"><a href="../index.html">首页</a><a href="index.html#/mailbox">珞珈印记</a><a href="index.html#/write?theme=time">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="about.html#features" aria-current="page">关于我们</a></nav>
-    <a class="login" id="about-account" href="index.html?login=1#/mailbox">登录</a>
+    <a class="login" id="about-account" href="auth.html?next=%23%2Fmine">登录</a>
   </header>
 
   <a class="back" href="../index.html">← 返回首页</a>
@@ -475,7 +475,7 @@
   <!-- ===== Footer ===== -->
   <footer class="footer"><div class="footer-copy">在珞珈，每一封信，都是生活的注脚。<span>LUOJIA POST OFFICE</span></div><div class="campus-window" aria-hidden="true"><div class="campus-track"><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div></div></div></footer>
 
-  <script src="runtime-config.js"></script><script>const account=document.querySelector('#about-account');async function syncAboutAccount(){let logged=false;if(window.__LUOJIA_CONFIG__?.mode==='api'){try{const response=await fetch(`${window.__LUOJIA_CONFIG__.apiBase}/auth/me`,{credentials:'include',headers:{Accept:'application/json'}});const result=await response.json();logged=response.ok&&result.code===0&&Boolean(result.data?.id)}catch{}}else{try{logged=sessionStorage.getItem('luojia.demo.signedIn')==='true'}catch{}}account.textContent=logged?'我的':'登录';account.href=logged?'index.html#/mine':'index.html?login=1#/mailbox'}window.addEventListener('pageshow',syncAboutAccount);</script><script src="assets/art-15.js" defer></script>
+  <script src="runtime-config.js"></script><script>const account=document.querySelector('#about-account');async function syncAboutAccount(){let logged=false;if(window.__LUOJIA_CONFIG__?.mode==='api'){try{const response=await fetch(`${window.__LUOJIA_CONFIG__.apiBase}/auth/me`,{credentials:'include',headers:{Accept:'application/json'}});const result=await response.json();logged=response.ok&&result.code===0&&Boolean(result.data?.id)}catch{}}else{try{logged=sessionStorage.getItem('luojia.demo.signedIn')==='true'}catch{}}account.textContent=logged?'我的':'登录';account.href=logged?'index.html#/mine':'auth.html?next=%23%2Fmine'}window.addEventListener('pageshow',syncAboutAccount);</script><script src="assets/art-15.js" defer></script>
 
 </body>
 </html>
