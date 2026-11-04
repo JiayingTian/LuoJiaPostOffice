@@ -239,7 +239,15 @@
 .brand-stamp .stamp-frame{position:absolute;inset:0;width:100%;height:100%}
 .brand-stamp img{position:absolute;left:14%;top:17%;width:72%;height:66%;object-fit:contain;mix-blend-mode:multiply}
 .brand-stamp .stamp-postmark{position:absolute;right:-5%;top:-4%;width:55%;height:60%;color:#795137;opacity:.25;transform:rotate(-14deg);pointer-events:none}
-@media(max-width:600px){.brand-stamp{width:54px;height:47px}.brand{gap:10px}}</style></head>
+@media(max-width:600px){.brand-stamp{width:54px;height:47px}.brand{gap:10px}}</style><style>
+/* 与正式信箱页共用同一导航高度与文字行高。 */
+.header{min-height:73px;padding:10px max(28px,6vw)}
+.brand-stamp{width:60px;height:52px}
+.header nav a{padding:10px 4px;line-height:1.4}
+.login{min-height:44px}
+@media(max-width:1000px){.header{flex-wrap:wrap;padding:10px 24px}.header nav{order:3;width:100%;justify-content:center}}
+@media(max-width:600px){.header{gap:16px;padding:10px 20px}.brand-stamp{width:60px;height:52px}}
+</style></head>
 <body>
 
   <!-- ===== Header ===== -->
@@ -248,7 +256,7 @@
       <span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span>
       <span class="brand-name">珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span>
     </a>
-<nav aria-label="主导航"><a href="../index.html">首页</a><a href="index.html#/mailbox">珞珈印记</a><a href="index.html#/write?theme=time">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="about.html#features" aria-current="page">关于我们</a></nav>
+<nav aria-label="主导航"><a href="../index.html">首页</a><a href="index.html#/mailbox">珞珈印记</a><a href="index.html#/calendar">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="about.html#features" aria-current="page">关于我们</a></nav>
     <a class="login" id="about-account" href="auth.html?next=%23%2Fmine">登录</a>
   </header>
 

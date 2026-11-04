@@ -47,10 +47,11 @@ button{font:inherit; cursor:pointer}
 }
 .brand-name{font:24px var(--serif); letter-spacing:2px; line-height:1.1}
 .brand-name small{display:block; font:9px Georgia,serif; letter-spacing:2px; color:var(--gold); margin-top:6px}
-.header nav{display:flex; gap:26px; font-size:15px}
+.header nav{display:flex; flex-wrap:wrap; align-items:center; gap:18px; font-size:15px}
 .header nav a{padding:8px 2px; color:var(--muted); transition:color .18s}
 .header nav a[aria-current=page]{color:var(--gold); border-bottom:2px solid var(--gold)}
 .header nav a:hover{color:var(--gold)}
+.nav-pending{opacity:.5; font-size:14px; white-space:nowrap}
 .login{
   border:1px solid #ccb184; background:var(--gold); color:#fff;
   border-radius:7px; padding:9px 20px; min-height:42px; transition:transform .15s, box-shadow .18s;
@@ -88,68 +89,63 @@ button{font:inherit; cursor:pointer}
 
 /* 萌角色排排站 */
 .mascots{
-  display:flex; justify-content:center; gap:clamp(14px,2.4vw,34px);
+  display:flex; justify-content:center; gap:clamp(12px,2vw,28px);
   margin:6px 0 14px; perspective:760px;
   transition:transform .35s cubic-bezier(.34,1.4,.5,1);
 }
 .auth-art.peek .mascots{transform:translateY(-6px)}
-.auth-art.shy .mascots{transform:none}   /* 取消倾斜，改由每个小信使转身背对 */
+.auth-art.shy .mascots{transform:none}   /* 不看密码：小信使正面闭眼，不再倾斜/转身 */
 
+/* ===== 萌角色：信封家族（极简圆萌） ===== */
 .mascot{
-  position:relative; width:84px; height:84px;
+  position:relative; width:92px; height:71px;
   transform-style:preserve-3d; transition:transform .55s cubic-bezier(.34,1.4,.5,1);
+  background:var(--mc,#fff3d6);
+  border:2px solid rgba(120,91,43,.20);
+  border-radius:15px;
+  box-shadow:0 12px 24px rgba(120,91,43,.16);
 }
-/* 正面元素：默认面向前，转身后随父级翻转而隐藏 */
+/* 正面元素：默认面向前 */
 .mascot .face,
-.mascot .ear, .mascot .slot, .mascot .flag, .mascot .stamp, .mascot .spike{
+.mascot .flap, .mascot .seam{
   backface-visibility:hidden; -webkit-backface-visibility:hidden;
 }
-.mascot .face{
-  position:absolute; inset:0; border-radius:50%;
-  background:var(--mc,#ffe9c7); border:2px solid rgba(120,91,43,.18);
-  box-shadow:0 10px 22px rgba(120,91,43,.14);
-  display:flex; align-items:center; justify-content:center;
+/* 信封翻盖（顶部三角，随尺寸缩放） */
+.mascot .flap{
+  position:absolute; top:0; left:0; width:100%; height:42%;
+  background:rgba(120,91,43,.12);
+  clip-path:polygon(0 0,100% 0,50% 100%);
 }
-/* 背面：转身后看到的后脑勺（邮戳样式） */
-.mascot .back{
-  position:absolute; inset:0; border-radius:50%;
-  background:var(--mc,#ffe9c7); border:2px solid rgba(120,91,43,.18);
-  box-shadow:0 10px 22px rgba(120,91,43,.14);
-  transform:rotateY(180deg); backface-visibility:hidden; -webkit-backface-visibility:hidden;
-  display:flex; align-items:center; justify-content:center;
+/* 信封下沿浅缝，强化“信封”识别 */
+.mascot .seam{
+  position:absolute; left:10%; right:10%; bottom:18%; height:2px;
+  background:rgba(120,91,43,.10); border-radius:2px;
 }
-.mascot .back::before{content:""; width:30px; height:30px; border:2px solid rgba(120,91,43,.26); border-radius:50%}
-.mascot .back::after{content:""; position:absolute; width:8px; height:8px; border-radius:50%; background:var(--gold)}
-/* 明文密码 → 小信使整只转过身去（背对），而不是倾斜 */
-.auth-art.shy .mascot{transform:rotateY(180deg)}
-/* 眼睛 */
-.mascot .eye{
-  position:absolute; top:34%; width:20px; height:22px; border-radius:50%;
-  background:#fff; border:1.5px solid rgba(120,91,43,.35); overflow:hidden;
+/* 正面五官层（透明，叠在信封上） */
+.mascot .face{position:absolute; inset:0; border-radius:15px}
+/* 明文密码（不看密码）→ 正面闭眼，不再转身 */
+.auth-art.shy .mascot .eye{background:transparent; border:0}
+.auth-art.shy .mascot .eye::after{
+  content:""; position:absolute; left:50%; top:52%; transform:translate(-50%,-50%);
+  width:15px; height:9px; border:2px solid rgba(120,91,43,.55);
+  border-top:0; border-left:0; border-right:0; border-radius:0 0 15px 15px;
 }
-.mascot .eye.l{left:24%} .mascot .eye.r{right:24%}
-.mascot .pupil{
-  position:absolute; left:50%; top:50%; width:10px; height:11px; border-radius:50%;
-  background:#3a2c22; transform:translate(-50%,-50%);
-  transition:transform .04s linear;
-}
+.auth-art.shy .mascot .pupil{display:none}
+.auth-art.shy .mascot .mouth{border-bottom-color:rgba(120,91,43,.30)}
+/* 眼睛（白底 + 可动瞳孔，叠在信封正面） */
+.mascot .eye{position:absolute; top:48%; width:21px; height:23px; border-radius:50%; background:#fff; border:1.5px solid rgba(120,91,43,.35); overflow:hidden}
+.mascot .eye.l{left:20%} .mascot .eye.r{right:20%}
+.mascot .pupil{position:absolute; left:50%; top:50%; width:10px; height:11px; border-radius:50%; background:#3a2c22; transform:translate(-50%,-50%); transition:transform .04s linear}
 .mascot .pupil::after{content:""; position:absolute; left:2px; top:1px; width:3px; height:3px; border-radius:50%; background:#fff; opacity:.85}
-/* 腮红 + 嘴 */
-.mascot .blush{position:absolute; top:56%; width:13px; height:8px; border-radius:50%; background:rgba(224,120,90,.32)}
-.mascot .blush.l{left:18%} .mascot .blush.r{right:18%}
-.mascot .mouth{position:absolute; top:62%; left:50%; width:18px; height:9px; transform:translateX(-50%);
-  border-bottom:2px solid rgba(120,91,43,.5); border-radius:0 0 18px 18px}
-/* 角色区分装饰 */
-.mascot .ear{position:absolute; top:-9px; width:0; height:0; border-left:13px solid transparent; border-right:13px solid transparent; border-bottom:22px solid var(--mc,#ffe9c7); filter:drop-shadow(0 -1px 0 rgba(120,91,43,.18))}
-.mascot .ear.l{left:12px; transform:rotate(-12deg)} .mascot .ear.r{right:12px; transform:rotate(12deg)}
-.mascot .slot{position:absolute; top:14%; left:50%; transform:translateX(-50%); width:34px; height:7px; border-radius:4px; background:rgba(120,91,43,.35)}
-.mascot .flag{position:absolute; top:6%; right:14%; width:5px; height:22px; background:var(--gold); border-radius:3px}
-.mascot .stamp{position:absolute; top:14%; right:16%; width:16px; height:18px; background:#fff; border:2px solid var(--gold); border-radius:3px; transform:rotate(8deg)}
-.mascot .spike{position:absolute; top:-7px; width:0; height:0; border-left:7px solid transparent; border-right:7px solid transparent; border-bottom:14px solid var(--mc,#cdb089)}
-.mascot .spike.s1{left:18px; transform:rotate(-18deg)} .mascot .spike.s2{left:50%; margin-left:-7px} .mascot .spike.s3{right:18px; transform:rotate(18deg)}
-
-/* 角色配色 */
-.m-post{--mc:#bfe3d2} .m-env{--mc:#fff0d2} .m-cat{--mc:#ffe1c4} .m-hedge{--mc:#d8c2a0}
+/* 腮红 + 嘴（正面） */
+.mascot .blush{position:absolute; top:62%; width:13px; height:8px; border-radius:50%; background:rgba(224,120,90,.32)}
+.mascot .blush.l{left:14%} .mascot .blush.r{right:14%}
+.mascot .mouth{position:absolute; top:68%; left:50%; width:18px; height:9px; transform:translateX(-50%); border-bottom:2px solid rgba(120,91,43,.5); border-radius:0 0 18px 18px}
+/* 角色配色（信封家族四子 · 暖色同系） */
+.m-env-a{--mc:#fdf1da}
+.m-env-b{--mc:#f8e0c4}
+.m-env-c{--mc:#f0cda0}
+.m-env-d{--mc:#e7b98f}
 
 /* 心情气泡 */
 .mood{
@@ -284,7 +280,19 @@ button{font:inherit; cursor:pointer}
   .header{flex-wrap:wrap; gap:14px; padding:14px 20px}
   .header nav{order:3; width:100%; justify-content:center; gap:16px; font-size:13px}
   .brand-name{font-size:19px}
-  .mascot{width:68px; height:68px}
+  .mascot{width:64px; height:50px}
   .mascots{gap:14px}
   .auth-art .orn-pen{width:150px} .auth-art .orn-env{width:150px}
+}
+
+/* 与正式信箱页共用同一导航高度与文字行高。 */
+.header{min-height:73px; padding:10px max(28px,6vw)}
+.header nav a{padding:10px 4px; line-height:1.4}
+.login{min-height:44px}
+@media(max-width:1000px){
+  .header{flex-wrap:wrap; padding:10px 24px}
+  .header nav{order:3; width:100%; justify-content:center}
+}
+@media(max-width:600px){
+  .header{gap:16px; padding:10px 20px}
 }

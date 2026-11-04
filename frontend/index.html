@@ -58,7 +58,7 @@ body{min-height:100svh;display:flex;flex-direction:column}
 .campus-group{gap:45px;padding-right:45px}
 .campus-group img{height:118px;width:auto;max-width:none;object-fit:contain;flex:none}
 @media(min-width:1001px){
- .header{padding-top:10px;padding-bottom:10px}
+ .header{min-height:73px;padding-top:10px;padding-bottom:10px}
  .brand-stamp{width:60px;height:52px}
  .header nav a{line-height:1.4}
  .mailbox-view .mode-note{font-size:11px;padding:5px 16px}
@@ -168,12 +168,17 @@ body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .head
 .vintage-frame:before{content:'';position:absolute;inset:4.667px;background:linear-gradient(#b38b50,#b38b50) center top/calc(100% - 107.33px) 1px no-repeat,linear-gradient(#b38b50,#b38b50) center bottom/calc(100% - 107.33px) 1px no-repeat,linear-gradient(#b38b50,#b38b50) left center/1px calc(100% - 107.33px) no-repeat,linear-gradient(#b38b50,#b38b50) right center/1px calc(100% - 107.33px) no-repeat}
 .vintage-frame .corner{width:70px;height:70px;background:none}.vintage-frame .paper-flourish{opacity:1;stroke-width:1.4}.vintage-frame .c0{left:-5.833px;top:-5.833px}.vintage-frame .c1{right:-5.833px;top:-5.833px}.vintage-frame .c2{right:-5.833px;bottom:-5.833px}.vintage-frame .c3{left:-5.833px;bottom:-5.833px}
 @media(max-width:700px){.vintage-frame{inset:18px}.sheet-cancel{width:64px;height:64px;top:25px}.desk-seal.detailed-seal{width:90px;height:90px}.ginkgo-icon{width:28px;height:34px}}
+/* 统一使用关于页的主导航结构与间距。 */
+.header nav{flex-wrap:wrap;align-items:center;gap:18px}
+.nav-pending{opacity:.5;font-size:14px;white-space:nowrap}
+.account [data-nav=admin]{padding:9px 15px}
+@media(max-width:1000px){.header nav{gap:12px;font-size:13px}}
 </style></head>
 <body>
   <header class="header">
     <a class="brand" href="../index.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
-    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光日历</a><a href="#/inbox" data-nav="inbox">私人收件箱</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="about.html">关于我们</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
-    <div class="account"><span id="user-name"></span><button id="account-button" class="button primary" type="button">登录</button></div>
+    <nav aria-label="主导航"><a href="../index.html">首页</a><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="about.html">关于我们</a></nav>
+    <div class="account"><span id="user-name"></span><a href="#/admin" data-nav="admin" class="button" hidden>审核</a><button id="account-button" class="button primary" type="button">登录</button></div>
   </header>
   <div class="page-surface"><div class="desk-decor" aria-hidden="true"><div class="old-envelope"></div><div class="desk-blossom"><img src="assets/art-3.png" alt=""></div><span class="petal petal-a"></span><span class="petal petal-b"></span><span class="petal petal-c"></span></div>
 
