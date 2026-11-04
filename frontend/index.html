@@ -58,8 +58,9 @@ body{min-height:100svh;display:flex;flex-direction:column}
 .campus-group{gap:45px;padding-right:45px}
 .campus-group img{height:118px;width:auto;max-width:none;object-fit:contain;flex:none}
 @media(min-width:1001px){
- .mailbox-view .header{padding-top:10px;padding-bottom:10px}
- .mailbox-view .brand-stamp{width:60px;height:52px}
+ .header{padding-top:10px;padding-bottom:10px}
+ .brand-stamp{width:60px;height:52px}
+ .header nav a{line-height:1.4}
  .mailbox-view .mode-note{font-size:11px;padding:5px 16px}
  .mailbox-view #app{min-height:0;padding:12px 28px 10px}
  .mailbox-view .breadcrumbs{margin-bottom:8px;font-size:12px}
@@ -120,9 +121,9 @@ body{min-height:100svh;display:flex;flex-direction:column}
 .stationery-sheet .sheet-header h1{letter-spacing:.04em;max-width:100%}
 .sheet-header>.letter-stamp.art-stamp{width:48px;height:48px;margin:4px 0 10px 16px;opacity:.7;filter:saturate(.7) sepia(.08);transform:rotate(2deg)}
 .reading-main>.sheet-paging,.preview-main>.sheet-paging{margin:14px auto 0;width:100%;padding:0 8px;min-height:32px}
-.envelope-stamp{width:38px;height:38px;bottom:10px;right:16px;transform:rotate(5deg)}
+.envelope-stamp{width:76px;height:76px;bottom:10px;right:16px;transform:rotate(5deg)}
 .envelope-excerpt{padding-right:0}
-@media(max-width:600px){.stationery-sheet.paper{padding:52px 8% 32px}.sheet-header>.letter-stamp.art-stamp{width:40px;height:40px;margin-left:10px}.envelope-stamp{width:42px;height:42px;bottom:14px;right:18px}}
+@media(max-width:600px){.stationery-sheet.paper{padding:52px 8% 32px}.sheet-header>.letter-stamp.art-stamp{width:40px;height:40px;margin-left:10px}.envelope-stamp{width:84px;height:84px;bottom:14px;right:18px}}
 </style>
 <style>
 .stationery-sheet .letter-content{white-space:normal}.stationery-sheet .letter-content p{font:inherit;line-height:inherit;text-indent:2em;margin:0;white-space:pre-wrap}.stationery-sheet .letter-content p+p{margin-top:.925em}.stationery-sheet .letter-content p.continued{text-indent:0}
@@ -171,7 +172,7 @@ body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .head
 <body>
   <header class="header">
     <a class="brand" href="../index.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
-    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光日历</a><a href="#/inbox" data-nav="inbox">私人收件箱</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
+    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光日历</a><a href="#/inbox" data-nav="inbox">私人收件箱</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="about.html">关于我们</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
     <div class="account"><span id="user-name"></span><button id="account-button" class="button primary" type="button">登录</button></div>
   </header>
   <div class="page-surface"><div class="desk-decor" aria-hidden="true"><div class="old-envelope"></div><div class="desk-blossom"><img src="assets/art-3.png" alt=""></div><span class="petal petal-a"></span><span class="petal petal-b"></span><span class="petal petal-c"></span></div>
