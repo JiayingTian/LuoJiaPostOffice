@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: 珞珈烟火邮局 API
-  version: 0.3.0
+  version: 0.4.0
   summary: 珞珈烟火邮局前后端接口约定
   description: |
     本文件是前端与后端共同遵守的接口契约，也是联调、Mock、测试和接口文档的唯一事实来源。
@@ -367,6 +367,7 @@ paths:
       tags: [Letters]
       operationId: getLetter
       summary: 获取信件详情
+      description: 公开信可由任何访客读取；草稿和待审核信仅作者或对应审核管理员可读；私密信仅作者和指定收件人可读，其他调用统一返回 404。
       security:
         - {}
         - cookieAuth: []
@@ -431,43 +432,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-
-  /letters/{letterId}/forward:
-    parameters:
-      - $ref: "#/components/parameters/LetterId"
-    post:
-      tags: [Letters]
-      operationId: forwardPrivateLetter
-      summary: 转发私人信件
-      description: 仅为收件用户建立原私人信件的读取授权，不复制正文、不改变原信收件人或可见范围；原信删除后授权立即失效。
-      security:
-        - cookieAuth: []
-          csrfToken: []
-      parameters:
-        - $ref: "#/components/parameters/IdempotencyKey"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ForwardLetterRequest"
-      responses:
-        "201":
-          description: 转发授权创建成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ForwardLetterResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "422":
-          $ref: "#/components/responses/ValidationFailed"
 
   /letters/{letterId}/favorite:
     parameters:
@@ -746,7 +710,7 @@ paths:
       tags: [Me]
       operationId: listMyInbox
       summary: 获取当前用户的私人收件箱
-      description: 返回直接发送给当前用户或通过有效转发授权给当前用户的私人信件；原信删除后不再返回。
+      description: 仅返回直接发送给当前用户且已经投递的私密信件；私密信件只允许作者与指定收件人读取。
       security:
         - cookieAuth: []
       parameters:
@@ -1072,7 +1036,7 @@ components:
             message: 信件内容未通过校验
             data:
               fieldErrors:
-                content: 正文长度必须为 20 至 1500 个字符
+                content: 正文长度必须为 20 至 2000 个字符
             requestId: req_01JABCD2EFGH3456789
     RateLimited:
       description: 请求过于频繁
@@ -1327,7 +1291,7 @@ components:
     LetterWorkflowState:
       type: string
       description: 面向作者列表的派生展示状态，不写入数据库的 status 字段。
-      enum: [draft, pendingReview, published, returnedForEdit]
+      enum: [draft, pendingReview, published, returnedForEdit, private]
 
     RecipientType:
       type: string
@@ -1435,6 +1399,7 @@ components:
           $ref: "#/components/schemas/LetterStatus"
         visibility:
           $ref: "#/components/schemas/LetterVisibility"
+          description: wall 必须为 public；user 必须为 private。
         submittedAt:
           type: [string, "null"]
           format: date-time
@@ -1479,7 +1444,7 @@ components:
             content:
               type: string
               minLength: 0
-              maxLength: 1500
+              maxLength: 2000
               description: 纯文本正文；作者读取草稿时允许少于 20 个字符。
             parentLetterId:
               type: [string, "null"]
@@ -1539,7 +1504,7 @@ components:
         content:
           type: string
           minLength: 0
-          maxLength: 1500
+          maxLength: 2000
           default: ""
           description: 纯文本正文；草稿允许为空，正式提交时至少 20 个 Unicode 字符。
         recipientType:
@@ -1547,6 +1512,9 @@ components:
         recipientUserId:
           type: [string, "null"]
           description: recipientType 为 user 时必填；为 wall 时必须为空。
+        visibility:
+          $ref: "#/components/schemas/LetterVisibility"
+          description: 与 recipientType、recipientUserId 同步修改；私密信投递后不进入公开审核。
         parentLetterId:
           type: [string, "null"]
           description: 创建完整回信时填写；首版仅允许一层关联。
@@ -1582,12 +1550,14 @@ components:
         content:
           type: string
           minLength: 0
-          maxLength: 1500
+          maxLength: 2000
           description: 草稿允许为空；submitForReview=true 时后端对信件完整状态执行正式校验。
         recipientType:
           $ref: "#/components/schemas/RecipientType"
         recipientUserId:
           type: [string, "null"]
+        visibility:
+          $ref: "#/components/schemas/LetterVisibility"
         penName:
           type: [string, "null"]
           maxLength: 30
@@ -1604,31 +1574,6 @@ components:
         submitForReview:
           type: boolean
           description: 修改完成后是否重新提交审核；已公开信件一旦修改，旧版本无论此值为何都立即停止展示。
-
-    ForwardLetterRequest:
-      type: object
-      additionalProperties: false
-      required: [recipientUserId]
-      properties:
-        recipientUserId:
-          type: string
-          minLength: 1
-          description: 获得该私人信件读取权限的用户 ID。
-
-    ForwardLetterData:
-      type: object
-      required: [id, letterId, recipient, createdAt]
-      properties:
-        id:
-          type: string
-          example: fwd_01JABCD2EFGH3456789
-        letterId:
-          type: string
-        recipient:
-          $ref: "#/components/schemas/UserPublic"
-        createdAt:
-          type: string
-          format: date-time
 
     ResponseStatus:
       type: string
@@ -1823,13 +1768,40 @@ components:
       type: object
       additionalProperties: false
       required: [action]
+      allOf:
+        - if:
+            properties:
+              action:
+                const: returnForEdit
+          then:
+            required: [reason]
+            properties:
+              reason:
+                $ref: "#/components/schemas/ReviewReturnReason"
+        - if:
+            properties:
+              action:
+                const: delete
+          then:
+            required: [reason]
       properties:
         action:
           $ref: "#/components/schemas/ReviewAction"
         reason:
-          type: [string, "null"]
-          maxLength: 300
-          description: returnForEdit 或 delete 时必填。
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/ReviewReturnReason"
+          description: returnForEdit 或 delete 时必须是预设原因标签；approve 时必须为空。
+
+    ReviewReturnReason:
+      type: string
+      description: 管理员退回公开信件时只能选择一个预设原因；信件随后回到作者草稿箱。
+      enum:
+        - 色情低俗
+        - 暴力血腥
+        - 仇恨歧视与骚扰
+        - 违法违规内容
+        - 垃圾信息与恶意广告
 
     MetadataData:
       type: object
@@ -1911,20 +1883,6 @@ components:
         requestId:
           type: string
 
-    ForwardLetterResponse:
-      type: object
-      required: [code, message, data, requestId]
-      properties:
-        code:
-          type: integer
-          const: 0
-        message:
-          type: string
-        data:
-          $ref: "#/components/schemas/ForwardLetterData"
-        requestId:
-          type: string
-
     LetterListData:
       allOf:
         - $ref: "#/components/schemas/Pagination"
@@ -1954,7 +1912,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/LetterSummary"
         - type: object
-          required: [workflowState, reviewNote]
+          required: [workflowState, reviewNote, createdAt, updatedAt]
           properties:
             workflowState:
               $ref: "#/components/schemas/LetterWorkflowState"
@@ -1962,6 +1920,13 @@ components:
               type: [string, "null"]
               maxLength: 300
               description: 最近一次适用于当前版本的退回修改原因；从未退回时为 null。
+            createdAt:
+              type: string
+              format: date-time
+              description: 信件首次创建时间；时光信笺用它记录私密投递时间。
+            updatedAt:
+              type: string
+              format: date-time
 
     MyLetterListData:
       allOf:

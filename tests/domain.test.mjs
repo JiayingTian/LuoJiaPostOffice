@@ -6,17 +6,17 @@ const draft = { title:'一封信', content:'这是至少二十个字的一封信
 test('Unicode code point length and limits match the contract', () => {
   assert.equal(charCount('你好😀'),3);
   assert.deepEqual(validateLetter(draft),{});
-  assert.ok(validateLetter({...draft,content:'😀'.repeat(1501)}).content);
-  assert.equal(validateLetter({...draft,content:'😀'.repeat(1500)}).content,undefined);
+  assert.ok(validateLetter({...draft,content:'😀'.repeat(2001)}).content);
+  assert.equal(validateLetter({...draft,content:'😀'.repeat(2000)}).content,undefined);
   assert.ok(validateLetter({...draft,title:'单'}).title);
 });
 test('empty and unfinished drafts are valid; sending still validates minimum lengths', () => {
   assert.deepEqual(validateLetter({...draft,title:'',content:'一句话'}, {draft:true}),{});
   assert.ok(validateLetter({...draft,title:'',content:'一句话'}).title);
   assert.deepEqual(validateLetter({...draft,title:'',content:'   '}, {draft:true}),{});
-  assert.ok(validateLetter({...draft,content:' '.repeat(1501)}, {draft:true}).content);
+  assert.ok(validateLetter({...draft,content:' '.repeat(2001)}, {draft:true}).content);
   assert.equal(letterPayload({...draft,content:'  原文\n '},{draft:true}).content,'  原文\n ');
-  assert.equal(statusLabel({status:'draft',workflowState:'returnedForEdit'}),'退回修改');
+  assert.equal(statusLabel({status:'draft',workflowState:'returnedForEdit'}),'草稿');
 });
 test('create/update payloads contain only declared fields', () => {
   const create=letterPayload({...draft,parentLetterId:'let_parent',id:'not-a-field',extra:'secret'},{draft:true});
@@ -32,9 +32,17 @@ test('retry reuses key until content changes or submission completes', () => {
 });
 test('review labels use real backend states and safe fallback', () => {
   assert.equal(statusLabel({status:'active',visibility:'public',submittedAt:'now',publishedAt:null}),'待审核');
-  assert.equal(statusLabel({status:'draft',reviewNote:'请修改'}),'退回修改');
+  assert.equal(statusLabel({status:'draft',reviewNote:'请修改'}),'草稿');
   assert.equal(statusLabel({status:'future'}),'状态待确认');
 });
 test('letter text is escaped before rendering', () => {
   assert.equal(escapeHTML('<img src=x onerror="alert(1)">'), '&lt;img src=x onerror=&quot;alert(1)&quot;&gt;');
+});
+test('private delivery requires an explicit recipient and disables public replies',()=>{
+  assert.throws(()=>letterPayload({...draft,visibility:'private'}),/私人投递暂不可用/);
+  assert.ok(validateLetter({...draft,visibility:'private'}).recipientUsername);
+  const payload=letterPayload({...draft,visibility:'private',recipientUsername:'test_user_b',recipientUserId:'usr_b',allowReplies:true},{privateEnabled:true});
+  assert.equal(payload.visibility,'private');assert.equal(payload.allowReplies,false);
+  assert.equal(payload.recipientType,'user');assert.equal(payload.recipientUserId,'usr_b');
+  assert.equal('visibility' in letterPayload({...draft,visibility:'public'}),false);
 });

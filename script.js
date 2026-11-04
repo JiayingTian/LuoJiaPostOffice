@@ -8,7 +8,7 @@ let toastTimer;
 
 const routes = {
   '读信': 'frontend/#/mailbox',
-  '时光信笺': 'frontend/#/mailbox',
+  '时光信笺': 'frontend/#/calendar',
   '写信': 'frontend/#/write',
 };
 

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="珞珈烟火邮局 · 时光信笺（日历检索）">
+<title>时光信笺 · 珞珈烟火邮局</title>
+<link rel="stylesheet" href="luojia-calendar.css">
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true">🏯</span>
+      <span class="brand-name">珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="#">首页</a>
+      <a href="#" aria-current="page">时光信笺</a>
+      <a href="#">珞珈印记</a>
+      <a href="#">关于我们</a>
+    </nav>
+    <button class="login" type="button">登录</button>
+  </header>
+
+  <a class="back" href="#">← 返回首页</a>
+
+  <!-- ===== Layout ===== -->
+  <div class="layout">
+
+    <!-- page hero -->
+    <section class="hero">
+      <p class="eyebrow">Time Letters · 时光信笺</p>
+      <h1>写给时间的信</h1>
+      <p class="sub">每一封寄出的信，都在时间里留下一个坐标。翻开日历，挑一个日子，找回那天的自己。</p>
+    </section>
+
+    <!-- ===== State 1: empty ===== -->
+    <span class="state-label">状态一 · 尚未写信</span>
+    <section class="card">
+      <img class="ornament orn-pen" src="图素/钢笔树枝.png" alt="" aria-hidden="true">
+      <img class="ornament orn-wensu" src="图素/文素1_crop.png" alt="" aria-hidden="true">
+      <div class="content">
+        <div class="empty-wrap">
+          <img class="empty-env" src="图素/信封.png" alt="">
+          <p class="empty-text">尚未留下时光足迹</p>
+          <p class="empty-hint">提笔写下一封信，让时间开始为你记下痕迹。</p>
+          <button class="btn-gold" type="button">写一封信</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== State 2: calendar search ===== -->
+    <span class="state-label">状态二 · 已写信（日历检索）</span>
+    <section class="card">
+      <img class="ornament orn-pen" src="图素/钢笔树枝.png" alt="" aria-hidden="true">
+      <img class="ornament orn-wensu" src="图素/文素1_crop.png" alt="" aria-hidden="true">
+      <div class="content">
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab is-active" data-view="calendar" type="button" role="tab" aria-selected="true">日历</button>
+          <button class="view-tab" data-view="timeline" type="button" role="tab" aria-selected="false">时间轴</button>
+        </div>
+
+        <div class="view-panel" id="viewCalendar">
+          <div class="cal-content">
+            <div class="cal-col-left">
+              <div class="cal-wrap">
+                <div class="cal-bar">
+                  <button id="calPrev" type="button" aria-label="上一月">‹ 上月</button>
+                  <span class="cal-title" id="calTitle">2026 年 11 月</span>
+                  <button id="calNext" type="button" aria-label="下一月">下月 ›</button>
+                </div>
+                <div class="cal-dow">
+                  <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                </div>
+                <div class="cal" id="calGrid"></div>
+                <p class="cal-hint">
+                  <span class="cal-legend"><i></i>有信件</span>
+                  &nbsp;·&nbsp;点击带圆点的日期，查看那一天寄出的信
+                </p>
+              </div>
+            </div>
+            <div class="cal-col-right">
+              <div class="cal-result" id="calResult"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view-panel" id="viewTimeline" hidden>
+          <div class="tl-axis-scroll"><div class="tl-axis" id="tlAxis"></div></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="footer-copy">—— 在珞珈，每一封信，都是生活的注脚 ——<span>LUOJIA POST OFFICE</span></div>
+    <div class="campus-window" aria-hidden="true">
+      <img src="剪影.svg" alt="">
+    </div>
+  </footer>
+
+<script>
+  // 信件数据（按写信日期归入日历；同一天可有多封）
+  var letters = [
+    {y:2026,m:11,d:2, t:"21:14", title:"致 · 未来的我",
+      preview:"今天在图书馆待了一整天，终于把那篇论文的框架搭好了。希望收到这封信的你，已经不再为 deadline 焦虑。"},
+    {y:2026,m:11,d:2, t:"23:40", title:"致 · 灯下的自己",
+      preview:"刚写完上一封，又舍不得停笔。珞珈的夜很静，想把这一刻的安心，也寄给很久以后的我。"},
+    {y:2026,m:10,d:18, t:"09:02", title:"致 · 珞珈的秋天",
+      preview:"银杏又黄了，风一吹满地都是。想把这些说给明年此刻的自己听——记得慢一点，记得抬头看树。"},
+    {y:2026,m:9,d:30, t:"23:47", title:"致 · 远方的陌生人",
+      preview:"不知道你此刻在哪个城市，但我们都对着同一片月亮失眠吧。这封信，替我说一声晚安。"},
+    {y:2026,m:8,d:15, t:"18:30", title:"致 · 毕业那天的我们",
+      preview:"四年好像很短，短到我还记得第一次踏进校门的样子。等这封信抵达，愿我们都成了想成为的人。"},
+    {y:2026,m:7,d:20, t:"02:11", title:"致 · 考研深夜的自己",
+      preview:"又是一个熬到两点的夜晚，单词书翻到第 412 页。想告诉那时的你：那些看似无用的坚持，后来都成了底气。"},
+    {y:2026,m:6,d:11, t:"20:45", title:"致 · 没说出口的那个人",
+      preview:"有些话当面总说不出口，就写进信里吧。希望未来的你，已经学会了把喜欢大方地说出来。"},
+    {y:2026,m:5,d:3, t:"14:20", title:"致 · 老图书馆窗边的猫",
+      preview:"今天又遇见你了，趴在暖气片上晒太阳，像一座小小的纪念碑。替我谢谢你的陪伴，让枯燥的复习日有了温度。"},
+    {y:2026,m:3,d:21, t:"11:08", title:"致 · 十八岁的夏天",
+      preview:"如果遇见刚成年的自己，我想说：别怕走弯路，你后来去的珞珈，比想象中更温柔。"},
+    {y:2026,m:1,d:9, t:"22:53", title:"致 · 武汉的那场初雪",
+      preview:"雪花落在樱花树上，白得不像话。这一刻想定格下来，寄给很多年以后也许已经离开这座城市的我。"}
+  ];
+
+  // 按 年-月-日 建索引
+  var map = {};
+  letters.forEach(function(l){
+    var k = l.y + "-" + l.m + "-" + l.d;
+    (map[k] = map[k] || []).push(l);
+  });
+
+  // 应用“今天”
+  var TODAY = {y:2026, m:11, d:2};
+  var viewY = TODAY.y, viewM = TODAY.m;
+  var selected = {y:TODAY.y, m:TODAY.m, d:TODAY.d};
+
+  var DOW = ["日","一","二","三","四","五","六"];
+
+  function pad(n){ return n < 10 ? "0" + n : "" + n; }
+
+  function renderCalendar(){
+    var grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+    var first = new Date(viewY, viewM - 1, 1).getDay();
+    var days = new Date(viewY, viewM, 0).getDate();
+
+    for (var i = 0; i < first; i++){
+      var blank = document.createElement("div");
+      blank.className = "cal-cell muted";
+      grid.appendChild(blank);
+    }
+
+    for (var d = 1; d <= days; d++){
+      var cell = document.createElement("div");
+      cell.className = "cal-cell";
+      cell.textContent = d;
+      var k = viewY + "-" + viewM + "-" + d;
+      if (map[k]) cell.className += " has";
+      if (viewY === TODAY.y && viewM === TODAY.m && d === TODAY.d) cell.className += " today";
+      if (selected && selected.y === viewY && selected.m === viewM && selected.d === d) cell.className += " selected";
+      (function(y, m, dd){
+        cell.addEventListener("click", function(){ selectDate(y, m, dd); });
+      })(viewY, viewM, d);
+      grid.appendChild(cell);
+    }
+
+    document.getElementById("calTitle").textContent = viewY + " 年 " + viewM + " 月";
+  }
+
+  function selectDate(y, m, d){
+    selected = {y:y, m:m, d:d};
+    renderCalendar();
+    renderResult();
+  }
+
+  function renderResult(){
+    var k = selected.y + "-" + selected.m + "-" + selected.d;
+    var list = map[k] || [];
+    var dateStr = selected.y + "." + pad(selected.m) + "." + pad(selected.d);
+    var box = document.getElementById("calResult");
+
+    if (list.length === 0){
+      box.innerHTML =
+        '<p class="cal-result-date">' + dateStr + '</p>' +
+        '<div class="cal-empty">这一天还没有留下信笺</div>';
+      return;
+    }
+
+    var html = '<p class="cal-result-date">' + dateStr + ' · 共 ' + list.length + ' 封</p>' +
+               '<div class="cal-result-list">';
+    list.forEach(function(l){
+      html +=
+        '<div class="tl-card">' +
+          '<img class="tl-env" src="图素/信封.png" alt="">' +
+          '<div class="tl-body">' +
+            '<span class="tl-date">' + dateStr + ' · ' + l.t + '</span>' +
+            '<h3 class="tl-title">' + l.title + '</h3>' +
+            '<p class="tl-preview">' + l.preview + '</p>' +
+            '<span class="tl-status">已寄出</span>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+    box.innerHTML = html;
+  }
+
+  document.getElementById("calPrev").addEventListener("click", function(){
+    viewM--; if (viewM < 1){ viewM = 12; viewY--; } renderCalendar();
+  });
+  document.getElementById("calNext").addEventListener("click", function(){
+    viewM++; if (viewM > 12){ viewM = 1; viewY++; } renderCalendar();
+  });
+
+  renderCalendar();
+  renderResult();
+
+  // ===== 时间轴视图（按时间倒序排列全部信件） =====
+  function renderTimeline(){
+    var sorted = letters.slice().sort(function(a,b){
+      return (b.y-a.y) || (b.m-a.m) || (b.d-a.d) || (b.t < a.t ? 1 : b.t > a.t ? -1 : 0);
+    });
+    var html = "";
+    sorted.forEach(function(l){
+      var ds = l.y + "." + pad(l.m) + "." + pad(l.d);
+      html +=
+        '<div class="tl-node"><div class="tl-card">' +
+          '<img class="tl-env" src="图素/信封.png" alt="">' +
+          '<div class="tl-body">' +
+            '<span class="tl-date">' + ds + ' · ' + l.t + '</span>' +
+            '<h3 class="tl-title">' + l.title + '</h3>' +
+            '<p class="tl-preview">' + l.preview + '</p>' +
+            '<span class="tl-status">已寄出</span>' +
+          '</div></div></div>';
+    });
+    document.getElementById("tlAxis").innerHTML = html;
+  }
+
+  // ===== 视图切换（日历 / 时间轴） =====
+  document.querySelectorAll(".view-tab").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var v = btn.getAttribute("data-view");
+      document.querySelectorAll(".view-tab").forEach(function(b){
+        var on = (b === btn);
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      document.getElementById("viewCalendar").hidden = (v !== "calendar");
+      document.getElementById("viewTimeline").hidden = (v !== "timeline");
+    });
+  });
+
+  renderTimeline();
+</script>
+
+</body>
+</html>

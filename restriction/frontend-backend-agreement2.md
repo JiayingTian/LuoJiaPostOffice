@@ -2,7 +2,7 @@
 
 ## 1 文档信息
 
-1. 文档版本：`1.0.0`。
+1. 文档版本：`1.1.0`。
 2. 制定日期：`2026-10-19`。
 3. 适用范围：基础功能版 `1.2` 的后端开发、前后端联调和交接验收。
 4. 目标读者：后端开发者、前端开发者和负责验收的团队成员。
@@ -11,7 +11,7 @@
 
 ## 2 本轮交付结论
 
-本轮后端只需打通以下完整流程：用户登录后浏览已公开信件，创建并继续编辑草稿，将公开信提交审核，管理员通过或退回，作者查看自己的信件状态，以及其他用户创建并查看完整回信。
+本轮后端需打通公开信、审核退回、完整回信和指定用户私密投递；私密信仅作者与指定收件人可读。
 
 本轮必须保证刷新页面后会话仍然有效、草稿不会因为内容未完成而无法保存、重复提交不会产生重复信件、失败请求不会导致前端丢失正文。
 
@@ -29,17 +29,18 @@
 8. 使用 `parentLetterId` 创建完整回信。
 9. 查询某封公开信件下已经审核通过的完整回信。
 10. 为创建信件和完整回信提供幂等保护。
+11. 搜索私密投递收件人并创建私密信件。
+12. 收件人在私人收件箱中读取收到的私密信件。
 
 ### 3.2 本轮不新增
 
 1. 定时信笺。
-2. 指定用户私人寄信。
-3. 私人信件转发。
-4. 收藏和共鸣。
-5. 简短回应。
-6. 互动通知。
-7. 用户搜索、信件搜索和随机拆信。
-8. 专题、故事和真实首页统计。
+2. 私人信件转发。
+3. 收藏和共鸣。
+4. 简短回应。
+5. 互动通知。
+6. 信件全文搜索和随机拆信。
+7. 专题、故事和真实首页统计。
 
 已实现的范围外接口可以保留，但不得影响本轮接口的稳定性，也不得成为本轮验收的前置条件。
 
@@ -139,6 +140,8 @@ GET /api/v1/auth/csrf
 | 信件详情 | `GET /letters/{letterId}` | 根据状态和身份判断可见性 |
 | 更新草稿 | `PATCH /letters/{letterId}` | 支持继续编辑和提交审核 |
 | 我的信件 | `GET /me/letters` | 返回展示状态和退回原因 |
+| 用户搜索 | `GET /users/search` | 登录后搜索私密信收件人 |
+| 私人收件箱 | `GET /me/inbox` | 只返回投递给当前用户的私密信 |
 | 完整回信列表 | `GET /letters/{letterId}/replies` | 本轮新增 |
 | 待审核列表 | `GET /admin/letters` | 仅管理员 |
 | 审核信件 | `POST /admin/letters/{letterId}/review` | 通过或退回修改 |
@@ -170,7 +173,7 @@ deleted_at IS NULL
 
 1. `saveAsDraft=true` 时，标题和正文允许为空或低于正式投递的最小长度。
 2. 草稿标题允许 `0` 至 `80` 个 Unicode 字符。
-3. 草稿正文允许 `0` 至 `1500` 个 Unicode 字符。
+3. 草稿正文允许 `0` 至 `2000` 个 Unicode 字符。
 4. 空白字符可以暂时保存在草稿中，但正式提交前必须按去除首尾空白后的内容重新校验。
 5. 草稿可以暂时缺少 `locationId`，地点始终为可选字段。
 6. 本轮只启用白色信纸，稳定 `patternId` 为 `pat_00000000000000000000000001`，资源路径为 `/pictures/material/letter-paper/white.png`。
@@ -224,10 +227,10 @@ POST /api/v1/letters
 创建时 `saveAsDraft=false`，或更新时 `submitForReview=true`，均视为正式提交。后端必须在事务中执行完整校验：
 
 1. 标题去除首尾空白后为 `2` 至 `80` 个 Unicode 字符。
-2. 正文去除首尾空白后为 `20` 至 `1500` 个 Unicode 字符。
+2. 正文去除首尾空白后为 `20` 至 `2000` 个 Unicode 字符。
 3. 正文为纯文本，不接收可执行 HTML。
-4. `recipientType` 本轮只接受 `wall`。
-5. `recipientUserId` 必须为 `null`。
+4. `recipientType=wall` 时 `visibility=public` 且 `recipientUserId=null`；进入管理员审核。
+5. `recipientType=user` 时 `visibility=private` 且 `recipientUserId` 必须是有效用户；直接投递，不进入管理员审核。
 6. `patternId` 必须指向启用或该信件历史已使用的信纸图案。
 7. `locationId` 可以为 `null`；非空时必须指向启用或历史已使用的地点。
 8. `penName` 最多 30 个 Unicode 字符。
@@ -243,6 +246,16 @@ submitted_at IS NOT NULL
 published_at IS NULL
 ```
 
+私密投递成功后必须满足：
+
+```text
+status = active
+visibility = private
+recipient_user_id IS NOT NULL
+submitted_at IS NULL
+published_at IS NULL
+```
+
 ## 12 我的信件和展示状态
 
 数据库状态继续只使用 `draft`、`active` 和 `deleted`。为方便前端展示，`GET /me/letters` 必须额外返回派生字段 `workflowState`：
@@ -253,6 +266,7 @@ published_at IS NULL
 | `pendingReview` | `status=active`、`submittedAt!=null`、`publishedAt=null` | 待审核 |
 | `published` | `status=active`、`publishedAt!=null` | 已公开 |
 | `returnedForEdit` | `status=draft`，且最近一次审核为 `returned_for_edit` | 退回修改 |
+| `private` | `status=active`、`visibility=private` | 私密已投递 |
 
 1. `workflowState` 是 API 展示字段，不得写入数据库的 `status` 列。
 2. 我的信件列表必须返回 `reviewNote`；没有退回原因时为 `null`。
@@ -273,6 +287,8 @@ status = draft
 submitted_at = NULL
 published_at = NULL
 ```
+
+`reason` 只能选择：`色情低俗`、`暴力血腥`、`仇恨歧视与骚扰`、`违法违规内容`、`垃圾信息与恶意广告`。
 
 6. 每次提交、通过和退回都必须追加 `moderation_records`，不得覆盖历史记录。
 7. 作者修改退回信件后，可以通过 `submitForReview=true` 再次提交。
@@ -318,6 +334,7 @@ GET /api/v1/letters/{letterId}/replies?page=1&pageSize=20
 7. 状态冲突、重复审核和幂等冲突返回 `409`。
 8. 后端内部错误返回 `500`，不得暴露 SQL、调用栈、文件路径或配置值。
 9. 所有响应体和 `X-Request-Id` 响应头必须提供同一个 `requestId`。
+10. 前端不得把 `requestId` 直接展示给用户；它只用于开发日志和联调排查。
 10. 后端失败不得部分提交数据库事务。
 
 ## 17 文本和显示约束
@@ -338,6 +355,7 @@ GET /api/v1/letters/{letterId}/replies?page=1&pageSize=20
 5. 管理员可以读取本轮审核队列中的公开待审核信件。
 6. 管理员身份不能由前端请求体指定，只能由后端 Session 对应的用户角色决定。
 7. 前端隐藏按钮不构成权限控制，所有权限必须由后端验证。
+8. 私密信件只允许作者和指定收件人读取，管理员不自动获得读取权；其他调用统一返回 `404`。
 
 ## 19 联调验收场景
 
@@ -371,9 +389,16 @@ GET /api/v1/letters/{letterId}/replies?page=1&pageSize=20
 3. 管理员通过后，原信的回信列表能够读取该回信。
 4. 对已有 `parentLetterId` 的回信再次回信时返回 `422`。
 
-### 19.5 边界与失败
+### 19.5 私密投递权限
 
-1. 中文、Emoji、换行、空草稿和 1500 字正文均能正确处理。
+1. 用户 A 搜索用户 B，并向 B 投递一封私密信。
+2. 该信不进入公共列表和管理员审核列表。
+3. A 可从“已寄私密”读取，B 可从私人收件箱读取。
+4. 游客、其他普通用户和管理员读取详情均返回 `404`。
+
+### 19.6 边界与失败
+
+1. 中文、Emoji、换行、空草稿和 2000 字正文均能正确处理。
 2. 标题、正文和退回原因的边界校验返回对应字段错误。
 3. 连续点击或超时重试不会产生重复信件。
 4. 登录失效、CSRF 失效和服务器错误均不会清空前端编辑区。
@@ -439,7 +464,7 @@ CSRF 恢复方案：
 
 1. 新增 `GET /auth/csrf` 及响应 Schema。
 2. 将草稿请求改为条件校验，允许 `saveAsDraft=true` 时标题和正文为空。
-3. 保持正式提交时标题 `2–80` 字、正文 `20–1500` 字的严格校验。
+3. 保持正式提交时标题 `2–80` 字、正文 `20–2000` 字的严格校验。
 4. 在我的信件响应中增加 `workflowState` 和 `reviewNote`。
 5. 为 `GET /me/letters` 增加 `workflowState` 筛选参数。
 6. 新增 `GET /letters/{letterId}/replies` 及分页响应 Schema。

@@ -36,7 +36,7 @@ from app.services.letters import (
     resolve_pattern,
     validate_page,
     validate_submission,
-    validate_wall_recipient,
+    resolve_recipient,
 )
 
 
@@ -154,17 +154,30 @@ def create_letter(
                 content=replay,
             )
 
-        validate_wall_recipient(payload.recipient_type, payload.recipient_user_id)
+        resolve_recipient(
+            database_session,
+            payload.recipient_type,
+            payload.recipient_user_id,
+            payload.visibility,
+        )
         pattern = resolve_pattern(database_session, payload.pattern_id)
         location = resolve_location(database_session, payload.location_id)
         parent = resolve_parent_letter(database_session, payload.parent_letter_id)
+        if payload.visibility == "private" and parent is not None:
+            raise_api_error(
+                422,
+                42201,
+                "私人信件不能作为公开回信",
+                {"fieldErrors": {"parentLetterId": "私人信件不能作为公开回信"}},
+            )
+        private_delivery = payload.visibility == "private"
 
         letter = Letter(
             id=new_id("let"),
             author_id=auth_context.user.id,
             parent_letter_id=parent.id if parent else None,
-            recipient_type="wall",
-            recipient_user_id=None,
+            recipient_type=payload.recipient_type,
+            recipient_user_id=payload.recipient_user_id,
             title=payload.title,
             content=payload.content,
             pen_name=payload.pen_name,
@@ -172,10 +185,12 @@ def create_letter(
             location_id=location.id if location else None,
             pattern_id=pattern.id,
             status="draft" if payload.save_as_draft else "active",
-            visibility="public",
-            allow_responses=payload.allow_responses,
-            allow_replies=payload.allow_replies,
-            submitted_at=None if payload.save_as_draft else utc_now(),
+            visibility=payload.visibility,
+            allow_responses=False if private_delivery else payload.allow_responses,
+            allow_replies=False if private_delivery else payload.allow_replies,
+            submitted_at=(
+                None if payload.save_as_draft or private_delivery else utc_now()
+            ),
             published_at=None,
         )
         if not payload.save_as_draft:
@@ -183,7 +198,7 @@ def create_letter(
 
         database_session.add(letter)
         database_session.flush()
-        if not payload.save_as_draft:
+        if not payload.save_as_draft and not private_delivery:
             add_moderation_record(
                 database_session,
                 letter,
@@ -222,6 +237,12 @@ def get_letter(
     )
     viewer = auth_context.user if auth_context else None
     is_author = viewer is not None and viewer.id == letter.author_id
+    is_recipient = (
+        viewer is not None
+        and letter.visibility == "private"
+        and letter.status == "active"
+        and viewer.id == letter.recipient_user_id
+    )
     is_review_admin = (
         viewer is not None
         and viewer.role == "admin"
@@ -229,7 +250,7 @@ def get_letter(
         and letter.submitted_at is not None
         and letter.published_at is None
     )
-    if not (is_public or is_author or is_review_admin):
+    if not (is_public or is_author or is_recipient or is_review_admin):
         raise_api_error(404, 40401, "信件不存在")
 
     return LetterResponse(
@@ -280,15 +301,29 @@ def update_letter(
                     {"fieldErrors": {"content": "正文不能为 null"}},
                 )
             letter.content = payload.content
-        if "recipient_type" in changed_fields:
-            validate_wall_recipient(
-                payload.recipient_type or "",
-                payload.recipient_user_id,
+        next_recipient_type = (
+            payload.recipient_type
+            if "recipient_type" in changed_fields
+            else letter.recipient_type
+        )
+        next_recipient_user_id = (
+            payload.recipient_user_id
+            if "recipient_user_id" in changed_fields
+            else letter.recipient_user_id
+        )
+        next_visibility = (
+            payload.visibility if "visibility" in changed_fields else letter.visibility
+        )
+        if {"recipient_type", "recipient_user_id", "visibility"} & changed_fields:
+            resolve_recipient(
+                database_session,
+                next_recipient_type or "",
+                next_recipient_user_id,
+                next_visibility or "",
             )
-            letter.recipient_type = "wall"
-            letter.recipient_user_id = None
-        if "recipient_user_id" in changed_fields and payload.recipient_user_id is not None:
-            validate_wall_recipient(letter.recipient_type, payload.recipient_user_id)
+            letter.recipient_type = next_recipient_type
+            letter.recipient_user_id = next_recipient_user_id
+            letter.visibility = next_visibility
         if "pen_name" in changed_fields:
             letter.pen_name = payload.pen_name
         if "is_anonymous" in changed_fields:
@@ -325,29 +360,44 @@ def update_letter(
                 raise_api_error(422, 42201, "allowReplies 不能为 null")
             letter.allow_replies = payload.allow_replies
 
+        if letter.visibility == "private":
+            letter.allow_responses = False
+            letter.allow_replies = False
+
         if changed_fields:
             letter.version += 1
             letter.updated_at = utc_now()
-            if was_published:
+            if was_published or (
+                letter.status == "active" and letter.visibility == "private"
+            ):
                 letter.status = "draft"
                 letter.submitted_at = None
                 letter.published_at = None
 
         if payload.submit_for_review:
+            resolve_recipient(
+                database_session,
+                letter.recipient_type,
+                letter.recipient_user_id,
+                letter.visibility,
+            )
             resolve_parent_letter(database_session, letter.parent_letter_id)
             validate_submission(letter)
             letter.status = "active"
-            letter.submitted_at = utc_now()
+            letter.submitted_at = (
+                None if letter.visibility == "private" else utc_now()
+            )
             letter.published_at = None
             if not changed_fields:
                 letter.version += 1
                 letter.updated_at = utc_now()
-            add_moderation_record(
-                database_session,
-                letter,
-                auth_context.user.id,
-                "submitted",
-            )
+            if letter.visibility == "public":
+                add_moderation_record(
+                    database_session,
+                    letter,
+                    auth_context.user.id,
+                    "submitted",
+                )
 
         database_session.flush()
         response = LetterResponse(

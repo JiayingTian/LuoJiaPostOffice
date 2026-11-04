@@ -218,6 +218,25 @@ def run_flow(base_url: str) -> None:
     status, queue = admin.request("GET", "/admin/letters")
     assert status == 200, queue
     assert letter_id in {item["id"] for item in queue["data"]["items"]}, queue
+    status, rejected = admin.request(
+        "POST",
+        f"/admin/letters/{letter_id}/review",
+        {"action": "returnForEdit", "reason": "垃圾信息与恶意广告"},
+        {"X-CSRF-Token": csrf_admin},
+    )
+    assert status == 200 and rejected["data"]["status"] == "draft", rejected
+    assert rejected["data"]["reviewNote"] == "垃圾信息与恶意广告", rejected
+
+    status, returned = user_a.request("GET", f"/letters/{letter_id}")
+    assert status == 200 and returned["data"]["reviewNote"] == "垃圾信息与恶意广告", returned
+    status, submitted_again = user_a.request(
+        "PATCH",
+        f"/letters/{letter_id}",
+        {"submitForReview": True},
+        {"X-CSRF-Token": csrf_a},
+    )
+    assert status == 200 and submitted_again["data"]["submittedAt"], submitted_again
+
     status, approved = admin.request(
         "POST",
         f"/admin/letters/{letter_id}/review",
@@ -228,6 +247,41 @@ def run_flow(base_url: str) -> None:
 
     status, public_after = anonymous.request("GET", f"/letters/{letter_id}")
     assert status == 200, public_after
+
+    status, users = user_a.request("GET", "/users/search?keyword=smoke_user_b")
+    assert status == 200 and users["data"]["total"] == 1, users
+    recipient_id = users["data"]["items"][0]["id"]
+    status, private_letter = user_a.request(
+        "POST",
+        "/letters",
+        {
+            "title": "只写给你的信",
+            "content": "这是一封只允许作者和指定收件人读取的私人测试信件。",
+            "recipientType": "user",
+            "recipientUserId": recipient_id,
+            "visibility": "private",
+            "isAnonymous": False,
+            "patternId": pattern_id,
+            "allowResponses": True,
+            "allowReplies": True,
+            "saveAsDraft": False,
+        },
+        {
+            "X-CSRF-Token": csrf_a,
+            "Idempotency-Key": "smoke-private-00001",
+        },
+    )
+    assert status == 201 and private_letter["data"]["visibility"] == "private", private_letter
+    assert private_letter["data"]["allowReplies"] is False, private_letter
+    private_id = private_letter["data"]["id"]
+    status, _ = anonymous.request("GET", f"/letters/{private_id}")
+    assert status == 404
+    status, _ = admin.request("GET", f"/letters/{private_id}")
+    assert status == 404
+    status, received = user_b.request("GET", f"/letters/{private_id}")
+    assert status == 200 and received["data"]["id"] == private_id, received
+    status, inbox = user_b.request("GET", "/me/inbox")
+    assert status == 200 and private_id in {item["id"] for item in inbox["data"]["items"]}, inbox
 
     status, reply = user_b.request(
         "POST",

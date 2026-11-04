@@ -115,17 +115,37 @@ def resolve_parent_letter(
     return parent
 
 
-def validate_wall_recipient(
+def resolve_recipient(
+    database_session: Session,
     recipient_type: str,
     recipient_user_id: str | None,
-) -> None:
+    visibility: str,
+) -> User | None:
     field_errors: dict[str, str] = {}
-    if recipient_type != "wall":
-        field_errors["recipientType"] = "本轮只支持投递信墙"
-    if recipient_user_id is not None:
-        field_errors["recipientUserId"] = "投递信墙时必须为空"
+    recipient = None
+    if recipient_type == "wall":
+        if recipient_user_id is not None:
+            field_errors["recipientUserId"] = "投递信墙时必须为空"
+        if visibility != "public":
+            field_errors["visibility"] = "投递信墙的信件必须公开"
+    elif recipient_type == "user":
+        if not recipient_user_id:
+            field_errors["recipientUserId"] = "私人投递必须选择收件人"
+        if visibility != "private":
+            field_errors["visibility"] = "投递给用户的信件必须设为私密"
+        if recipient_user_id:
+            recipient = database_session.get(User, recipient_user_id)
+            if (
+                recipient is None
+                or not recipient.is_active
+                or recipient.deleted_at is not None
+            ):
+                field_errors["recipientUserId"] = "收件人不存在或不可用"
+    else:
+        field_errors["recipientType"] = "收信目标类型无效"
     if field_errors:
         raise_api_error(422, 42201, "收信目标无效", {"fieldErrors": field_errors})
+    return recipient
 
 
 def validate_submission(letter: Letter) -> None:
@@ -135,12 +155,22 @@ def validate_submission(letter: Letter) -> None:
 
     if len(title) < 2 or len(title) > 80:
         field_errors["title"] = "标题必须为 2 至 80 个字符"
-    if len(content) < 20 or len(content) > 1500:
-        field_errors["content"] = "正文必须为 20 至 1500 个字符"
-    if letter.recipient_type != "wall":
-        field_errors["recipientType"] = "本轮只支持投递信墙"
-    if letter.recipient_user_id is not None:
-        field_errors["recipientUserId"] = "投递信墙时必须为空"
+    if len(content) < 20 or len(content) > 2000:
+        field_errors["content"] = "正文必须为 20 至 2000 个字符"
+    if letter.recipient_type == "wall":
+        if letter.recipient_user_id is not None:
+            field_errors["recipientUserId"] = "投递信墙时必须为空"
+        if letter.visibility != "public":
+            field_errors["visibility"] = "投递信墙的信件必须公开"
+    elif letter.recipient_type == "user":
+        if not letter.recipient_user_id:
+            field_errors["recipientUserId"] = "私人投递必须选择收件人"
+        if letter.visibility != "private":
+            field_errors["visibility"] = "投递给用户的信件必须设为私密"
+        if letter.parent_letter_id is not None:
+            field_errors["parentLetterId"] = "私人信件不能作为公开回信"
+    else:
+        field_errors["recipientType"] = "收信目标类型无效"
     if not letter.pattern_id:
         field_errors["patternId"] = "请选择信纸图案"
 
@@ -202,6 +232,8 @@ def get_review_note(database_session: Session, letter_id: str) -> str | None:
 
 
 def get_workflow_state(database_session: Session, letter: Letter) -> str:
+    if letter.status == "active" and letter.visibility == "private":
+        return "private"
     if letter.status == "active" and letter.published_at is not None:
         return "published"
     if (
@@ -307,7 +339,9 @@ def build_letter_read(
         review_note = get_review_note(database_session, letter.id)
 
     can_edit = is_author and letter.status != "deleted" and (
-        letter.status == "draft" or letter.published_at is not None
+        letter.status == "draft"
+        or letter.published_at is not None
+        or (letter.status == "active" and letter.visibility == "private")
     )
 
     return LetterRead(
@@ -338,4 +372,6 @@ def build_my_letter_summary(
         **summary.model_dump(),
         workflow_state=workflow_state,
         review_note=review_note,
+        created_at=letter.created_at,
+        updated_at=letter.updated_at,
     )

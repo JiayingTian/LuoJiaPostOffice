@@ -22,7 +22,7 @@ const server = http.createServer(async (req,res) => {
     upstream.setTimeout(15000, () => upstream.destroy(new Error('timeout')));
     upstream.on('error', () => {
       if (!res.headersSent) res.writeHead(502, { 'Content-Type':'application/json; charset=utf-8' });
-      if (!res.writableEnded) res.end(JSON.stringify({code:50201,message:'本地后端未连接',data:null,requestId:'local-dev-proxy'}));
+      if (!res.writableEnded) res.end(JSON.stringify({code:50201,message:'本地后端未连接',data:null}));
     });
     req.pipe(upstream); return;
   }

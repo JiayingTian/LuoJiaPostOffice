@@ -10,8 +10,8 @@
 </head>
 <body>
   <header class="header">
-    <a class="brand" href="../index.html"><span class="brand-icon" aria-hidden="true">珞</span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
-    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">公共来信</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
+    <a class="brand" href="../index.html"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 80 64" focusable="false"><g fill="currentColor"><path d="M8 57h64v4H8zM14 40h52v16H14zM26 25h28v31H26zM24 22c7-2 11-7 14-13V6h4v3c3 6 7 11 14 13l5 1-3 4H22l-3-4zM5 38c8-1 13-4 18-9h34c5 5 10 8 18 9l-4 4H9z"/><path d="M35 3h10v3H35z"/></g><g fill="#faf6ee"><path d="M31 29h4v8h-4zM38 29h4v8h-4zM45 29h4v8h-4zM19 45h4v8h-4zM27 45h4v8h-4zM49 45h4v8h-4zM57 45h4v8h-4zM36 45h8v12h-8z"/></g></svg></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
+    <nav aria-label="主导航"><a href="#/mailbox" data-nav="mailbox">公共来信</a><a href="#/calendar" data-nav="calendar">时光信笺</a><a href="#/inbox" data-nav="inbox">私人收件箱</a><a href="#/mine" data-nav="mine">我的信件</a><a href="#/write" data-nav="write" data-new-letter>写一封信</a><a href="#/admin" data-nav="admin" hidden>审核</a></nav>
     <div class="account"><span id="user-name"></span><button id="account-button" class="button primary" type="button">登录</button></div>
   </header>
   <div id="mode-note" class="mode-note" role="note"></div>
@@ -23,6 +23,7 @@
     <p class="eyebrow">LUOJIA POST OFFICE</p><h2 id="auth-title">回到你的信箱</h2>
     <div id="auth-body"></div>
   </dialog>
+  <dialog id="choice-dialog" aria-labelledby="choice-title"></dialog>
   <script type="module" src="app.js"></script>
 </body>
 </html>

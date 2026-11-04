@@ -19,7 +19,7 @@
 7. 首版不支持定时寄信。
 8. 收信目标只有信墙 `wall` 或某个用户 `user`。
 9. 信墙信件为公开信件，提交后需要管理员审核。
-10. 用户定向信件为私人信件，只允许发送者、原接收者和有效转发接收者读取，不进入审核。
+10. 用户定向信件为私人信件，只允许发送者和指定接收者读取，不进入审核。
 11. 支持笔名和匿名；匿名不移除数据库中的真实用户关系。
 12. 地点和信纸图案只能使用后台维护的固定选项；初版不提供标签功能。
 13. 互动包含共鸣、收藏、简短回应和完整回信。
@@ -36,7 +36,7 @@
 24. MVP 搜索使用 MySQL `LIKE`，后续再评估 FULLTEXT。
 25. 普通用户可以自行注册；自行注册的账户角色固定为 `user`。
 26. 用户名允许修改，但必须由后端执行唯一性检查和规范化。
-27. 私人信件允许转发；转发通过独立授权关系实现，不复制私人信件正文。
+27. 初版私人信件不允许转发给第三人。
 28. 修改已公开信件时，旧版本立即停止展示；修改后的版本重新审核通过后再公开。
 
 ## 3. 状态模型
@@ -256,7 +256,7 @@ WHERE id = :id AND version = :expected_version;
 | `recipient_type` | `VARCHAR(16)` | `wall` 或 `user` |
 | `recipient_user_id` | `CHAR(30) NULL` | 收信用户；信墙信件为空 |
 | `title` | `VARCHAR(80)` | 2–80 个 Unicode 字符 |
-| `content` | `TEXT` | 20–1500 个 Unicode 字符，纯文本 |
+| `content` | `TEXT` | 20–2000 个 Unicode 字符，纯文本 |
 | `pen_name` | `VARCHAR(30) NULL` | 可选笔名 |
 | `is_anonymous` | `BOOLEAN` | 是否匿名展示 |
 | `location_id` | `CHAR(30) NULL` | 外键到 `locations.id` |
@@ -274,7 +274,7 @@ WHERE id = :id AND version = :expected_version;
 
 1. `recipient_type=wall` 时，`recipient_user_id` 必须为空，`visibility=public`。
 2. `recipient_type=user` 时，`recipient_user_id` 必填，`visibility=private`。
-3. 用户定向信件只有作者、原接收者和有效转发接收者可以读取。
+3. 用户定向信件只有作者和指定接收者可以读取。
 4. 草稿只有作者可以读取和编辑。
 5. 公开列表只查询已经填写 `published_at` 的有效记录。
 6. `parent_letter_id` 不为空时，该原信自身的 `parent_letter_id` 必须为空。
@@ -284,23 +284,9 @@ WHERE id = :id AND version = :expected_version;
 10. 修改已公开信件时，后端立即清空 `published_at`；旧内容不再对外展示。
 11. 作者选择重新提交时填写新的 `submitted_at`，审核通过后再填写 `published_at`。
 
-## 10. `letter_forwards` 私人信件转发授权表
+## 10. 私密信件转发
 
-| 字段 | 类型 | 约束与说明 |
-|---|---|---|
-| `id` | `CHAR(30)` | 主键，前缀 `fwd_` |
-| `letter_id` | `CHAR(30)` | 被转发的私人信件 |
-| `forwarded_by_user_id` | `CHAR(30)` | 执行转发的用户 |
-| `recipient_user_id` | `CHAR(30)` | 获得读取权限的用户 |
-| `created_at` | `DATETIME(6)` | 转发时间 |
-| `deleted_at` | `DATETIME(6) NULL` | 撤销或失效时间 |
-
-1. 转发只创建读取授权，不复制标题、正文、作者或收件人数据。
-2. 只有原发送者、原接收者或仍持有有效转发授权的用户可以继续转发。
-3. 只允许转发 `status=active`、`visibility=private` 的信件。
-4. 同一信件对同一用户最多存在一条有效授权。
-5. 原信软删除后，全部转发授权立即失效；15 天清理期内也不能继续读取。
-6. 管理员不会因角色而自动获得转发或读取权限。
+初版不建立转发授权。私密信件的读取者固定为作者和 `recipient_user_id` 指定的收件人。
 
 ## 11. `resonances` 共鸣表
 
@@ -360,7 +346,7 @@ WHERE id = :id AND version = :expected_version;
 | `target_id` | `CHAR(30)` | 被审核资源 ID |
 | `actor_user_id` | `CHAR(30)` | 提交者或管理员 |
 | `action` | `VARCHAR(32)` | `submitted`、`approved`、`returned_for_edit`、`deleted` |
-| `reason` | `VARCHAR(300) NULL` | 退回或删除原因 |
+| `reason` | `VARCHAR(300) NULL` | 退回或删除原因；应用层只接受五个预设标签 |
 | `target_version` | `INT UNSIGNED` | 审核时资源版本 |
 | `created_at` | `DATETIME(6)` | 操作时间 |
 
@@ -369,6 +355,7 @@ WHERE id = :id AND version = :expected_version;
 3. 审核记录只追加，不修改历史记录。
 4. 审核查询默认排除私人信件。
 5. 管理员不能通过审核接口读取私人信件正文。
+6. 退回原因只能为：`色情低俗`、`暴力血腥`、`仇恨歧视与骚扰`、`违法违规内容`、`垃圾信息与恶意广告`。
 
 ## 15. `notifications` 站内通知表
 
@@ -429,8 +416,8 @@ private_letter_forwarded
 | 云端保存草稿 | 不允许 | 允许自己的 | 允许自己的 |
 | 向信墙提交公开信件 | 不允许 | 允许 | 允许 |
 | 向某个用户发送私人信件 | 不允许 | 允许 | 允许 |
-| 转发私人信件 | 不允许 | 仅自己有读取权时 | 仅自己有读取权时 |
-| 读取私人信件 | 不允许 | 发送者、接收者或有效转发接收者 | 仅自己拥有上述关系时 |
+| 转发私人信件 | 不允许 | 不允许 | 不允许 |
+| 读取私人信件 | 不允许 | 发送者或指定接收者 | 仅自己是发送者或指定接收者时 |
 | 编辑草稿 | 不允许 | 仅自己的 | 仅自己的 |
 | 修改已公开信件 | 不允许 | 仅自己的，重新审核 | 仅自己的，重新审核 |
 | 共鸣和收藏 | 不允许 | 允许 | 允许 |
@@ -475,7 +462,7 @@ private_letter_forwarded
 5. 通过 `recipientType=wall` 投递信墙。
 6. 通过 `recipientType=user` 和有效 `recipientUserId` 投递某个用户。
 7. 编辑自己的草稿和允许编辑的自有内容。
-8. 读取自己发送、接收或通过有效转发授权获得的私人信件。
+8. 读取自己发送或作为指定收件人收到的私人信件。
 9. 在后端返回有读取权时，将私人信件转发给有效用户。
 10. 对已公开信件共鸣、收藏、简短回应或完整回信。
 11. 读取自己的通知和内容状态。
@@ -505,7 +492,7 @@ private_letter_forwarded
 
 1. 已确认：开放普通用户自行注册。
 2. 已确认：用户名允许后续修改。
-3. 已确认：私人信件允许转发，使用独立授权关系且不复制正文。
+3. 已确认：初版私人信件不允许转发，读取者仅限作者和指定收件人。
 4. 已确认：公开信件修改后旧版本立即停止展示。
 5. 已确认：软删除数据保留 15 天。
 6. 已确认：初版取消标签功能，不建立 `tags` 或 `letter_tags` 表。
