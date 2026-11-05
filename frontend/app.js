@@ -32,9 +32,14 @@ function toast(message) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => box.classList.remove('visible'), 4200);
 }
 function updateAccount() {
-  document.querySelector('#user-name').textContent = service.user?.displayName || '';
-  document.querySelector('#account-button').textContent = service.user ? '退出登录' : '登录';
-  document.querySelector('#account-button').hidden = false;
+  const userMenu = document.querySelector('#account-menu');
+  const userTrigger = document.querySelector('#user-name');
+  userTrigger.textContent = service.user?.displayName || '';
+  userTrigger.setAttribute('aria-expanded', 'false');
+  userMenu.classList.remove('open');
+  userMenu.hidden = !service.user;
+  document.querySelector('#account-button').textContent = '登录';
+  document.querySelector('#account-button').hidden = Boolean(service.user);
   document.querySelector('[data-nav=admin]').hidden = service.user?.role !== 'admin';
 }
 function navigate(hash) { if (hash === location.hash) render(); else location.hash = hash; }
@@ -70,13 +75,15 @@ async function metadata() {
   return state.metadata;
 }
 function titleBlock(title, intro, action = '') {
-  return `<div class="breadcrumbs"><a href="../index.html">首页 / 信箱</a><a href="../index.html">返回首页 ↗</a></div><div class="page-heading"><div><p class="eyebrow">LETTERS FROM LUOJIA</p><h1>${title}</h1><p class="intro">${intro}</p></div>${action}</div>`;
+  return `<div class="breadcrumbs"><a href="../index.html">首页 / 信箱</a></div><div class="page-heading"><div><p class="eyebrow">LETTERS FROM LUOJIA</p><h1>${title}</h1><p class="intro">${intro}</p></div>${action}</div>`;
 }
-function card(letter, mine) {
+function card(letter, mine, index = 0) {
+  const frame = index % 3 + 1;
   return `<button class="envelope ${matchMedia('(hover: none)').matches && state.selected === letter.id ? 'revealed' : ''}" type="button" data-letter="${e(letter.id)}" aria-label="${e(letter.title || '未命名草稿')}，按 Enter 阅读全文" aria-describedby="summary-${e(letter.id)}">
+    <img class="envelope-frame frame-${frame}" src="assets/frame${frame}.png" alt="" aria-hidden="true">
     ${mine || letter.visibility === 'private' ? `<span class="badge">${e(statusLabel(letter))}</span>` : ''}
     <span class="envelope-title">${e(letter.title || '未命名草稿')}</span><span class="envelope-excerpt" id="summary-${e(letter.id)}">${e(letter.excerpt || '这封信还在慢慢写。')}</span>
-    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(letter.publishedAt ? date(letter.publishedAt) : letter.visibility === 'private' ? '私密投递' : '尚未公开')}</span><span class="stamp" aria-hidden="true">珞</span>
+    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(letter.publishedAt ? date(letter.publishedAt) : letter.visibility === 'private' ? '私密投递' : '尚未公开')}</span><span class="envelope-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="stamp" aria-hidden="true">珞</span>
   </button>`;
 }
 async function mailbox(params, mine, token) {
@@ -92,7 +99,7 @@ async function mailbox(params, mine, token) {
   const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['pendingReview','待审核'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${workflowState === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
   app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '<a class="button primary" href="#/write">写一封信</a>') + tabs +
     `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
-    (result.items.length ? `<div class="letter-grid">${result.items.map(item => card(item, mine)).join('')}</div>` : empty(mine ? '这里还没有信' : '信箱暂时安静', mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
+    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(mine ? '这里还没有信' : '信箱暂时安静', mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
   state.list = location.hash || '#/mailbox';
   requestAnimationFrame(() => window.scrollTo(0, state.positions.get(state.list) || 0));
@@ -106,7 +113,7 @@ async function inbox(params, token) {
   const paging = value => `#/inbox?page=${value}`;
   app.innerHTML = titleBlock('私人收件箱', '这里的信只有寄信人和你可以看到。', '<a class="button primary" href="#/write">写一封信</a>') +
     `<div class="section-label"><span>写给我的信</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
-    (result.items.length ? `<div class="letter-grid">${result.items.map(item => card(item, false)).join('')}</div>` : empty('还没有私人来信', '有人写给你的信，会出现在这里。')) +
+    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, false, index)).join('')}</div>` : empty('还没有私人来信', '有人写给你的信，会出现在这里。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
   state.list = location.hash || '#/inbox';
 }
@@ -124,15 +131,30 @@ async function archiveLetters(token) {
   }
   throw new Error('信件数量较多，暂时无法完整生成时光信笺。');
 }
-function archiveCard(entry) {
+function archiveCard(entry, index = 0) {
   const { letter, parts } = entry;
   const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
-  return `<a class="time-letter" href="#/letter/${encodeURIComponent(letter.id)}">
-    <span class="time-letter-date">${dateTime}</span>
-    <h3>${e(letter.title || '未命名信件')}</h3>
-    <p>${e(letter.excerpt || '这封信没有留下摘要。')}</p>
-    <span class="badge">${e(statusLabel(letter))}</span>
-  </a>`;
+  return `<a class="time-letter calendar-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="calendar-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : '<img class="calendar-card-flower" src="assets/art-3.png" alt="" aria-hidden="true">'}<h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="calendar-letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span><span>${dateTime}</span></span><span class="badge">${e(statusLabel(letter))}</span><span class="calendar-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="calendar-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a>`;
+}
+function timelineCard(entry, index) {
+  const { letter, parts } = entry;
+  const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
+  return `<div class="timeline-entry"><img class="timeline-seal" src="assets/wax-sealed.png" alt="" aria-hidden="true"><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="timeline-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : ''}<span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="badge">${e(statusLabel(letter))}</span><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a></div>`;
+}
+function timelineArchive(entries) {
+  const groups = [];
+  for (const entry of entries) {
+    const { year, month, day } = entry.parts;
+    const key = `${year}-${month}-${day}`;
+    let group = groups.at(-1);
+    if (!group || group.key !== key) {
+      group = { key, year, month, day, items: [] };
+      groups.push(group);
+    }
+    group.items.push(entry);
+  }
+  let cardIndex = 0;
+  return `<div class="timeline-shell"><img class="timeline-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><div class="timeline-list">${groups.map(group => `<section class="timeline-day"><h2 class="timeline-day-title"><span>${group.year}年${group.month}月${group.day}日</span><small>${group.items.length} 封来信</small></h2><div class="timeline-day-items">${group.items.map(entry => timelineCard(entry, cardIndex++)).join('')}</div></section>`).join('')}</div></div>`;
 }
 function calendarUrl({ year, month, day, view = 'calendar' }) {
   const query = new URLSearchParams({ view, year: String(year), month: String(month) });
@@ -179,7 +201,7 @@ async function timeLetters(params, token) {
   const previous = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
   const view = params.get('view') === 'timeline' ? 'timeline' : 'calendar';
-  const calendarPanel = `<div class="calendar-layout">
+  const calendarPanel = `<div class="calendar-shell"><img class="calendar-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><img class="calendar-campus" src="assets/art-22.png" alt="" aria-hidden="true"><div class="calendar-layout">
     <section class="calendar-picker" aria-label="按日期查找信件">
       <div class="calendar-bar"><a href="${calendarUrl(previous)}" aria-label="上一个月">‹ 上月</a><h2>${year} 年 ${month} 月</h2><a href="${calendarUrl(next)}" aria-label="下一个月">下月 ›</a></div>
       <div class="calendar-week" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
@@ -189,10 +211,9 @@ async function timeLetters(params, token) {
     <section class="calendar-results" aria-live="polite"><h2>${year}.${String(month).padStart(2, '0')}.${String(selectedDay).padStart(2, '0')} · ${selectedEntries.length} 封</h2>
       ${selectedEntries.length ? `<div class="time-letter-list">${selectedEntries.map(archiveCard).join('')}</div>` : '<p class="calendar-empty">这一天还没有留下信笺</p>'}
     </section>
-  </div>`;
-  const timelinePanel = `<div class="timeline-list">${entries.map(archiveCard).join('')}</div>`;
+  </div></div>`;
   app.innerHTML = titleBlock('时光信笺', '翻开日历，挑一个日子，找回那时寄出的信。', '<a class="button primary" href="#/write">写一封信</a>') +
-    `<section class="archive-card"><div class="archive-tabs" role="tablist"><a role="tab" aria-selected="${view === 'calendar'}" class="${view === 'calendar' ? 'active' : ''}" href="${calendarUrl({ year, month, day: selectedDay })}">日历</a><a role="tab" aria-selected="${view === 'timeline'}" class="${view === 'timeline' ? 'active' : ''}" href="${calendarUrl({ year, month, day: selectedDay, view: 'timeline' })}">时间轴</a></div>${view === 'calendar' ? calendarPanel : timelinePanel}</section>`;
+    `<section class="archive-card ${view === 'timeline' ? 'timeline-archive' : 'calendar-archive'}"><div class="archive-tabs" role="tablist"><a role="tab" aria-selected="${view === 'calendar'}" class="${view === 'calendar' ? 'active' : ''}" href="${calendarUrl({ year, month, day: selectedDay })}">日历</a><a role="tab" aria-selected="${view === 'timeline'}" class="${view === 'timeline' ? 'active' : ''}" href="${calendarUrl({ year, month, day: selectedDay, view: 'timeline' })}">时间轴</a></div>${view === 'calendar' ? calendarPanel : timelineArchive(entries)}</section>`;
 }
 function paper(letter, preview = false) {
   return `<article class="paper"><p class="eyebrow">A LETTER FOR YOU</p>${letter.parentLetterId ? `<p class="parent-note">回信${letter.parentTitle ? ` · ${e(letter.parentTitle)}` : ''}${!preview ? `　<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信</a>` : ''}</p>` : ''}
@@ -218,7 +239,7 @@ async function detail(id, token, params) {
       const result = await service.replies(id, { page, pageSize: config.pageSize });
       if (token !== state.render) return;
       const href = p => `#/letter/${encodeURIComponent(id)}?replyPage=${p}`;
-      app.querySelector('#reply-list').innerHTML = (result.items.length ? `<div class="letter-grid">${result.items.map(item => card(item, false)).join('')}</div>` : '<p class="help">还没有公开的回信。</p>') +
+      app.querySelector('#reply-list').innerHTML = (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, false, index)).join('')}</div>` : '<p class="help">还没有公开的回信。</p>') +
         `<nav class="pagination">${page > 1 ? `<a class="button" href="${href(page-1)}">上一页回信</a>` : ''}${result.hasMore ? `<a class="button" href="${href(page+1)}">下一页回信</a>` : ''}</nav>`;
     } catch (error) {
       if (token === state.render) app.querySelector('#reply-list').innerHTML = `<p class="form-error">${e(errorText(error))}</p>${button('重试','retry')}`;
@@ -234,7 +255,7 @@ async function reviewQueue(params, token) {
   if (token !== state.render) return;
   state.list = location.hash;
   app.innerHTML = titleBlock('待审核信件','审核通过后，其他人才能读到这封信。') +
-    (result.items.length ? `<div class="letter-grid">${result.items.map(item => card(item,true)).join('')}</div>` : empty('暂时没有待审核信件','可以稍后再来看看。')) +
+    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, true, index)).join('')}</div>` : empty('暂时没有待审核信件','可以稍后再来看看。')) +
     `<nav class="pagination">${page > 1 ? `<a class="button" href="#/admin?page=${page-1}">上一页</a>` : ''}${result.hasMore ? `<a class="button" href="#/admin?page=${page+1}">下一页</a>` : ''}</nav>`;
 }
 async function reviewLetter(action) {
@@ -456,9 +477,11 @@ dialog.addEventListener('submit', event => {
   authenticate(() => state.register ? service.register({ username: data.account.toLowerCase(), password: data.password, displayName: data.displayName }) : service.login({ account: data.account.toLowerCase(), password: data.password }));
 });
 document.querySelector('#account-button').addEventListener('click', async () => {
-  if (!service.user) { openAuth(); return; }
+  if (!service.user) openAuth();
+});
+document.querySelector('#logout-button').addEventListener('click', async () => {
   await requestLeave(async () => {
-    const control = document.querySelector('#account-button');
+    const control = document.querySelector('#logout-button');
     control.disabled = true;
     try {
       await service.logout();
@@ -467,6 +490,23 @@ document.querySelector('#account-button').addEventListener('click', async () => 
     } catch (error) { toast(errorText(error)); }
     finally { control.disabled = false; }
   });
+});
+const accountMenu = document.querySelector('#account-menu');
+const accountTrigger = document.querySelector('#user-name');
+accountTrigger.addEventListener('click', () => {
+  const open = accountMenu.classList.toggle('open');
+  accountTrigger.setAttribute('aria-expanded', String(open));
+});
+document.addEventListener('click', event => {
+  if (accountMenu.contains(event.target)) return;
+  accountMenu.classList.remove('open');
+  accountTrigger.setAttribute('aria-expanded', 'false');
+});
+accountMenu.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  accountMenu.classList.remove('open');
+  accountTrigger.setAttribute('aria-expanded', 'false');
+  accountTrigger.focus();
 });
 
 let renderedHash = location.hash || '#/mailbox';

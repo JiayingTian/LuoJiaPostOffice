@@ -49,12 +49,17 @@
     border-radius:7px; padding:9px 20px; min-height:42px; transition:transform .15s, box-shadow .18s;
   }
   .login:active{transform:translateY(1px)}
+  .about-account{display:flex; align-items:center; gap:10px; font-size:13px}
+  .about-account [hidden]{display:none!important}
+  .account-menu{position:relative}
+  .account-trigger{display:inline-flex; align-items:center; min-height:44px; padding:8px 4px; border:0; background:none; color:var(--gold); font:inherit; white-space:nowrap}
+  .account-trigger:hover{color:#7b4b18}
+  .account-dropdown{position:absolute; right:0; top:100%; z-index:60; display:grid; min-width:126px; padding:6px; background:#fffdf8; border:1px solid var(--line); border-radius:8px; box-shadow:0 10px 26px rgba(91,61,32,.14); opacity:0; visibility:hidden; transform:translateY(-4px); pointer-events:none; transition:opacity .16s,transform .16s,visibility .16s}
+  .account-dropdown a,.account-dropdown button{display:block; width:100%; padding:9px 12px; border:0; border-radius:5px; background:none; color:var(--ink); font:inherit; text-align:left; white-space:nowrap}
+  .account-dropdown a:hover,.account-dropdown button:hover,.account-dropdown a:focus-visible,.account-dropdown button:focus-visible{background:#f3e7ce; color:var(--gold)}
+  .account-menu:hover .account-dropdown,.account-menu:focus-within .account-dropdown,.account-menu.open .account-dropdown{opacity:1; visibility:visible; transform:none; pointer-events:auto}
 
   /* ---------- Page shell ---------- */
-  .back{
-    display:inline-flex; align-items:center; gap:6px; margin:22px max(28px,6vw) 0;
-    color:var(--gold); font-size:14px;
-  }
   .layout{
     display:grid; grid-template-columns:1fr;
     gap:22px; max-width:1440px; margin:16px auto 56px; padding:0 max(24px,4vw);
@@ -257,10 +262,8 @@
       <span class="brand-name">珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span>
     </a>
 <nav aria-label="主导航"><a href="../index.html">首页</a><a href="index.html#/mailbox">珞珈印记</a><a href="index.html#/calendar">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="about.html#features" aria-current="page">关于我们</a></nav>
-    <a class="login" id="about-account" href="auth.html?next=%23%2Fmine">登录</a>
+    <div class="about-account"><div class="account-menu" id="about-menu" hidden><button class="account-trigger" id="about-user" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="index.html#/mine" role="menuitem">我的</a><button id="about-logout" type="button" role="menuitem">退出登录</button></div></div><button class="login" id="about-account" type="button">登录</button></div>
   </header>
-
-  <a class="back" href="../index.html">← 返回首页</a>
 
   <!-- ===== Layout ===== -->
   <div class="layout">
@@ -483,7 +486,68 @@
   <!-- ===== Footer ===== -->
   <footer class="footer"><div class="footer-copy">在珞珈，每一封信，都是生活的注脚。<span>LUOJIA POST OFFICE</span></div><div class="campus-window" aria-hidden="true"><div class="campus-track"><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div><div class="campus-group"><img src="assets/art-21.png" alt="" width="570" height="282" decoding="async"><img src="assets/art-22.png" alt="" width="810" height="191" decoding="async"><img src="assets/art-23.png" alt="" width="665" height="270" decoding="async"><img src="assets/art-24.png" alt="" width="746" height="221" decoding="async"></div></div></div></footer>
 
-  <script src="runtime-config.js"></script><script>const account=document.querySelector('#about-account');async function syncAboutAccount(){let logged=false;if(window.__LUOJIA_CONFIG__?.mode==='api'){try{const response=await fetch(`${window.__LUOJIA_CONFIG__.apiBase}/auth/me`,{credentials:'include',headers:{Accept:'application/json'}});const result=await response.json();logged=response.ok&&result.code===0&&Boolean(result.data?.id)}catch{}}else{try{logged=sessionStorage.getItem('luojia.demo.signedIn')==='true'}catch{}}account.textContent=logged?'我的':'登录';account.href=logged?'index.html#/mine':'auth.html?next=%23%2Fmine'}window.addEventListener('pageshow',syncAboutAccount);</script><script src="assets/art-15.js" defer></script>
+  <script src="runtime-config.js"></script><script type="module">
+    import { ApiClient } from './api.js';
+    import { DemoService } from './demo.js';
+
+    const config = window.__LUOJIA_CONFIG__ || Object.freeze({ mode: 'demo', apiBase: '/api/v1' });
+    const service = config.mode === 'api' ? new ApiClient(config.apiBase) : new DemoService();
+    const userMenu = document.querySelector('#about-menu');
+    const userTrigger = document.querySelector('#about-user');
+    const accountButton = document.querySelector('#about-account');
+    const logoutButton = document.querySelector('#about-logout');
+    let user = null;
+
+    function renderAccount() {
+      userTrigger.textContent = user?.displayName || '';
+      userTrigger.setAttribute('aria-expanded', 'false');
+      userMenu.classList.remove('open');
+      userMenu.hidden = !user;
+      accountButton.textContent = '登录';
+      accountButton.hidden = Boolean(user);
+    }
+
+    async function syncAboutAccount() {
+      try { user = await service.session(); }
+      catch { user = null; }
+      renderAccount();
+    }
+
+    accountButton.addEventListener('click', () => {
+      location.href = 'auth.html?next=%23%2Fmine';
+    });
+
+    logoutButton.addEventListener('click', async () => {
+      logoutButton.disabled = true;
+      try {
+        await service.logout();
+        user = null;
+        renderAccount();
+      } catch {
+        logoutButton.textContent = '退出失败，请重试';
+      } finally {
+        logoutButton.disabled = false;
+      }
+    });
+
+    userTrigger.addEventListener('click', () => {
+      const open = userMenu.classList.toggle('open');
+      userTrigger.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', event => {
+      if (userMenu.contains(event.target)) return;
+      userMenu.classList.remove('open');
+      userTrigger.setAttribute('aria-expanded', 'false');
+    });
+    userMenu.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      userMenu.classList.remove('open');
+      userTrigger.setAttribute('aria-expanded', 'false');
+      userTrigger.focus();
+    });
+
+    window.addEventListener('pageshow', syncAboutAccount);
+  </script><script src="assets/art-15.js" defer></script>
 
 </body>
 </html>

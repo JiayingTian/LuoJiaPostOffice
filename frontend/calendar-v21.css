@@ -2,3 +2,84 @@
 @media(max-width:860px){.calendar-layout{grid-template-columns:1fr}.calendar-picker{padding:0 0 26px}.calendar-results{min-height:0;padding:26px 0 0;border-left:0;border-top:1px dashed var(--line)}}
 @media(max-width:600px){.archive-card{padding:20px 14px}.calendar-bar h2,.calendar-results h2{font-size:19px}.calendar-bar a{padding:7px;font-size:12px}.calendar-grid,.calendar-week{gap:3px}.calendar-cell{border-radius:6px}.time-letter{padding:18px 72px 18px 16px}.time-letter:after{right:17px;width:36px;height:43px}.timeline-list{padding-left:25px}.timeline-list .time-letter:before{left:-23px}}
 .review-note{margin:0;padding:16px 22px;background:#fff5df;border:1px solid #e5d8b9;color:#8a452f}.review-panel select{width:100%;padding:12px;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--ink);font:inherit}
+
+/* 日历：与时间轴共用复古纸张、邮票和校园装饰语言。 */
+.calendar-archive{position:relative;overflow:hidden;padding:22px 36px 42px;background:linear-gradient(rgba(255,249,235,.88),rgba(249,235,207,.86)),url('assets/frame3.png') center/100% 100% no-repeat;border-color:#d6b77d;box-shadow:0 18px 42px #76502221}
+.calendar-archive .archive-tabs,.timeline-archive .archive-tabs{width:max-content;margin:0 auto 26px;padding:5px;border:1px solid #dfc99f;border-radius:999px;background:#fff8e9dd;box-shadow:0 6px 16px #70491d1c}
+.calendar-archive .archive-tabs a,.timeline-archive .archive-tabs a{min-width:116px;border:0;padding:9px 24px}
+.calendar-shell{position:relative;max-width:1180px;margin:auto;padding:10px 10px 6px}
+.calendar-blossom{position:absolute;z-index:1;left:-82px;top:-54px;width:270px;max-width:none;opacity:.9;pointer-events:none}
+.calendar-campus{position:absolute;z-index:1;left:18%;bottom:-28px;width:360px;max-width:55%;opacity:.22;filter:sepia(1);pointer-events:none}
+.calendar-archive .calendar-layout{position:relative;z-index:2;grid-template-columns:minmax(330px,46%) minmax(0,54%);gap:0}
+.calendar-archive .calendar-picker{padding:28px 42px 28px 20px}
+.calendar-archive .calendar-results{position:relative;min-height:430px;padding:24px 16px 24px 50px;border:0}
+.calendar-archive .calendar-results:before{content:'';position:absolute;left:-7px;top:4px;bottom:4px;width:18px;background:url('assets/golden-line.png') center/auto 100% no-repeat}
+.calendar-archive .calendar-bar{margin-bottom:24px}
+.calendar-archive .calendar-bar h2{font-size:28px;color:#5a3c24;letter-spacing:.08em}
+.calendar-archive .calendar-bar h2:before,.calendar-archive .calendar-bar h2:after{content:'⌁';margin:0 13px;color:#bd8a3f;font-size:22px;letter-spacing:-5px}
+.calendar-archive .calendar-bar a{padding:8px 15px;border-color:#d8b77e;border-radius:999px;background:#fff8e9cc;box-shadow:0 4px 11px #6e48141a}
+.calendar-archive .calendar-week{margin-bottom:6px;padding-bottom:7px;border-bottom:1px solid #dcc69f;color:#6e543b;font-size:14px}
+.calendar-archive .calendar-week span:first-child,.calendar-archive .calendar-week span:last-child{color:#b2673d}
+.calendar-archive .calendar-grid{gap:4px 7px}
+.calendar-archive .calendar-cell{min-height:49px;aspect-ratio:1;border:0;border-radius:50%;background:transparent;color:#4e3b2d;font:18px var(--serif)}
+.calendar-archive .calendar-cell:nth-child(7n+1),.calendar-archive .calendar-cell:nth-child(7n){color:#a55c3e}
+.calendar-archive .calendar-cell:hover{border:0;background:#ead5ad80;box-shadow:none}
+.calendar-archive .calendar-cell.has-letters:after{bottom:4px;width:6px;height:6px;background:#c79031}
+.calendar-archive .calendar-cell.today{box-shadow:inset 0 0 0 1px #b4823e}
+.calendar-archive .calendar-cell.selected{background:transparent url('assets/wax-sealed.png') center/58px 58px no-repeat;color:#fff;font-size:21px;font-weight:700;text-shadow:0 1px 2px #6f321b;box-shadow:none}
+.calendar-archive .calendar-cell.selected:after{content:'•••';bottom:2px;width:auto;height:auto;background:none;color:#fff;font:9px/1 var(--sans);letter-spacing:1px}
+.calendar-archive .calendar-hint{position:relative;z-index:2;color:#80674e}
+.calendar-archive .calendar-results>h2{margin:0 0 18px;color:#5a3c24;font-size:25px;letter-spacing:.05em}
+.calendar-archive .calendar-results>h2:after{content:'⌁⌁';margin-left:15px;color:#bd8a3f;font-size:22px;letter-spacing:-7px}
+.calendar-archive .time-letter-list{gap:18px;margin-top:0}
+.calendar-archive .calendar-letter{min-height:166px;padding:24px 178px 21px 31px;border:1px solid #ddbf89;border-radius:14px;background:linear-gradient(135deg,rgba(255,251,240,.98),rgba(248,228,190,.95));box-shadow:0 9px 20px #714a2322;overflow:hidden;isolation:isolate}
+.calendar-archive .calendar-letter:after{display:none}
+.calendar-archive .calendar-letter.airmail{border:0;background:#fff4dc}
+.calendar-card-frame{position:absolute;z-index:-1;left:-3%;top:-50%;width:106%;height:200%;max-width:none;pointer-events:none}
+.calendar-card-flower{position:absolute;z-index:0;left:-53px;top:-48px;width:190px;max-width:none;opacity:.62;pointer-events:none}
+.calendar-archive .calendar-letter h3,.calendar-archive .calendar-letter p,.calendar-letter-meta,.calendar-archive .calendar-letter .badge{position:relative;z-index:2}
+.calendar-archive .calendar-letter h3{margin:4px 0 8px;font-size:24px;line-height:1.4;color:#52341f}
+.calendar-archive .calendar-letter p{margin:0 0 18px;color:#624b39;font-size:13px;line-height:1.7;-webkit-line-clamp:2}
+.calendar-letter-meta{display:flex;flex-wrap:wrap;gap:7px 16px;color:#72593f;font-size:11px}
+.calendar-letter-meta span+span:before{content:'│';margin-right:12px;color:#b99a6b}
+.calendar-archive .calendar-letter .badge{position:absolute;right:18px;top:16px;padding:3px 10px;background:#fff4d9dd;border-color:#c7a166;color:#79512a}
+.calendar-stamp{position:absolute;z-index:4;right:70px;top:31px;width:96px;height:96px;transform:rotate(4deg);filter:drop-shadow(0 4px 4px #54351b25)}
+.calendar-stamp .letter-stamp{width:100%;height:100%}
+.calendar-postmark{position:absolute;z-index:3;right:151px;top:68px;width:72px;height:45px;color:#8d6137;opacity:.7;transform:rotate(5deg);pointer-events:none}
+.calendar-postmark svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6}
+.calendar-archive .calendar-letter:hover{transform:translateY(-3px);box-shadow:0 14px 28px #704a252c}
+@media(max-width:860px){.calendar-archive{padding:18px 20px 34px}.calendar-archive .calendar-layout{grid-template-columns:1fr}.calendar-archive .calendar-picker{padding:28px 24px}.calendar-archive .calendar-results{padding:36px 24px 20px;border-top:1px dashed #c9a978}.calendar-archive .calendar-results:before{display:none}.calendar-campus{left:10%;max-width:80%}.calendar-blossom{left:-92px;top:-48px;width:230px}}
+@media(max-width:600px){.calendar-archive{padding:16px 10px 28px}.calendar-archive .archive-tabs a{min-width:98px;padding:8px 18px}.calendar-archive .calendar-picker{padding:24px 8px}.calendar-archive .calendar-bar h2{font-size:22px}.calendar-archive .calendar-bar h2:before,.calendar-archive .calendar-bar h2:after{display:none}.calendar-archive .calendar-cell{min-height:42px;font-size:16px}.calendar-archive .calendar-cell.selected{background-size:50px 50px;font-size:18px}.calendar-archive .calendar-results{padding:30px 4px 12px}.calendar-archive .calendar-letter{min-height:190px;padding:20px 118px 20px 20px}.calendar-stamp{right:17px;top:32px;width:82px;height:82px}.calendar-postmark{right:89px;top:62px;width:60px}.calendar-archive .calendar-letter .badge{right:14px;top:12px}.calendar-archive .calendar-letter h3{font-size:21px}}
+@media(max-width:430px){.calendar-archive .calendar-letter{min-height:245px;padding:20px 18px}.calendar-stamp{top:auto;right:16px;bottom:17px;width:72px;height:72px}.calendar-postmark{top:auto;right:80px;bottom:29px}.calendar-letter-meta{padding-right:100px}.calendar-letter-meta span+span:before{display:none}}
+
+/* 时间轴：蜡封节点、日期分组与信件卡片。 */
+.timeline-archive{position:relative;overflow:hidden;padding:22px 42px 46px;background:linear-gradient(rgba(255,249,235,.9),rgba(248,232,201,.88)),url('assets/frame3.png') center/100% 100% no-repeat;border-color:#d6b77d;box-shadow:0 18px 42px #76502221}
+.timeline-archive .archive-tabs{position:relative;z-index:4;margin-bottom:18px}
+.timeline-shell{position:relative;max-width:1060px;margin:auto;padding:28px 24px 10px}
+.timeline-blossom{position:absolute;z-index:1;left:-72px;top:-68px;width:280px;max-width:none;opacity:.9;pointer-events:none}
+.timeline-archive .timeline-list{position:relative;z-index:2;display:grid;gap:34px;max-width:none;margin:0;padding:0}
+.timeline-day{position:relative}
+.timeline-day-title{display:flex;align-items:baseline;justify-content:center;gap:12px;margin:0 0 20px;color:#5a3c24;font:28px/1.4 var(--serif);text-align:center;letter-spacing:.04em}
+.timeline-day-title:before,.timeline-day-title:after{content:'⌁';color:#bd8a3f;font-size:25px;letter-spacing:-5px}
+.timeline-day-title small{font:14px var(--sans);color:#8a6945;letter-spacing:.04em}
+.timeline-day-items{position:relative;display:grid;gap:18px;padding-left:88px}
+.timeline-day-items:before{content:'';position:absolute;left:24px;top:4px;bottom:4px;width:16px;background:url('assets/golden-line.png') center/auto 100% no-repeat}
+.timeline-entry{position:relative;min-width:0}
+.timeline-seal{position:absolute;z-index:5;left:-82px;top:50%;width:58px;height:58px;object-fit:contain;transform:translateY(-50%);filter:drop-shadow(0 4px 5px rgba(89,48,15,.24));pointer-events:none}
+.timeline-archive .time-letter{min-height:170px;padding:22px 174px 20px 32px;border:1px solid #ddbf89;border-radius:13px;background:linear-gradient(135deg,rgba(255,251,240,.97),rgba(248,228,190,.94));box-shadow:0 8px 18px #714a2321;overflow:hidden;isolation:isolate}
+.timeline-archive .time-letter:after{display:none}
+.timeline-archive .time-letter.airmail{border:0;background:#fff4dc}
+.timeline-card-frame{position:absolute;z-index:-1;left:-3%;top:-50%;width:106%;height:200%;max-width:none;pointer-events:none}
+.timeline-archive .time-letter-date,.timeline-archive .time-letter h3,.timeline-archive .time-letter p,.timeline-archive .time-letter .badge{position:relative;z-index:2}
+.timeline-archive .time-letter-date{font-size:12px;color:#6f4b2f}
+.timeline-archive .time-letter h3{max-width:100%;margin:10px 0 7px;font-size:25px;line-height:1.35;color:#52341f}
+.timeline-archive .time-letter p{margin:0 0 11px;font-size:14px;line-height:1.75;color:#624b39;-webkit-line-clamp:2}
+.timeline-archive .time-letter .badge{padding:3px 10px;background:#fff4d9cc;border-color:#c7a166;color:#79512a}
+.timeline-stamp{position:absolute;z-index:4;right:24px;top:22px;width:118px;height:118px;transform:rotate(4deg);filter:drop-shadow(0 4px 4px #54351b25)}
+.timeline-stamp .letter-stamp{width:100%;height:100%}
+.timeline-fallback-stamp{display:grid;place-items:center;border:5px double #c5a773;background:#f4e9cb;color:#8b6b3c;font:34px var(--serif);outline:2px dashed #cfb68d;outline-offset:-7px}
+.timeline-postmark{position:absolute;z-index:3;right:124px;top:63px;width:82px;height:48px;color:#8d6137;opacity:.75;transform:rotate(5deg);pointer-events:none}
+.timeline-postmark svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6}
+.timeline-archive .time-letter:hover{transform:translateY(-3px);box-shadow:0 13px 27px #704a252d}
+@media(max-width:760px){.timeline-archive{padding:18px 14px 30px}.timeline-shell{padding:24px 0 4px}.timeline-blossom{left:-82px;top:-56px;width:220px}.timeline-day-title{flex-wrap:wrap;gap:5px;font-size:23px}.timeline-day-title small{flex-basis:100%}.timeline-day-items{padding-left:64px}.timeline-day-items:before{left:17px;width:14px}.timeline-seal{left:-61px;width:46px;height:46px}.timeline-archive .time-letter{min-height:180px;padding:20px 112px 18px 20px}.timeline-stamp{right:15px;top:24px;width:82px;height:82px}.timeline-postmark{right:88px;top:54px;width:62px}.timeline-archive .time-letter h3{font-size:21px}.timeline-archive .time-letter p{-webkit-line-clamp:3}}
+@media(max-width:480px){.timeline-day-items{padding-left:50px}.timeline-day-items:before{left:13px;width:12px}.timeline-seal{left:-48px;width:38px;height:38px}.timeline-archive .time-letter{padding:18px 18px 20px;min-height:240px}.timeline-stamp{top:auto;right:15px;bottom:18px;width:72px;height:72px}.timeline-postmark{top:auto;right:80px;bottom:30px}.timeline-archive .time-letter p{padding-right:0}.timeline-archive .time-letter .badge{margin-right:100px}}
