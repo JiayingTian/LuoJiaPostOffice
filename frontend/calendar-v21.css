@@ -99,8 +99,7 @@
 .calendar-timeline-scroll::-webkit-scrollbar-track{border-radius:99px;background:#ead9b8}
 .calendar-timeline-scroll::-webkit-scrollbar-thumb{border:2px solid #ead9b8;border-radius:99px;background:#b7843f}
 .combined-timeline>.timeline-empty{display:grid;height:100%;min-height:0;margin:0;place-content:center;justify-items:center;gap:18px;color:#826a52;font-size:22px;letter-spacing:.08em}
-.timeline-empty-art{display:grid;width:min(330px,82%);aspect-ratio:1.65;place-items:center;overflow:hidden;border:1px solid rgba(185,138,63,.35);border-radius:28px;background:rgba(255,253,247,.68);box-shadow:0 8px 22px rgba(105,73,37,.08)}
-.timeline-empty-art img{display:block;width:auto;height:92%;max-width:96%;object-fit:contain}
+.timeline-empty-image{display:block;width:min(230px,72%);height:auto;object-fit:contain}
 .timeline-empty p{margin:0;font:inherit;line-height:1.4}
 .combined-day{position:relative;margin:0 0 30px;scroll-margin-top:10px}
 .combined-day-title{display:flex;align-items:baseline;gap:9px;margin:0 0 15px -48px;color:#765437;font:21px/1.35 var(--serif);letter-spacing:.05em}

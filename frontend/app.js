@@ -139,7 +139,8 @@ function archiveCard(entry, index = 0) {
 function timelineCard(entry, index) {
   const { letter, parts } = entry;
   const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
-  return `<div class="timeline-entry"><span class="timeline-dot" aria-hidden="true"></span><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="timeline-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : ''}<span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="badge">${e(statusLabel(letter))}</span><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a></div>`;
+  const frameName = `frame${index % 3 + 1}.png`;
+  return `<div class="timeline-entry"><span class="timeline-dot" aria-hidden="true"></span><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}"><img class="timeline-card-frame" src="assets/${frameName}" alt="" aria-hidden="true"><span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="badge">${e(statusLabel(letter))}</span><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a></div>`;
 }
 function timelineArchive(entries) {
   const groups = [];
@@ -223,7 +224,7 @@ async function timeLetters(params, token) {
       <div class="calendar-grid">${cells.join('')}</div>
       <p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p>
     </section>
-    <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><span class="timeline-empty-art"><img src="assets/open-letter.png" alt="打开的信封"></span><p>今天藏在心里了吧</p></div>'}</section>
+    <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天藏在心里了吧</p></div>'}</section>
   </div></div>`;
   app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，查看那一天的所有来信，重温时光的回响。', '<a class="button primary" href="#/write">写一封信</a>') +
     `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
