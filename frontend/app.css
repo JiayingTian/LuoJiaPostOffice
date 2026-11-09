@@ -31,7 +31,6 @@
 .account #user-name{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px}
 .account-trigger svg{width:23px;height:23px;flex:none}
 
-.account-nickname{max-width:min(12em,24vw);overflow:hidden;text-overflow:ellipsis}
 
 .public-letter-grid .envelope{container-type:inline-size;padding-left:clamp(18px,2.1vw,31px);padding-right:clamp(76px,6.6vw,101px)}
 .public-letter-grid .envelope-title{display:block;white-space:nowrap;text-overflow:ellipsis;min-height:0;height:auto;max-height:none;font-size:20px;font-size:clamp(14px,8.2cqi,22px);line-height:1.45}

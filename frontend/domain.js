@@ -32,12 +32,12 @@ export function letterPayload(letter, { draft = false, update = false, privateEn
 }
 
 export function statusLabel(letter) {
-  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'待审核', published:'已公开', returnedForEdit:'草稿', private:'私密已投递' })[letter.workflowState] || '状态待确认';
+  if (letter.workflowState) return ({ draft:'草稿', pendingReview:'已投递', published:'已公开', returnedForEdit:'草稿', private:'私密已投递' })[letter.workflowState] || '状态待确认';
   if (letter.status === 'deleted') return '已删除';
   if (letter.status === 'draft') return '草稿';
   if (letter.status === 'active' && letter.visibility === 'public') {
     if (letter.publishedAt) return '已公开';
-    if (letter.submittedAt) return '待审核';
+    if (letter.submittedAt) return '已投递';
   }
   if (letter.status === 'active' && letter.visibility === 'private') return '私密已投递';
   return '状态待确认';

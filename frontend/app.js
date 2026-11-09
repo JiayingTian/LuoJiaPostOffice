@@ -21,11 +21,7 @@ const button = (text, action, primary = false) => `<button type="button" class="
 const ownEditor = () => ({ id: null, title: '', content: '', penName: '', isAnonymous: false, patternId: state.metadata?.patterns[0]?.id || '', parentLetterId: null, parentTitle: '', visibility: 'public', recipientUserId: null, recipientUsername: '', allowReplies: true });
 
 const modeNote = document.querySelector('#mode-note');
-if (demo) {
-  modeNote.innerHTML = '<strong>演示</strong>　示例信件仅供试用；保存和模拟提交只保存在此浏览器，不会发送到服务器。';
-} else {
-  modeNote.hidden = true;
-}
+if (modeNote) modeNote.hidden = true;
 
 function toast(message) {
   const box = document.querySelector('#toast'); box.textContent = message; box.classList.add('visible');
@@ -34,11 +30,8 @@ function toast(message) {
 function updateAccount() {
   const userMenu = document.querySelector('#account-menu');
   const userTrigger = document.querySelector('#user-name');
-  const displayName = service.user?.displayName?.trim();
-  const nickname = demo ? '珞珈来客' : displayName || '珞珈来客';
-  userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg><span class="account-nickname"></span>';
-  userTrigger.querySelector('.account-nickname').textContent = nickname;
-  userTrigger.setAttribute('aria-label', nickname + '，打开账户菜单');
+  userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg>';
+  userTrigger.setAttribute('aria-label', '打开账户菜单');
   userTrigger.setAttribute('aria-expanded', 'false');
   userMenu.classList.remove('open');
   userMenu.hidden = !service.user;
@@ -91,19 +84,34 @@ function card(letter, mine, index = 0) {
   </button>`;
 }
 async function mailbox(params, mine, token) {
-  const page = Math.max(1, Number(params.get('page')) || 1), workflowState = ['draft','pendingReview','published','private'].includes(params.get('filter')) ? params.get('filter') : '';
+  const page = Math.max(1, Math.floor(Number(params.get('page'))) || 1);
+  const filter = mine && ['draft','replies','published','private'].includes(params.get('filter')) ? params.get('filter') : '';
+  const workflowState = filter === 'replies' ? '' : filter;
   if (mine && !service.user) {
     app.innerHTML = empty('你的信，都在这里', '登录后查看自己保存的草稿和提交的信件。', button('登录', 'login', true)); return;
   }
   app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '<a class="button primary" href="#/write">写一封信</a>') + '<div class="letter-grid" aria-label="正在加载">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
-  const result = await service.list({ mine, workflowState, page, pageSize: config.pageSize });
+  let result;
+  if (filter === 'replies') {
+    const letters = await archiveLetters(token);
+    if (token !== state.render) return;
+    const replies = letters.filter(letter => letter.parentLetterId && letter.status === 'active');
+    const start = (page - 1) * config.pageSize;
+    result = {
+      items: replies.slice(start, start + config.pageSize),
+      total: replies.length,
+      hasMore: start + config.pageSize < replies.length,
+    };
+  } else {
+    result = await service.list({ mine, workflowState, page, pageSize: config.pageSize });
+  }
   if (token !== state.render) return;
   const base = mine ? '/mine' : '/mailbox';
-  const paging = p => `#${base}?page=${p}${workflowState ? `&filter=${workflowState}` : ''}`;
-  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['pendingReview','待审核'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${workflowState === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
+  const paging = p => `#${base}?page=${p}${filter ? `&filter=${filter}` : ''}`;
+  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['replies','我的回信'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${filter === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
   app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '<a class="button primary" href="#/write">写一封信</a>') + tabs +
     `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
-    (result.items.length ? `<div class="letter-grid${mine ? '' : ' public-letter-grid'}">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(mine ? '这里还没有信' : '信箱暂时安静', mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
+    (result.items.length ? `<div class="letter-grid${mine ? '' : ' public-letter-grid'}">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(filter === 'replies' ? '还没有寄出的回信' : mine ? '这里还没有信' : '信箱暂时安静', filter === 'replies' ? '读到想回应的信时，给对方回一封吧。' : mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
   state.list = location.hash || '#/mailbox';
   requestAnimationFrame(() => window.scrollTo(0, state.positions.get(state.list) || 0));
@@ -133,7 +141,7 @@ async function archiveLetters(token) {
       return items;
     }
   }
-  throw new Error('信件数量较多，暂时无法完整生成时光信笺。');
+  throw new Error('信件数量较多，请稍后再试。');
 }
 function archiveCard(entry, index = 0) {
   const { letter, parts } = entry;
@@ -317,7 +325,7 @@ function preview() {
   if (!state.editor) { navigate('#/write'); return; }
   const letter = state.editor;
   app.innerHTML = `<div class="breadcrumbs"><a href="#/write" data-continue>← 返回修改</a><span>寄出前，再读一遍</span></div>` + paper({ ...letter, author: { displayName: letter.isAnonymous ? '匿名来客' : letter.penName || service.user?.displayName || '珞珈来客' } }, true) +
-    `<p class="help">${letter.visibility === 'private' ? '投递后只有你和指定收件人可以阅读，不进入公开审核。' : demo ? '本次投递会保存在当前浏览器。' : '提交后等待管理员审核，通过后所有访客都可以阅读。'}</p><p class="form-error" role="alert"></p><div class="actions"><a href="#/write" class="button" data-continue>返回修改</a><button type="button" class="button primary" data-action="submit" data-mutate>${letter.visibility === 'private' ? '确认私密投递' : '寄出'}</button></div></article>`;
+    `${letter.visibility === 'private' ? '<p class="help">这封信仅你和指定收件人可见。</p>' : ''}<p class="form-error" role="alert"></p><div class="actions"><a href="#/write" class="button" data-continue>返回修改</a><button type="button" class="button primary" data-action="submit" data-mutate>${letter.visibility === 'private' ? '确认私密投递' : '寄出'}</button></div></article>`;
 }
 
 let deliveryTimer;
@@ -343,7 +351,7 @@ function deliveryReceipt() {
     app.querySelector('#delivery-title').textContent = '投递完成';
     const note = app.querySelector('.receipt-stage');
     note.className = 'receipt-note';
-    note.textContent = demo ? '这封信已保存在当前浏览器。' : receipt.pendingReview ? '公开来信将在审核通过后展示。' : '可以查看刚寄出的信了。';
+    note.textContent = '可以查看刚寄出的信了。';
     app.querySelector('.delivery-receipt a').hidden = false;
   };
   const remaining = receipt.readyAt - Date.now();
@@ -408,7 +416,7 @@ async function save(draft) {
     state.dirty = false; submission.clear();
     if (draft) {
       state.editor.id = letter.id;
-      const message = demo ? '草稿已保存在此浏览器。' : '草稿已保存。';
+      const message = '草稿已保存。';
       const note = app.querySelector('.saved-note'); if (note) note.textContent = message;
       toast(message);
     } else {
@@ -417,7 +425,6 @@ async function save(draft) {
       history.replaceState({ deliveryReceipt: {
         letterId: letter.id,
         userId: service.user.id,
-        pendingReview: statusLabel(letter) === '待审核',
         readyAt: Date.now() + 5000,
       } }, '', '#/delivery');
       render();
@@ -515,7 +522,7 @@ app.addEventListener('pointerup', event => {
 
 function openAuth() {
   document.querySelector('#auth-body').innerHTML = demo
-    ? '<p>当前是本机交互演示。使用演示身份即可测试保存和模拟提交，无需输入真实账号或密码。</p><button class="button primary" data-demo-login type="button">使用演示身份</button><p class="form-error" role="alert"></p>'
+    ? '<p>以访客身份继续读信与写信。</p><button class="button primary" data-demo-login type="button">访客进入</button><p class="form-error" role="alert"></p>'
     : `<form id="auth-form"><p class="help">${service.user ? '为继续当前操作，请重新验证登录。内容会保留。' : '登录后继续保存或寄信。'}</p><div class="form-field"><label for="account">用户名</label><input id="account" name="account" required minlength="3" maxlength="32" autocomplete="username" pattern="${state.register ? '[a-z0-9_]+' : '[A-Za-z0-9_]+'}">${state.register ? '<p class="help">仅支持英文小写字母、数字和下划线（_）。</p>' : ''}</div>${state.register ? '<div class="form-field"><label for="display-name">显示名称</label><input id="display-name" name="displayName" required maxlength="30" autocomplete="nickname"></div>' : ''}<div class="form-field"><label for="password">密码</label><input id="password" name="password" type="password" required minlength="8" maxlength="128" autocomplete="${state.register ? 'new-password' : 'current-password'}"></div><p class="form-error" role="alert"></p><div class="dialog-actions"><button class="text-button" type="button" data-auth-switch>${state.register ? '已有账号，去登录' : '还没有账号？注册'}</button><button class="button primary" type="submit">${state.register ? '注册' : '登录'}</button></div></form>`;
   if (!dialog.open) dialog.showModal();
 }
