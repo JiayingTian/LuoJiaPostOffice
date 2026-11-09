@@ -43,3 +43,39 @@
 .delivery-receipt .eyebrow{margin-bottom:8px}
 .delivery-receipt .receipt-note{margin:8px 0 20px;color:var(--muted)}
 .delivery-receipt .button[hidden]{display:none}
+
+
+/* A single five-second timeline, resumed from the successful delivery timestamp. */
+.encounter-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 22px;padding:16px 22px;border-block:1px solid #c5a16b55;background:#fff9ed70}
+.encounter-bar p{margin:0;color:#866d52;font-family:var(--serif,serif);letter-spacing:.08em}
+.encounter-button{flex-shrink:0;background:#fffaf0;border:1px solid #b89158;color:#875727;box-shadow:0 4px 14px #946c2b10}
+.encounter-button:hover{background:#f4e7cf;transform:translateY(-2px)}
+.encounter-button:disabled{opacity:.65;cursor:wait}
+.delivery-receipt.postal-ritual{max-width:680px;margin:24px auto;padding:28px 30px 32px;border-radius:4px;border:1px solid #c4a16c;background:radial-gradient(ellipse at 50% 25%,#fffdf8,#f6ead6);box-shadow:0 12px 40px #704c2020;outline:1px solid #dbc29b;outline-offset:-9px;overflow:hidden}
+.postal-ritual .eyebrow{font-size:11px;letter-spacing:.22em}
+.postal-ritual h1{font-size:clamp(26px,4vw,36px);margin:6px 0 10px}
+.postal-ritual .receipt-stage{font-size:15px;line-height:1.9;min-height:58px;color:#8d7559}
+.postal-scene{height:270px;display:grid;place-items:center;position:relative}
+.postal-envelope{position:relative;width:280px;height:166px;transform:translateY(35px);filter:drop-shadow(0 13px 10px #80603a22);perspective:800px}
+.postal-back{position:absolute;inset:0;background:#dbc19b;border:1px solid #bfa173;border-radius:4px}
+.postal-paper{position:absolute;z-index:2;width:232px;height:155px;left:24px;top:-75px;padding:24px;border:1px solid #c7aa7e;outline:1px solid #dbc49f;outline-offset:-7px;background:linear-gradient(120deg,#fffdf4,#f1e1c5);color:#8d6541;text-align:left;animation:postal-insert 5s both;animation-delay:var(--ritual-delay)}
+.postal-paper span{font:23px var(--serif,serif);letter-spacing:.15em}.postal-paper i{display:block;height:1px;background:#c7ab7c66;margin-top:15px}.postal-paper i:last-child{width:65%}
+.postal-front{position:absolute;inset:0;z-index:3;clip-path:polygon(0 0,50% 53%,100% 0,100% 100%,0 100%);background:linear-gradient(31deg,transparent 49.5%,#c9ab7c 50%,transparent 50.5%),linear-gradient(-31deg,transparent 49.5%,#c9ab7c 50%,transparent 50.5%),linear-gradient(100deg,#f5e7cf,#ecdbba);border:1px solid #bfa173;border-radius:4px}
+.postal-flap{position:absolute;inset:0 0 auto;height:90px;z-index:4;clip-path:polygon(0 0,100% 0,50% 100%);background:linear-gradient(#e6ceaa,#f5e7cf);transform-origin:top;animation:postal-close 5s both;animation-delay:var(--ritual-delay)}
+.postal-address{position:absolute;z-index:5;left:25px;bottom:24px;color:#99764d;letter-spacing:.18em;font:15px var(--serif,serif)}
+.postal-ritual .postal-imprint{position:absolute;z-index:6;right:18px;bottom:16px;width:83px;height:83px;object-fit:contain;margin:0;mix-blend-mode:multiply;animation:postal-ink 5s both;animation-delay:var(--ritual-delay)}
+.postal-tool{position:absolute;z-index:7;right:15px;bottom:18px;width:88px;height:120px;transform-origin:bottom;animation:postal-stamp 5s both;animation-delay:var(--ritual-delay)}
+.postal-tool i{display:block;position:absolute;left:26px;top:0;width:36px;height:88px;background:linear-gradient(90deg,#593724,#a7784c 43%,#553422);border-radius:20px 20px 8px 8px;box-shadow:inset 0 4px 3px #d1aa7666}
+.postal-tool b{position:absolute;bottom:0;left:0;width:88px;height:35px;border-radius:50% 50% 8px 8px;background:linear-gradient(90deg,#805625,#e0c18b 45%,#99703c);border-bottom:7px solid #533e2d;box-shadow:0 6px 8px #5c3e2525}
+.postal-ticket{position:relative;text-align:left;max-width:420px;margin:18px auto 22px;padding:19px 24px;background:#fffdf6;border-block:1px dashed #bd9c6b;box-shadow:0 5px 14px #79542112;animation:postal-ticket-in .55s ease-out both}
+.postal-ticket[hidden]{display:none}.postal-ticket>*{display:block}.postal-ticket-label{font-size:10px;letter-spacing:.16em;color:#947b59}.postal-ticket strong{font:20px var(--serif,serif);margin:10px 0;overflow-wrap:anywhere}.postal-ticket>span:not(:first-child){font-size:13px;color:#8b7256}.postal-ticket p{font-size:13px;color:#997e5d;margin:12px 0 0}
+.postal-ritual.is-complete .postal-scene{height:210px;transition:height .5s}.postal-ritual.is-complete .postal-paper{transform:translateY(82px);opacity:0}.postal-ritual.is-complete .postal-flap{transform:rotateX(0)}.postal-ritual.is-complete .postal-tool{opacity:0}.postal-ritual.is-complete .postal-imprint{opacity:.85;transform:rotate(-16deg)}
+@keyframes postal-insert{0%,8%{transform:translateY(0);opacity:1}30%,100%{transform:translateY(82px);opacity:0}}
+@keyframes postal-close{0%,28%{transform:rotateX(175deg)}43%,100%{transform:rotateX(0)}}
+@keyframes postal-stamp{0%,44%{opacity:0;transform:translate(45px,-130px) rotate(15deg)}52%{opacity:1;transform:translate(10px,-65px) rotate(8deg)}61%,65%{opacity:1;transform:translate(0,0) rotate(-9deg)}79%,100%{opacity:0;transform:translate(22px,-100px) rotate(4deg)}}
+@keyframes postal-ink{0%,62%{opacity:0;transform:rotate(-16deg) scale(1.09)}66%,100%{opacity:.85;transform:rotate(-16deg) scale(1)}}
+@keyframes postal-ticket-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.encounter-bar{align-items:flex-start;padding:14px;gap:12px;flex-direction:column}.encounter-bar p{font-size:14px}.postal-ritual.delivery-receipt{padding:24px 18px;margin:16px auto}.postal-envelope{scale:.9}.postal-scene{height:245px}.postal-ritual.is-complete .postal-scene{height:195px}}
+@media(prefers-reduced-motion:reduce){.postal-ritual *{animation:none!important;transition:none!important}.postal-paper{opacity:0}.postal-tool{display:none}.postal-flap{transform:none}.postal-imprint{opacity:.85;transform:rotate(-16deg)}}
+
+.postal-ritual.is-complete .postal-envelope{transform:translateY(10px);transition:transform .5s}
