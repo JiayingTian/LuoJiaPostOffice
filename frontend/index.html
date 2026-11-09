@@ -211,12 +211,27 @@ body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .head
 .account #user-name{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px}
 .account-trigger svg{width:23px;height:23px;flex:none}
 </style>
+<style>
+.account-nickname{max-width:min(12em,24vw);overflow:hidden;text-overflow:ellipsis}
+
+.public-letter-grid .envelope{container-type:inline-size;padding-left:clamp(18px,2.1vw,31px);padding-right:clamp(76px,6.6vw,101px)}
+.public-letter-grid .envelope-title{display:block;white-space:nowrap;text-overflow:ellipsis;min-height:0;height:auto;max-height:none;font-size:20px;font-size:clamp(14px,8.2cqi,22px);line-height:1.45}
+.public-letter-grid .envelope-excerpt{margin-top:12px}
+.public-letter-grid .envelope-stamp{width:clamp(56px,5vw,72px);height:clamp(60px,5.3vw,77px);top:22px;right:clamp(12px,1.55vw,23px)}
+.public-letter-grid .envelope-postmark{z-index:1;right:clamp(58px,6vw,82px);width:62px;opacity:.32}
+
+.delivery-receipt{max-width:580px;margin:clamp(28px,9vh,100px) auto;text-align:center;padding:clamp(24px,5vw,48px);background:#fffaf0;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px #785b2b14}
+.delivery-receipt img{display:block;width:clamp(105px,22vw,160px);height:auto;margin:0 auto 12px}
+.delivery-receipt .eyebrow{margin-bottom:8px}
+.delivery-receipt .receipt-note{margin:8px 0 20px;color:var(--muted)}
+.delivery-receipt .button[hidden]{display:none}
+</style>
 </head>
 <body>
   <header class="header">
     <a class="brand" href="../index.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
-    <nav aria-label="主导航"><a href="../index.html">首页</a><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光信笺</a><span class="nav-pending" aria-disabled="true" title="暂未开放">应时来信</span><a href="about.html">关于我们</a></nav>
-    <div class="account"><div class="account-menu" id="account-menu" hidden><button class="account-trigger" id="user-name" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="#/mine" role="menuitem">我的</a><button id="logout-button" type="button" role="menuitem">退出登录</button></div></div><a href="#/admin" data-nav="admin" class="button" hidden>审核</a><button id="account-button" class="button primary" type="button">登录</button></div>
+    <nav aria-label="主导航"><a href="../index.html">首页</a><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光信笺</a><a href="about.html">关于我们</a></nav>
+    <div class="account"><div class="account-menu" id="account-menu" hidden><button class="account-trigger" id="user-name" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="#/mine" role="menuitem">我的信件</a><button id="logout-button" type="button" role="menuitem">退出登录</button></div></div><a href="#/admin" data-nav="admin" class="button" hidden>审核</a><button id="account-button" class="button primary" type="button">登录</button></div>
   </header>
   <div class="page-surface"><div class="desk-decor" aria-hidden="true"><div class="old-envelope"></div><div class="desk-blossom"><img src="assets/art-3.png" alt=""></div><span class="petal petal-a"></span><span class="petal petal-b"></span><span class="petal petal-c"></span></div>
 
@@ -719,10 +734,10 @@ function updateAccount() {
   const userMenu = document.querySelector('#account-menu');
   const userTrigger = document.querySelector('#user-name');
   const displayName = service.user?.displayName?.trim();
-  const hasNickname = displayName && displayName !== '演示来客';
-  userTrigger.textContent = hasNickname ? displayName : '';
-  if (!hasNickname) userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg>';
-  userTrigger.setAttribute('aria-label', hasNickname ? displayName + '，打开账户菜单' : '打开账户菜单');
+  const nickname = demo ? '珞珈来客' : displayName || '珞珈来客';
+  userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg><span class="account-nickname"></span>';
+  userTrigger.querySelector('.account-nickname').textContent = nickname;
+  userTrigger.setAttribute('aria-label', nickname + '，打开账户菜单');
   userTrigger.setAttribute('aria-expanded', 'false');
   userMenu.classList.remove('open');
   userMenu.hidden = !service.user;
@@ -797,7 +812,7 @@ async function mailbox(params, mine, token) {
   const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['pendingReview','待审核'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${workflowState === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
   app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '') + tabs +
     `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
-    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(mine ? '这里还没有信' : '信箱暂时安静', mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
+    (result.items.length ? `<div class="letter-grid${mine ? '' : ' public-letter-grid'}">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(mine ? '这里还没有信' : '信箱暂时安静', mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
   state.list = location.hash || '#/mailbox';
   requestAnimationFrame(() => window.scrollTo(0, state.positions.get(state.list) || 0));
@@ -913,7 +928,7 @@ async function timeLetters(params, token) {
   }
   const previous = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
-  const calendarPanel = `<div class="calendar-shell combined-calendar-shell"><img class="calendar-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><img class="calendar-campus" src="assets/art-22.png" alt="" aria-hidden="true"><div class="calendar-layout"><section class="calendar-picker"><div class="calendar-bar"><a href="${calendarUrl(previous)}">‹ 上月</a><h2>${year} 年 ${month} 月</h2><a href="${calendarUrl(next)}">下月 ›</a></div><div class="calendar-week" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="calendar-grid">${cells.join('')}</div><p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p></section><section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天藏在心里了吧</p></div>'}</section></div></div>`;
+  const calendarPanel = `<div class="calendar-shell combined-calendar-shell"><img class="calendar-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><img class="calendar-campus" src="assets/art-22.png" alt="" aria-hidden="true"><div class="calendar-layout"><section class="calendar-picker"><div class="calendar-bar"><a href="${calendarUrl(previous)}">‹ 上月</a><h2>${year} 年 ${month} 月</h2><a href="${calendarUrl(next)}">下月 ›</a></div><div class="calendar-week" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="calendar-grid">${cells.join('')}</div><p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p></section><section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section></div></div>`;
   app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，查看那一天的所有来信，重温时光的回响。', '<a class="button primary" href="#/write?theme=time">写一封时光信</a>') + `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
   const timeline = app.querySelector('[data-calendar-timeline]');
   const target = timeline?.querySelector(`[data-timeline-date="${selectedKey}"]`);
@@ -1036,10 +1051,43 @@ function preview() {
   if (!state.editor) { navigate('#/write'); return; }
   const letter = state.editor;
   app.innerHTML = steps(2) + `<div class="breadcrumbs"><a href="#/decorate" data-continue>← 返回装点</a><span>寄出前，再读一遍</span></div><div class="preview-main">` + paper({ ...letter, author: { displayName: letter.isAnonymous ? '匿名来客' : letter.penName || service.user?.displayName || '珞珈来客' } }, true) +
-    `</article><p class="help">${letter.visibility === 'private' ? '投递后只有你和指定收件人可以阅读，不进入公开审核。' : demo ? '此处只模拟提交，不会真实寄出或公开。' : '提交后等待管理员审核，通过后所有访客都可以阅读。'}</p><p class="form-error" role="alert"></p><div class="actions"><a href="#/decorate" class="button" data-continue>返回装点</a><button type="button" class="button primary" data-action="submit" data-mutate>${letter.visibility === 'private' ? '确认私密投递' : demo ? '模拟提交审核' : '确认寄出'}</button></div></div>`;
+    `</article><p class="help">${letter.visibility === 'private' ? '投递后只有你和指定收件人可以阅读，不进入公开审核。' : demo ? '本次投递会保存在当前浏览器。' : '提交后等待管理员审核，通过后所有访客都可以阅读。'}</p><p class="form-error" role="alert"></p><div class="actions"><a href="#/decorate" class="button" data-continue>返回装点</a><button type="button" class="button primary" data-action="submit" data-mutate>${letter.visibility === 'private' ? '确认私密投递' : '寄出'}</button></div></div>`;
   disposeReader = mountLetterReader(app.querySelector('.stationery-sheet'));
 }
+
+let deliveryTimer;
+
+function deliveryReceipt() {
+  const receipt = history.state?.deliveryReceipt;
+  if (!service.user || !receipt || receipt.userId !== service.user.id) {
+    history.replaceState(null, '', '#/mine');
+    render();
+    return;
+  }
+  const href = '#/letter/' + encodeURIComponent(receipt.letterId);
+  app.innerHTML = `<section class="delivery-receipt" aria-labelledby="delivery-title">
+    <img src="assets/open-letter.png" alt="">
+    <p class="eyebrow">LUOJIA POST OFFICE</p>
+    <div role="status" aria-atomic="true">
+      <h1 id="delivery-title">信件已投递</h1>
+      <p class="receipt-stage"><strong>邮局整理中</strong><br>正在为你的信件盖戳，请稍候</p>
+    </div>
+    <a class="button primary" href="${e(href)}" hidden>查看信件</a>
+  </section>`;
+  const finish = () => {
+    app.querySelector('#delivery-title').textContent = '投递完成';
+    const note = app.querySelector('.receipt-stage');
+    note.className = 'receipt-note';
+    note.textContent = demo ? '这封信已保存在当前浏览器。' : receipt.pendingReview ? '公开来信将在审核通过后展示。' : '可以查看刚寄出的信了。';
+    app.querySelector('.delivery-receipt a').hidden = false;
+  };
+  const remaining = receipt.readyAt - Date.now();
+  if (remaining > 0) deliveryTimer = setTimeout(finish, remaining);
+  else finish();
+}
+
 async function render() {
+  clearTimeout(deliveryTimer);
   disposeReader(); disposeReader = () => {};
   renderedHash = location.hash || '#/mailbox';
   const token = ++state.render;
@@ -1060,6 +1108,7 @@ async function render() {
     else if (path === '/write') await write(token);
     else if (path === '/decorate') await decorate(token);
     else if (path === '/preview') preview();
+    else if (path === '/delivery') deliveryReceipt();
     else app.innerHTML = empty('这条路暂时没有信', '回到信箱继续看看吧。', '<a class="button" href="#/mailbox">返回信箱</a>');
   } catch (error) {
     if (token !== state.render) return;
@@ -1108,8 +1157,14 @@ async function save(draft) {
       toast(message);
     } else {
       state.editor = null;
-      toast(payload.visibility === 'private' ? (demo ? '私密信件已保存在此浏览器。' : '私密信件已投递。') : demo ? '已在本机模拟提交，未发送到服务器。' : '已提交，等待审核。');
-      navigate('#/mine');
+      state.list = '#/mine';
+      history.replaceState({ deliveryReceipt: {
+        letterId: letter.id,
+        userId: service.user.id,
+        pendingReview: statusLabel(letter) === '待审核',
+        readyAt: Date.now() + 5000,
+      } }, '', '#/delivery');
+      render();
     }
     return true;
   } catch (error) { showError(error); return false; }
