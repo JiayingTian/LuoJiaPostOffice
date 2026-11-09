@@ -34,7 +34,11 @@ function toast(message) {
 function updateAccount() {
   const userMenu = document.querySelector('#account-menu');
   const userTrigger = document.querySelector('#user-name');
-  userTrigger.textContent = service.user?.displayName || '';
+  const displayName = service.user?.displayName?.trim();
+  const hasNickname = displayName && displayName !== '演示来客';
+  userTrigger.textContent = hasNickname ? displayName : '';
+  if (!hasNickname) userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg>';
+  userTrigger.setAttribute('aria-label', hasNickname ? displayName + '，打开账户菜单' : '打开账户菜单');
   userTrigger.setAttribute('aria-expanded', 'false');
   userMenu.classList.remove('open');
   userMenu.hidden = !service.user;
@@ -78,7 +82,7 @@ function titleBlock(title, intro, action = '') {
   return `<div class="breadcrumbs"><a href="../index.html">首页 / 信箱</a></div><div class="page-heading"><div><p class="eyebrow">LETTERS FROM LUOJIA</p><h1>${title}</h1><p class="intro">${intro}</p></div>${action}</div>`;
 }
 function card(letter, mine, index = 0) {
-  const frame = index % 3 + 1;
+  const frame = (index + Math.floor(index / 3)) % 3 + 1;
   return `<button class="envelope ${matchMedia('(hover: none)').matches && state.selected === letter.id ? 'revealed' : ''}" type="button" data-letter="${e(letter.id)}" aria-label="${e(letter.title || '未命名草稿')}，按 Enter 阅读全文" aria-describedby="summary-${e(letter.id)}">
     <img class="envelope-frame frame-${frame}" src="assets/frame${frame}.png" alt="" aria-hidden="true">
     ${mine || letter.visibility === 'private' ? `<span class="badge">${e(statusLabel(letter))}</span>` : ''}

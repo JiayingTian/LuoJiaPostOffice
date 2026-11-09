@@ -252,7 +252,10 @@
 .login{min-height:44px}
 @media(max-width:1000px){.header{flex-wrap:wrap;padding:10px 24px}.header nav{order:3;width:100%;justify-content:center}}
 @media(max-width:600px){.header{gap:16px;padding:10px 20px}.brand-stamp{width:60px;height:52px}}
-</style></head>
+</style><style>.account #user-name{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px}
+.account-trigger svg{width:23px;height:23px;flex:none}
+</style>
+</head>
 <body>
 
   <!-- ===== Header ===== -->
@@ -499,7 +502,11 @@
     let user = null;
 
     function renderAccount() {
-      userTrigger.textContent = user?.displayName || '';
+      const displayName = user?.displayName?.trim();
+  const hasNickname = displayName && displayName !== '演示来客';
+  userTrigger.textContent = hasNickname ? displayName : '';
+  if (!hasNickname) userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg>';
+  userTrigger.setAttribute('aria-label', hasNickname ? displayName + '，打开账户菜单' : '打开账户菜单');
       userTrigger.setAttribute('aria-expanded', 'false');
       userMenu.classList.remove('open');
       userMenu.hidden = !user;
