@@ -199,7 +199,19 @@ body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .head
 .mailbox-view .envelope-postmark svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.4}
 .mailbox-view .envelope .badge{z-index:4;top:auto;right:24px;bottom:15px}
 @media(max-width:600px){.mailbox-view .envelope{height:230px;padding:32px 112px 28px 32px}.mailbox-view .envelope-meta{left:32px;right:108px}.mailbox-view .envelope-stamp{right:22px;width:78px;height:84px}.mailbox-view .envelope-postmark{right:84px}}
-</style></head>
+</style><style>
+/* Mailbox polish: keep ink/stamps crisp while softening paper artwork. */
+.mailbox-view .envelope-frame{opacity:.55}
+.mailbox-view .envelope-frame.frame-1{opacity:.38}
+.mailbox-view .envelope-excerpt{
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  line-clamp:2;font-size:13px;line-height:1.7;
+  height:3.4em;min-height:3.4em;max-height:3.4em;overflow:hidden;
+}
+.account #user-name{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px}
+.account-trigger svg{width:23px;height:23px;flex:none}
+</style>
+</head>
 <body>
   <header class="header">
     <a class="brand" href="../index.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
@@ -706,7 +718,11 @@ function toast(message) {
 function updateAccount() {
   const userMenu = document.querySelector('#account-menu');
   const userTrigger = document.querySelector('#user-name');
-  userTrigger.textContent = service.user?.displayName || '';
+  const displayName = service.user?.displayName?.trim();
+  const hasNickname = displayName && displayName !== '演示来客';
+  userTrigger.textContent = hasNickname ? displayName : '';
+  if (!hasNickname) userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg>';
+  userTrigger.setAttribute('aria-label', hasNickname ? displayName + '，打开账户菜单' : '打开账户菜单');
   userTrigger.setAttribute('aria-expanded', 'false');
   userMenu.classList.remove('open');
   userMenu.hidden = !service.user;
@@ -760,7 +776,7 @@ function titleBlock(title, intro, action = '') {
 }
 function card(letter, mine, index = 0) {
   const decoration = savedDecoration(letter.id);
-  const frame = index % 3 + 1;
+  const frame = (index + Math.floor(index / 3)) % 3 + 1;
   return `<button class="envelope ${matchMedia('(hover: none)').matches && state.selected === letter.id ? 'revealed' : ''}" type="button" data-letter="${e(letter.id)}" aria-label="${e(letter.title || '未命名草稿')}，按 Enter 阅读全文" aria-describedby="summary-${e(letter.id)}">
     <img class="envelope-frame frame-${frame}" src="assets/frame${frame}.png" alt="" aria-hidden="true">
     ${mine ? `<span class="badge">${e(statusLabel(letter))}</span>` : ''}
