@@ -30,3 +30,17 @@
 }
 .account #user-name{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px}
 .account-trigger svg{width:23px;height:23px;flex:none}
+
+.account-nickname{max-width:min(12em,24vw);overflow:hidden;text-overflow:ellipsis}
+
+.public-letter-grid .envelope{container-type:inline-size;padding-left:clamp(18px,2.1vw,31px);padding-right:clamp(76px,6.6vw,101px)}
+.public-letter-grid .envelope-title{display:block;white-space:nowrap;text-overflow:ellipsis;min-height:0;height:auto;max-height:none;font-size:20px;font-size:clamp(14px,8.2cqi,22px);line-height:1.45}
+.public-letter-grid .envelope-excerpt{margin-top:12px}
+.public-letter-grid .envelope-stamp{width:clamp(56px,5vw,72px);height:clamp(60px,5.3vw,77px);top:22px;right:clamp(12px,1.55vw,23px)}
+.public-letter-grid .envelope-postmark{z-index:1;right:clamp(58px,6vw,82px);width:62px;opacity:.32}
+
+.delivery-receipt{max-width:580px;margin:clamp(28px,9vh,100px) auto;text-align:center;padding:clamp(24px,5vw,48px);background:#fffaf0;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px #785b2b14}
+.delivery-receipt img{display:block;width:clamp(105px,22vw,160px);height:auto;margin:0 auto 12px}
+.delivery-receipt .eyebrow{margin-bottom:8px}
+.delivery-receipt .receipt-note{margin:8px 0 20px;color:var(--muted)}
+.delivery-receipt .button[hidden]{display:none}
