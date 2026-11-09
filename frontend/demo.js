@@ -30,9 +30,9 @@ export class DemoService {
   rows() {
     let rows;
     try { rows = JSON.parse(this.storage.getItem(storageKey) || '[]'); }
-    catch { throw new ApiError('本机演示数据无法读取，请保留数据并联系开发者。'); }
+    catch { throw new ApiError('暂时无法读取信件，请稍后重试。'); }
     if (!Array.isArray(rows) || rows.some(row => !row || typeof row.id !== 'string' || typeof row.title !== 'string' || typeof row.content !== 'string')) {
-      throw new ApiError('本机演示数据格式不正确，未覆盖原有内容。');
+      throw new ApiError('信件数据暂时无法读取，请联系维护人员。');
     }
     return rows;
   }
@@ -42,12 +42,12 @@ export class DemoService {
   }
   async login() {
     this.sessionStorage.setItem('luojia.demo.signedIn', 'true');
-    this.user = { id: 'usr_demo', displayName: '演示来客', role: 'user' }; this.csrfToken = 'demo-only'; return this.user;
+    this.user = { id: 'usr_demo', displayName: '珞珈来客', role: 'user' }; this.csrfToken = 'demo-only'; return this.user;
   }
   async logout() { this.sessionStorage.removeItem('luojia.demo.signedIn'); this.user = null; this.csrfToken = null; }
   async metadata() { return { locations: [], patterns: [demoPattern] }; }
   async list({ mine = false, drafts = false, workflowState, page = 1, pageSize = 6 } = {}) {
-    if (mine && !this.user) throw new ApiError('请先使用演示身份。', { status: 401 });
+    if (mine && !this.user) throw new ApiError('请先登录。', { status: 401 });
     let rows = mine ? this.rows() : seeds;
     if (workflowState === 'draft' || drafts) rows = rows.filter(row => row.status === 'draft');
     else if (workflowState) rows = rows.filter(row => (row.workflowState || (row.status === 'draft' ? 'draft' : 'pendingReview')) === (workflowState || 'draft'));
@@ -72,7 +72,7 @@ export class DemoService {
     catch { throw new ApiError('暂时未能删除，请稍后再试。'); }
   }
   async save(payload, { id, key } = {}) {
-    if (!this.user) throw new ApiError('请先使用演示身份。', { status: 401 });
+    if (!this.user) throw new ApiError('请先登录。', { status: 401 });
     if (!id && this.keys.has(key)) return this.detail(this.keys.get(key));
     const rows = this.rows();
     const previous = id ? rows.find(row => row.id === id) : null;
@@ -83,8 +83,8 @@ export class DemoService {
     const privateLetter = payload.visibility === 'private';
     const row = {
       ...seeds[0], ...previous, id: id || `let_local_${crypto.randomUUID()}`, ...payload,
-      author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '演示来客', isAnonymous: payload.isAnonymous },
-      recipient: privateLetter ? { type: 'user', user: { id: payload.recipientUserId || 'usr_demo_recipient', username: 'demo_recipient', displayName: '演示收件人', avatarUrl: null } } : { type: 'wall', user: null }, pattern: demoPattern,
+      author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '珞珈来客', isAnonymous: payload.isAnonymous },
+      recipient: privateLetter ? { type: 'user', user: { id: payload.recipientUserId || 'usr_demo_recipient', username: 'demo_recipient', displayName: '收件人', avatarUrl: null } } : { type: 'wall', user: null }, pattern: demoPattern,
       excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
       workflowState: draft ? 'draft' : privateLetter ? 'private' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: null,
       submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
@@ -93,7 +93,7 @@ export class DemoService {
     // 演示存储与真实接口完全隔离，不保存账号口令或 token。
     const next = [row, ...rows.filter(item => item.id !== row.id)];
     try { this.storage.setItem(storageKey, JSON.stringify(next)); }
-    catch { throw new ApiError('浏览器未能保存，请检查存储空间。内容仍在编辑器中。'); }
+    catch { throw new ApiError('暂时未能保存，请稍后重试。正文仍为你保留。'); }
     if (!id) this.keys.set(key, row.id);
     return structuredClone(row);
   }

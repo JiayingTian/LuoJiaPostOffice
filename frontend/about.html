@@ -255,8 +255,7 @@
 </style><style>.account #user-name{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:40px;min-height:40px}
 .account-trigger svg{width:23px;height:23px;flex:none}
 </style>
-<style>.account-nickname{max-width:min(12em,24vw);overflow:hidden;text-overflow:ellipsis}
-</style>
+<style></style>
 </head>
 <body>
 
@@ -504,11 +503,8 @@
     let user = null;
 
     function renderAccount() {
-      const displayName = user?.displayName?.trim();
-      const nickname = config.mode === 'demo' ? '珞珈来客' : displayName || '珞珈来客';
-      userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg><span class="account-nickname"></span>';
-      userTrigger.querySelector('.account-nickname').textContent = nickname;
-      userTrigger.setAttribute('aria-label', nickname + '，打开账户菜单');
+      userTrigger.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg>';
+  userTrigger.setAttribute('aria-label', '打开账户菜单');
       userTrigger.setAttribute('aria-expanded', 'false');
       userMenu.classList.remove('open');
       userMenu.hidden = !user;
