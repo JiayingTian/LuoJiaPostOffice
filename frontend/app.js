@@ -293,9 +293,11 @@ async function detail(id, token, params) {
   const letter = await service.detail(id);
   if (token !== state.render) return;
   state.currentLetter = letter;
+  const editAction = letter.canEdit ? button(letter.status === 'draft' ? '继续写信' : '编辑', 'edit', true) : '';
+  const deleteAction = letter.canDelete ? button(letter.status === 'draft' ? '删除草稿' : '删除', 'delete-letter') : '';
   app.innerHTML = `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a></div>` + paper(letter) +
     (letter.reviewNote ? `<p class="review-note"><strong>未通过原因：</strong>${e(letter.reviewNote)}</p>` : '') +
-    `<div class="actions">${letter.canEdit ? button(letter.publishedAt ? '再次编辑' : '继续写信', 'edit', true) : ''}${letter.status === 'draft' && letter.canDelete ? button('删除草稿', 'delete-draft') : ''}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('回一封信', 'reply', true) : ''}</div></article>`;
+    `<div class="actions">${editAction}${deleteAction}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('回一封信', 'reply', true) : ''}</div></article>`;
   if (!demo && service.user?.role === 'admin' && letter.status === 'active' && letter.visibility === 'public' && !letter.publishedAt && letter.submittedAt) {
     app.insertAdjacentHTML('beforeend', `<section class="paper review-panel"><h2>审核这封信</h2><div class="form-field"><label for="review-reason">未通过原因</label><select id="review-reason"><option value="">请选择原因标签</option>${['色情低俗','暴力血腥','仇恨歧视与骚扰','违法违规内容','垃圾信息与恶意广告'].map(reason => `<option value="${reason}">${reason}</option>`).join('')}</select></div><p class="form-error" role="alert"></p><div class="actions">${button('退回草稿箱','reject-review')}${button('审核通过','approve-review',true)}</div></section>`);
     app.querySelectorAll('.review-panel button').forEach(el => el.dataset.mutate = '');
@@ -472,6 +474,7 @@ async function save(draft) {
       }
     }
     const payload = letterPayload(state.editor, { draft, update: Boolean(state.editor.id), privateEnabled: true });
+    if (demo) payload.recipientUsername = state.editor.recipientUsername.trim();
     const letter = await service.save(payload, { id: state.editor.id, key: submission.for(payload) });
     state.archive = null;
     state.dirty = false; submission.clear();
@@ -498,19 +501,11 @@ async function save(draft) {
 }
 async function startFrom(letter, edit) {
   if (state.busy) { toast('正在保存，请稍等片刻。'); return; }
+  if (!letter || (edit && !letter.canEdit)) return;
   if (state.dirty) { await requestLeave(() => startFrom(letter, edit)); return; }
+  const token = state.render;
   await metadata();
-  if (edit && letter.publishedAt && letter.visibility === 'public') {
-    if (leaving) return;
-    leaving = true;
-    try {
-      const choice = await choose('收回草稿箱，再继续写？', '确认后，这封信将不再公开，已保存的正文会保留。修改完成后，可以重新寄出。', [['cancel','取消'],['edit','收回并编辑',true]]);
-      if (choice !== 'edit') return;
-      setBusy(true);
-      letter = await service.save({ title: letter.title, submitForReview: false }, { id: letter.id });
-      state.currentLetter = letter;
-    } finally { setBusy(false); leaving = false; }
-  }
+  if (token !== state.render) return;
   state.editor = edit ? { id: letter.id, title: letter.title, content: letter.content, penName: letter.author?.isAnonymous ? '' : letter.author?.displayName || '', isAnonymous: Boolean(letter.author?.isAnonymous), patternId: letter.pattern.id, parentLetterId: letter.parentLetterId, parentTitle: '', visibility: letter.visibility || 'public', recipientUserId: letter.recipient?.user?.id || null, recipientUsername: letter.recipient?.user?.username || '', allowReplies: letter.allowReplies, allowResponses: letter.allowResponses }
     : { ...ownEditor(), parentLetterId: letter.id, parentTitle: letter.title };
   state.dirty = false; submission.clear(); navigate('#/write');
@@ -552,7 +547,7 @@ app.addEventListener('click', async event => {
     if (action === 'encounter') await encounterLetter(event.target.closest('[data-action]'));
     if (action === 'login') openAuth();
     if (action === 'retry' && canRequest()) render();
-    if (action === 'delete-draft') await deleteDraft();
+    if (action === 'delete-letter') await deleteLetter();
     if (action === 'save') await save(true);
     if (action === 'submit') await save(false);
     if (action === 'reply') await startFrom(state.currentLetter, false);
@@ -667,18 +662,25 @@ async function requestLeave(action) {
     await action();
   } finally { leaving = false; }
 }
-async function deleteDraft() {
-  if (state.busy || leaving) return;
+async function deleteLetter() {
+  if (state.busy || leaving || !canRequest()) return;
   const letter = state.currentLetter;
-  if (!letter || letter.status !== 'draft' || !letter.canDelete) return;
+  if (!letter?.canDelete || authNeeded()) return;
+  const draft = letter.status === 'draft';
   leaving = true;
   try {
-    const choice = await choose('删除这封草稿？', '删除后，这封草稿将不再保留。', [['cancel','取消'],['delete','删除',true]]);
+    const choice = await choose(
+      draft ? '删除这封草稿？' : '删除这封信？',
+      draft ? '删除后，这封草稿将不再保留。' : '删除后，这封信将无法查看或恢复。',
+      [['cancel', '取消'], ['delete', '确认删除', true]]
+    );
     if (choice !== 'delete') return;
     setBusy(true);
     await service.remove(letter.id);
+    state.archive = null;
     if (state.editor?.id === letter.id) { state.editor = null; state.dirty = false; }
-    toast('草稿已删除。'); navigate('#/mine');
+    toast(draft ? '草稿已删除。' : '信件已删除。');
+    navigate('#/mine');
   } catch (error) { showError(error); }
   finally { setBusy(false); leaving = false; }
 }
