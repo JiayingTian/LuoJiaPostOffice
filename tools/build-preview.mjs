@@ -17,6 +17,13 @@ await cp(
   resolve(target, 'pictures/material/letter-paper/rice-yellow.png'),
 );
 await cp(resolve(root, 'tools/dev-server.mjs'), resolve(target, 'tools/dev-server.mjs'));
+await writeFile(resolve(target, 'package.json'), JSON.stringify({
+  name: 'luojia-post-office-preview',
+  private: true,
+  type: 'module',
+  scripts: { dev: 'node tools/dev-server.mjs' },
+  engines: { node: '>=20' },
+}, null, 2) + '\n');
 await writeFile(resolve(target, 'README.md'),
   '# 珞珈烟火邮局 · 演示包\n\n需要 Node.js 20 或更新版本。进入本目录运行 `npm run dev`，然后打开终端显示的网址。无需安装依赖或启动数据库。\n');
 console.log(`已生成 ${target}。进入该目录运行 npm run dev 后查看演示。`);
