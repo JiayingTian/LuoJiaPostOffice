@@ -275,7 +275,7 @@ async function timeLetters(params, token) {
       <div class="calendar-grid">${cells.join('')}</div>
       <p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p>
     </section>
-    <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section>
+    <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.webp" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section>
   </div></div>`;
   app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，重温时光的回响。', '<a class="button primary" href="#/write">写一封信</a>') +
     `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
@@ -389,7 +389,7 @@ function deliveryReceipt() {
         <div class="postal-paper"><i></i><i></i><i></i></div>
         <div class="postal-front"></div><div class="postal-flap"></div>
         <span class="postal-address">珞珈烟火邮局</span>
-        <img class="postal-imprint" src="assets/art-19.png" alt="">
+        <img class="postal-imprint" src="assets/art-19.webp" alt="">
         <div class="postal-tool"><div class="postal-tool-turn"><b></b><i></i></div></div>
       </div>
     </div>

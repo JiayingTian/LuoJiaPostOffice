@@ -30,8 +30,8 @@ test('retry reuses key until content changes or submission completes', () => {
   assert.notEqual(key.for(draft),key.for({...draft,title:'另一封信'}));
   const previous=key.for(draft);key.clear();assert.notEqual(key.for(draft),previous);
 });
-test('review labels use real backend states and safe fallback', () => {
-  assert.equal(statusLabel({status:'active',visibility:'public',submittedAt:'now',publishedAt:null}),'待审核');
+test('delivery labels follow current copy and have a safe fallback', () => {
+  assert.equal(statusLabel({status:'active',visibility:'public',submittedAt:'now',publishedAt:null}),'已投递');
   assert.equal(statusLabel({status:'draft',reviewNote:'请修改'}),'草稿');
   assert.equal(statusLabel({status:'future'}),'状态待确认');
 });
