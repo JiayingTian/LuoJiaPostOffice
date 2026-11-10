@@ -83,8 +83,6 @@
 
 /* Compact heading action: no extra row in the public mailbox. */
 .page-heading .encounter-button{position:relative;flex:none;align-self:center;margin-left:auto;padding:13px 30px;border:1px solid #ae8752;border-radius:3px;background:linear-gradient(120deg,#fffaf0,#f1e2c7);color:#855c32;font-family:var(--serif,serif);font-size:18px;letter-spacing:.12em;box-shadow:inset 0 0 0 4px #fff9ed,inset 0 0 0 5px #c5a77866,0 4px 12px #8f6a2f12}
-.page-heading .encounter-button:before,.page-heading .encounter-button:after{content:'';position:absolute;width:7px;height:7px;border:1px solid #b48c55;transform:rotate(45deg);top:calc(50% - 4px);background:#f8edd9}
-.page-heading .encounter-button:before{left:12px}.page-heading .encounter-button:after{right:12px}
 .page-heading .encounter-button:hover{background:linear-gradient(120deg,#fff9eb,#e9d4af);box-shadow:inset 0 0 0 4px #fff9ed,inset 0 0 0 5px #b99b6e,0 5px 16px #8f6a2f20}
 .postal-ritual{background-image:radial-gradient(ellipse at 50% 25%,#fffdf5e6,#f0e1cbd9),url('assets/art-16.png')!important;background-size:auto,650px!important}
 .postal-paper{background:linear-gradient(120deg,#fffdf1df,#efe0c8dd),url('assets/art-16.png') center/450px;padding-top:32px}
@@ -95,7 +93,7 @@
 .postal-tool-turn i{left:28px;top:22px;width:32px;height:82px;transform:translateZ(20px);border-radius:18px 18px 9px 9px;background:repeating-linear-gradient(88deg,#67452f 0,#805b3b 3px,#715035 5px,#946c44 7px);box-shadow:inset 5px 0 7px #d4b07855,inset -6px 0 8px #35261977;animation:postal-handle 5s both;animation-delay:var(--ritual-delay)}
 .postal-tool-turn i:after{content:'';position:absolute;inset:3px 3px auto;height:24px;border-radius:50%;background:radial-gradient(ellipse at 35% 30%,#bd9665,#795434 65%,#4f3425);border:1px solid #b28a59;box-shadow:inset 0 0 0 3px #775133}
 @keyframes postal-turn{0%,47%{transform:rotateX(0) rotateZ(12deg)}59%,72%{transform:rotateX(-65deg) rotateZ(-9deg)}100%{transform:rotateX(-65deg) rotateZ(-9deg)}}
-@keyframes postal-handle{0%,47%{top:22px;height:82px;border-radius:18px 18px 9px 9px;transform:translateZ(20px) rotateX(0)}59%,100%{top:85px;height:32px;border-radius:50%;transform:translateZ(20px) rotateX(65deg)}}
+@keyframes postal-handle{0%,47%{top:22px;height:82px;border-radius:18px 18px 9px 9px;transform:translateZ(20px) rotateX(0)}59%,100%{top:85px;height:32px;border-radius:50%;transform:translateZ(0) rotateX(65deg)}}
 @keyframes postal-stamp{0%,43%{opacity:0;transform:translate(40px,-125px)}49%{opacity:1;transform:translate(15px,-70px)}60%{opacity:1;transform:translate(0,-16px)}65%,69%{opacity:1;transform:translate(0,0) scale(.97)}82%,100%{opacity:0;transform:translate(15px,-110px)}}
 @keyframes postal-ink{0%,66%{opacity:0;transform:rotate(-16deg) scale(1.05)}70%,100%{opacity:.8;transform:rotate(-16deg) scale(1)}}
 @media(min-width:1001px) and (min-height:650px){
@@ -112,4 +110,4 @@ body.public-mailbox-view{height:100dvh;overflow:hidden;display:flex;flex-directi
 .public-mailbox-view .pagination{flex:none;margin:8px 0 0;padding:0}
 .public-mailbox-view .footer{height:82px;min-height:0;flex:none}
 }
-@media(max-width:600px){.page-heading .encounter-button{padding:11px 22px;font-size:13px;letter-spacing:.04em}.page-heading .encounter-button:before{left:8px}.page-heading .encounter-button:after{right:8px}}
+@media(max-width:600px){.page-heading .encounter-button{padding:11px 22px;font-size:13px;letter-spacing:.04em}}
