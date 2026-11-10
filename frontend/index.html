@@ -262,6 +262,39 @@ body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .head
 @media(prefers-reduced-motion:reduce){.postal-ritual *{animation:none!important;transition:none!important}.postal-paper{opacity:0}.postal-tool{display:none}.postal-flap{transform:none}.postal-imprint{opacity:.85;transform:rotate(-16deg)}}
 
 </style>
+<style>/* Compact heading action: no extra row in the public mailbox. */
+.page-heading .encounter-button{position:relative;flex:none;align-self:center;margin-left:auto;padding:13px 30px;border:1px solid #ae8752;border-radius:3px;background:linear-gradient(120deg,#fffaf0,#f1e2c7);color:#855c32;font-family:var(--serif,serif);font-size:18px;letter-spacing:.12em;box-shadow:inset 0 0 0 4px #fff9ed,inset 0 0 0 5px #c5a77866,0 4px 12px #8f6a2f12}
+.page-heading .encounter-button:before,.page-heading .encounter-button:after{content:'';position:absolute;width:7px;height:7px;border:1px solid #b48c55;transform:rotate(45deg);top:calc(50% - 4px);background:#f8edd9}
+.page-heading .encounter-button:before{left:12px}.page-heading .encounter-button:after{right:12px}
+.page-heading .encounter-button:hover{background:linear-gradient(120deg,#fff9eb,#e9d4af);box-shadow:inset 0 0 0 4px #fff9ed,inset 0 0 0 5px #b99b6e,0 5px 16px #8f6a2f20}
+.postal-ritual{background-image:radial-gradient(ellipse at 50% 25%,#fffdf5e6,#f0e1cbd9),url('assets/art-16.png')!important;background-size:auto,650px!important}
+.postal-paper{background:linear-gradient(120deg,#fffdf1df,#efe0c8dd),url('assets/art-16.png') center/450px;padding-top:32px}
+.postal-paper i{height:1px;opacity:.55}
+.postal-tool{perspective:650px;transform-style:preserve-3d}
+.postal-tool-turn{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:44px 101px;animation:postal-turn 5s both;animation-delay:var(--ritual-delay)}
+.postal-tool-turn b{left:0;top:57px;bottom:auto;height:88px;width:88px;border-radius:50%;border:3px double #d8bb81;border-bottom:5px solid #694724;background:repeating-radial-gradient(ellipse at 44% 40%,#b28a50 0,#ceb27c 2px,#b99760 3px,#97703d 5px);box-shadow:inset 0 0 0 5px #896337,inset 0 0 0 7px #d7bb81,0 6px 9px #51341d35;transform:rotateX(65deg)}
+.postal-tool-turn i{left:28px;top:22px;width:32px;height:82px;transform:translateZ(20px);border-radius:18px 18px 9px 9px;background:repeating-linear-gradient(88deg,#67452f 0,#805b3b 3px,#715035 5px,#946c44 7px);box-shadow:inset 5px 0 7px #d4b07855,inset -6px 0 8px #35261977;animation:postal-handle 5s both;animation-delay:var(--ritual-delay)}
+.postal-tool-turn i:after{content:'';position:absolute;inset:3px 3px auto;height:24px;border-radius:50%;background:radial-gradient(ellipse at 35% 30%,#bd9665,#795434 65%,#4f3425);border:1px solid #b28a59;box-shadow:inset 0 0 0 3px #775133}
+@keyframes postal-turn{0%,47%{transform:rotateX(0) rotateZ(12deg)}59%,72%{transform:rotateX(-65deg) rotateZ(-9deg)}100%{transform:rotateX(-65deg) rotateZ(-9deg)}}
+@keyframes postal-handle{0%,47%{top:22px;height:82px;border-radius:18px 18px 9px 9px;transform:translateZ(20px) rotateX(0)}59%,100%{top:85px;height:32px;border-radius:50%;transform:translateZ(20px) rotateX(65deg)}}
+@keyframes postal-stamp{0%,43%{opacity:0;transform:translate(40px,-125px)}49%{opacity:1;transform:translate(15px,-70px)}60%{opacity:1;transform:translate(0,-16px)}65%,69%{opacity:1;transform:translate(0,0) scale(.97)}82%,100%{opacity:0;transform:translate(15px,-110px)}}
+@keyframes postal-ink{0%,66%{opacity:0;transform:rotate(-16deg) scale(1.05)}70%,100%{opacity:.8;transform:rotate(-16deg) scale(1)}}
+@media(min-width:1001px) and (min-height:650px){
+body.public-mailbox-view{height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+.public-mailbox-view .header{flex:none}
+.public-mailbox-view .page-surface{flex:1;min-height:0;display:flex;flex-direction:column}
+.public-mailbox-view #app{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;padding-top:10px;padding-bottom:8px}
+.public-mailbox-view .page-heading{margin-bottom:8px;flex:none}
+.public-mailbox-view .breadcrumbs{margin-bottom:6px}
+.public-mailbox-view .page-heading h1{font-size:30px}
+.public-mailbox-view .intro{margin:4px 0 0}
+.public-mailbox-view .letter-grid{flex:1;min-height:0;grid-template-rows:repeat(2,minmax(0,1fr));gap:14px}
+.public-mailbox-view .envelope{height:100%;min-height:0}
+.public-mailbox-view .pagination{flex:none;margin:8px 0 0;padding:0}
+.public-mailbox-view .footer{height:82px;min-height:0;flex:none}
+}
+@media(max-width:600px){.page-heading .encounter-button{padding:11px 22px;font-size:13px;letter-spacing:.04em}.page-heading .encounter-button:before{left:8px}.page-heading .encounter-button:after{right:8px}}
+</style>
 </head>
 <body>
   <header class="header">
@@ -676,7 +709,7 @@ class DemoService {
     if (!Array.isArray(rows) || rows.some(row => !row || typeof row.id !== 'string' || typeof row.title !== 'string' || typeof row.content !== 'string')) {
       throw new ApiError('信件数据暂时无法读取，请联系维护人员。');
     }
-    return rows;
+    return rows.map(row => row.status === 'active' && row.visibility === 'public' && row.workflowState === 'pendingReview' ? { ...row, workflowState: 'published', publishedAt: row.submittedAt || row.updatedAt || row.createdAt } : row);
   }
   async session() {
     if (this.sessionStorage.getItem('luojia.demo.signedIn') === 'true') await this.login();
@@ -690,20 +723,20 @@ class DemoService {
   async metadata() { return { locations: [], patterns: stationeryCatalog }; }
   async list({ mine = false, drafts = false, workflowState, page = 1, pageSize = 6 } = {}) {
     if (mine && !this.user) throw new ApiError('请先登录。', { status: 401 });
-    let rows = mine ? this.rows() : seeds;
+    let rows = mine ? this.rows() : [...this.rows().filter(row => row.status === 'active' && row.visibility === 'public' && row.publishedAt && !row.parentLetterId), ...seeds];
     if (workflowState === 'draft' || drafts) rows = rows.filter(row => row.status === 'draft');
     else if (workflowState) rows = rows.filter(row => (row.workflowState || (row.status === 'draft' ? 'draft' : 'pendingReview')) === (workflowState || 'draft'));
     if (mine) rows = [...rows].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
     return { items: rows.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total: rows.length, hasMore: page * pageSize < rows.length };
   }
   async detail(id) {
-    const row = seeds.find(row => row.id === id) || demoReplies.find(row => row.id === id) || (this.user && this.rows().find(row => row.id === id));
+    const row = seeds.find(row => row.id === id) || demoReplies.find(row => row.id === id) || this.rows().find(row => row.id === id && (this.user || (row.status === 'active' && row.visibility === 'public' && row.publishedAt)));
     if (!row) throw new ApiError('这封信暂时无法查看。', { status: 404 });
     return structuredClone(row);
   }
   async replies(id, { page = 1, pageSize = 6 } = {}) {
     await this.detail(id);
-    const rows = demoReplies.filter(row => row.parentLetterId === id);
+    const rows = [...demoReplies, ...this.rows().filter(row => row.status === 'active' && row.visibility === 'public' && row.publishedAt)].filter(row => row.parentLetterId === id);
     return { items: rows.slice((page-1)*pageSize,page*pageSize), page, pageSize, total: rows.length, hasMore: page*pageSize < rows.length };
   }
   async remove(id) {
@@ -729,7 +762,7 @@ class DemoService {
       author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '珞珈来客', isAnonymous: payload.isAnonymous },
       recipient: { type: 'wall', user: null }, pattern: stationeryCatalog.find(pattern => pattern.id === payload.patternId) || previous?.pattern || demoPattern,
       excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
-      workflowState: draft ? 'draft' : privateLetter ? 'private' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: null,
+      workflowState: draft ? 'draft' : privateLetter ? 'private' : 'published', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: !draft && !privateLetter ? now : null,
       submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
       canEdit: draft || privateLetter, canDelete: true, canForward: false,
     };
@@ -827,9 +860,9 @@ function card(letter, mine, index = 0) {
   const frame = (index + Math.floor(index / 3)) % 3 + 1;
   return `<button class="envelope ${matchMedia('(hover: none)').matches && state.selected === letter.id ? 'revealed' : ''}" type="button" data-letter="${e(letter.id)}" aria-label="${e(letter.title || '未命名草稿')}，按 Enter 阅读全文" aria-describedby="summary-${e(letter.id)}">
     <img class="envelope-frame frame-${frame}" src="assets/frame${frame}.png" alt="" aria-hidden="true">
-    ${mine ? `<span class="badge">${e(statusLabel(letter))}</span>` : ''}
+    ${mine && letter.status === 'draft' ? '<span class="badge">草稿</span>' : ''}
     <span class="envelope-title">${e(letter.title || '未命名草稿')}</span><span class="envelope-excerpt" id="summary-${e(letter.id)}">${e(letter.excerpt || '这封信还在慢慢写。')}</span>
-    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(letter.publishedAt ? date(letter.publishedAt) : letter.visibility === 'private' ? '私密投递' : '尚未公开')}</span><span class="envelope-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="envelope-stamp" aria-hidden="true">${stampMarkup(letter.stampId || decoration.stampId)}</span>
+    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(date(letter.publishedAt || letter.submittedAt || letter.updatedAt || letter.createdAt))}</span><span class="envelope-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="envelope-stamp" aria-hidden="true">${stampMarkup(letter.stampId || decoration.stampId)}</span>
   </button>`;
 }
 let encounterBusy = false;
@@ -867,7 +900,7 @@ async function encounterLetter(control) {
     encounterBusy = false;
     control.disabled = false;
     control.removeAttribute('aria-busy');
-    control.textContent = '偶遇一封信 ↗';
+    control.textContent = '偶遇一封信';
   }
 }
 
@@ -878,7 +911,7 @@ async function mailbox(params, mine, token) {
   if (mine && !service.user) {
     app.innerHTML = empty('你的信，都在这里', '登录后查看自己保存的草稿和提交的信件。', button('登录', 'login', true)); return;
   }
-  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '') + '<div class="letter-grid" aria-label="正在加载">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
+  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', mine ? '' : '<button type="button" class="button encounter-button" data-action="encounter" title="随机打开一封公共来信">偶遇一封信</button>') + '<div class="letter-grid" aria-label="正在加载">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
   let result;
   if (filter === 'replies') {
     const letters = await archiveLetters(token);
@@ -896,9 +929,8 @@ async function mailbox(params, mine, token) {
   if (token !== state.render) return;
   const base = mine ? '/mine' : '/mailbox';
   const paging = p => `#${base}?page=${p}${filter ? `&filter=${filter}` : ''}`;
-  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['replies','我的回信'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${filter === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
-  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '') + tabs +
-    (mine ? '' : '<div class="encounter-bar"><p>让一封未曾谋面的信，来到你面前。</p><button type="button" class="button encounter-button" data-action="encounter">偶遇一封信 ↗</button></div>') +
+  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['replies','我的回信'],['published','已公开'],['private','已私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${filter === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
+  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', mine ? '' : '<button type="button" class="button encounter-button" data-action="encounter" title="随机打开一封公共来信">偶遇一封信</button>') + tabs +
     `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
     (result.items.length ? `<div class="letter-grid${mine ? '' : ' public-letter-grid'}">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(filter === 'replies' ? '还没有寄出的回信' : mine ? '这里还没有信' : '信箱暂时安静', filter === 'replies' ? '读到想回应的信时，给对方回一封吧。' : mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
@@ -937,7 +969,7 @@ function archiveCard(entry, index = 0) {
   const decoration = savedDecoration(letter.id);
   const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
   const stamp = stampMarkup(letter.stampId || decoration.stampId);
-  return `<a class="time-letter calendar-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="calendar-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : '<img class="calendar-card-flower" src="assets/art-3.png" alt="" aria-hidden="true">'}<h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="calendar-letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span><span>${dateTime}</span></span><span class="badge">${e(statusLabel(letter))}</span><span class="calendar-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="calendar-stamp" aria-hidden="true">${stamp}</span></a>`;
+  return `<a class="time-letter calendar-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="calendar-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : '<img class="calendar-card-flower" src="assets/art-3.png" alt="" aria-hidden="true">'}<h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="calendar-letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span><span>${dateTime}</span></span><span class="calendar-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="calendar-stamp" aria-hidden="true">${stamp}</span></a>`;
 }
 function timelineCard(entry, index) {
   const { letter, parts } = entry;
@@ -945,7 +977,7 @@ function timelineCard(entry, index) {
   const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
   const stamp = stampMarkup(letter.stampId || decoration.stampId);
   const frameName = `frame${index % 3 + 1}.png`;
-  return `<div class="timeline-entry"><span class="timeline-dot" aria-hidden="true"></span><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}"><img class="timeline-card-frame" src="assets/${frameName}" alt="" aria-hidden="true"><span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="badge">${e(statusLabel(letter))}</span><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp" aria-hidden="true">${stamp}</span></a></div>`;
+  return `<div class="timeline-entry"><span class="timeline-dot" aria-hidden="true"></span><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}"><img class="timeline-card-frame" src="assets/${frameName}" alt="" aria-hidden="true"><span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp" aria-hidden="true">${stamp}</span></a></div>`;
 }
 function timelineArchive(entries) {
   const groups = [];
@@ -990,7 +1022,7 @@ async function timeLetters(params, token) {
   if (token !== state.render) return;
   state.list = location.hash || '#/calendar';
   if (!entries.length) {
-    app.innerHTML = titleBlock('时光日历', '每一封寄出的信，都在时间里留下一个坐标。', '<a class="button primary" href="#/write?theme=time">写一封时光信</a>') + empty('尚未留下时光足迹', '提交审核或寄出一封私密信后，它会出现在这里。');
+    app.innerHTML = titleBlock('时光日历', '每一封寄出的信，都在时间里留下一个坐标。', '<a class="button primary" href="#/write?theme=time">写一封时光信</a>') + empty('尚未留下时光足迹', '寄出一封信后，它会出现在这里。');
     return;
   }
   const grouped = groupEntriesByDate(entries);
@@ -1017,7 +1049,7 @@ async function timeLetters(params, token) {
   const previous = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
   const calendarPanel = `<div class="calendar-shell combined-calendar-shell"><img class="calendar-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><img class="calendar-campus" src="assets/art-22.png" alt="" aria-hidden="true"><div class="calendar-layout"><section class="calendar-picker"><div class="calendar-bar"><a href="${calendarUrl(previous)}">‹ 上月</a><h2>${year} 年 ${month} 月</h2><a href="${calendarUrl(next)}">下月 ›</a></div><div class="calendar-week" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="calendar-grid">${cells.join('')}</div><p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p></section><section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section></div></div>`;
-  app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，查看那一天的所有来信，重温时光的回响。', '<a class="button primary" href="#/write?theme=time">写一封时光信</a>') + `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
+  app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，重温时光的回响。', '<a class="button primary" href="#/write?theme=time">写一封时光信</a>') + `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
   const timeline = app.querySelector('[data-calendar-timeline]');
   const target = timeline?.querySelector(`[data-timeline-date="${selectedKey}"]`);
   if (timeline && target) requestAnimationFrame(() => timeline.scrollTo({ top: Math.max(0, target.offsetTop - 12), behavior: params.has('day') ? 'smooth' : 'auto' }));
@@ -1029,7 +1061,7 @@ function paper(letter, preview = false) {
   const orientation = pattern.orientation === 'portrait' ? 'portrait' : 'landscape';
   const source = safePatternURL(pattern.previewUrl);
   return `<article class="paper stationery-sheet ${orientation}">${source ? `<img class="stationery-bg" src="${e(source)}" alt="">` : ''}<div class="reader-corner-flower" aria-hidden="true"><img src="assets/art-3.png" alt=""></div><div class="sheet-cancel" aria-hidden="true"><img src="assets/art-19.png" alt=""><svg viewBox="0 0 100 50" fill="none"><path d="M0 10Q12 0 25 10T50 10T75 10T100 10M0 22Q12 12 25 22T50 22T75 22T100 22M0 34Q12 24 25 34T50 34T75 34T100 34"/></svg></div><div class="sheet-header">${stampMarkup(letter.stampId || decoration.stampId)}<p class="eyebrow">A LETTER FOR YOU</p>${letter.parentLetterId ? `<p class="parent-note">回信${letter.parentTitle ? ` · ${e(letter.parentTitle)}` : ''}${!preview ? `　<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信</a>` : ''}</p>` : ''}
-  <h1>${e(letter.title || '未命名草稿')}</h1><div class="letter-meta"><span>署名：${e(letter.author?.displayName || '匿名来客')}</span>${!preview ? `<span>${e(date(letter.publishedAt || letter.updatedAt || letter.createdAt))}</span><span class="badge">${e(statusLabel(letter))}</span>` : `<span>${letter.visibility === 'private' ? `私密投递给 ${e(letter.recipientUsername || letter.recipient?.user?.displayName || '指定收件人')}` : '寄往公共信箱 · 审核后公开'}</span>`}</div></div>
+  <h1>${e(letter.title || '未命名草稿')}</h1><div class="letter-meta"><span>署名：${e(letter.author?.displayName || '匿名来客')}</span>${!preview ? `<span>${e(date(letter.publishedAt || letter.updatedAt || letter.createdAt))}</span><span class="badge">${e(statusLabel(letter))}</span>` : `<span>${letter.visibility === 'private' ? `私密投递给 ${e(letter.recipientUsername || letter.recipient?.user?.displayName || '指定收件人')}` : '寄往公共信箱'}</span>`}</div></div>
   <div class="reading-body"><div class="letter-content">${e(letter.content)}</div></div>
   <nav class="sheet-paging" aria-label="信纸翻页"><button class="text-button" type="button" data-page-prev>← 上一页</button><span class="paper-page-count" role="status"></span><button class="text-button" type="button" data-page-next>下一页 →</button></nav>`;
 }
@@ -1096,7 +1128,7 @@ async function write(token) {
   state.editor ||= ownEditor();
   state.editor.patternId ||= state.metadata.patterns[0].id;
   const value = state.editor;
-  app.innerHTML = steps(0) + `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a><span>${value.id ? '继续写草稿' : '写一封信'}</span></div><form id="editor" class="paper" novalidate><div class="vintage-frame" aria-hidden="true"><span class="corner c0"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c1"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c2"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c3"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span></div><p class="eyebrow">WORDS WORTH KEEPING</p><h1>${route().params.get('theme') === 'time' ? '时光信笺' : '写下此刻的心事'}</h1>${route().params.get('theme') === 'time' ? '<p class="help">写给过去的自己，也写给未来的你。记下此刻的成长、困惑与期待。</p>' : ''}
+  app.innerHTML = steps(0) + `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a><span>${value.id ? '继续写草稿' : '写一封信'}</span></div><form id="editor" class="paper" novalidate><div class="vintage-frame" aria-hidden="true"><span class="corner c0"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c1"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c2"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c3"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span></div><p class="eyebrow">WORDS WORTH KEEPING</p><h1>${route().params.get('theme') === 'time' ? '时光信笺' : '写下此刻的心事'}</h1>${route().params.get('theme') === 'time' ? '<p class="help">写给过去的自己，也写给未来的你。</p>' : ''}
     ${value.parentLetterId ? `<p class="parent-note">回信 · ${e(value.parentTitle || '原信')}</p>` : ''}
     <div class="form-field"><label for="letter-title">标题</label><input id="letter-title" name="title" value="${e(value.title)}" autocomplete="off" aria-describedby="title-error"><div class="field-error" id="title-error" data-error="title"></div></div>
     <div class="form-field"><label for="letter-content">正文</label><textarea id="letter-content" name="content" placeholder="见字如面……" aria-describedby="content-error">${e(value.content)}</textarea><div class="form-meta"><span id="word-count">${charCount(value.content)} / 2000</span></div><div class="field-error" id="content-error" data-error="content"></div></div>
@@ -1116,7 +1148,7 @@ async function decorate(token) {
   app.innerHTML=steps(1)+`<form id="editor" class="paper decoration-page" novalidate><div class="vintage-frame" aria-hidden="true"><span class="corner c0"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c1"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c2"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span><span class="corner c3"><svg class="paper-flourish" viewBox="0 0 120 120" fill="none" aria-hidden="true"><path d="M10 110V37Q10 10 37 10H110M18 110V40Q18 18 40 18H110"/><path d="M10 62C40 62 62 40 62 10M18 44C35 44 44 35 44 18M32 32C17 14 37 5 42 19C48 36 28 48 19 42C5 37 14 17 32 32Z"/><path d="M62 10C75 28 51 36 48 25C45 14 63 18 67 25M10 62C28 75 36 51 25 48C14 45 18 63 25 67"/><circle cx="32" cy="32" r="4"/></svg></span></div><p class="eyebrow">A LITTLE CARE, BEFORE IT LEAVES</p><h1>给心事挑一件外衣</h1>
     ${patternPicker()}${stampPicker()}
     <fieldset class="letter-settings"><legend>这封信的设置</legend>
-      <div class="form-field"><label for="visibility">投递方式</label><select id="visibility" name="visibility"><option value="public" ${value.visibility !== 'private' ? 'selected' : ''}>信墙（公开，审核后展示）</option><option value="private" ${value.visibility === 'private' ? 'selected' : ''}>指定用户（仅双方可见）</option></select></div>
+      <div class="form-field"><label for="visibility">投递方式</label><select id="visibility" name="visibility"><option value="public" ${value.visibility !== 'private' ? 'selected' : ''}>信墙（公开）</option><option value="private" ${value.visibility === 'private' ? 'selected' : ''}>指定用户（仅双方可见）</option></select></div>
       <div class="form-field" id="recipient-field" ${value.visibility === 'private' ? '' : 'hidden'}><label for="recipient-username">收件人用户名</label><input id="recipient-username" name="recipientUsername" value="${e(value.recipientUsername || '')}" autocomplete="off" placeholder="请输入对方的用户名"><p class="help">投递前会核对账号；私密信只有你和收件人可见。</p><div class="field-error" data-error="recipientUsername"></div></div>
       <label class="check-label"><input type="checkbox" name="allowReplies" ${value.visibility !== 'private' && value.allowReplies !== false ? 'checked' : ''} ${value.visibility === 'private' ? 'disabled' : ''}> 允许别人回信</label><p class="help" id="reply-setting-note">${value.visibility === 'private' ? '私密信件不开放公开回信。' : '关闭后，别人仍能阅读公开信件，但不能给它写回信。'}</p>
     </fieldset>
@@ -1160,11 +1192,11 @@ function deliveryReceipt() {
     <div class="postal-scene" aria-hidden="true">
       <div class="postal-envelope">
         <div class="postal-back"></div>
-        <div class="postal-paper"><span>见字如面</span><i></i><i></i><i></i></div>
+        <div class="postal-paper"><i></i><i></i><i></i></div>
         <div class="postal-front"></div><div class="postal-flap"></div>
         <span class="postal-address">珞珈烟火邮局</span>
         <img class="postal-imprint" src="assets/art-19.png" alt="">
-        <div class="postal-tool"><i></i><b></b></div>
+        <div class="postal-tool"><div class="postal-tool-turn"><b></b><i></i></div></div>
       </div>
     </div>
     <div role="status" aria-live="polite" aria-atomic="true">
@@ -1201,6 +1233,7 @@ async function render() {
   renderedHash = location.hash || '#/mailbox';
   const token = ++state.render;
   const { path, params } = route();
+  document.body.classList.toggle('public-mailbox-view', path === '/mailbox');
   document.body.classList.toggle('reading-view', path.startsWith('/letter/') || path === '/preview');
   document.body.classList.toggle('writing-view', ['/write','/decorate','/preview'].includes(path));
   document.body.classList.toggle('mailbox-view', ['/mailbox','/mine','/inbox','/calendar'].includes(path));
@@ -1288,7 +1321,7 @@ async function startFrom(letter, edit) {
     if (leaving) return;
     leaving = true;
     try {
-      const choice = await choose('收回草稿箱，再继续写？', '确认后，这封信将不再公开，已保存的正文会保留。修改完成后，可重新提交审核。', [['cancel','取消'],['edit','收回并编辑',true]]);
+      const choice = await choose('收回草稿箱，再继续写？', '确认后，这封信将不再公开，已保存的正文会保留。修改完成后，可以重新寄出。', [['cancel','取消'],['edit','收回并编辑',true]]);
       if (choice !== 'edit') return;
       setBusy(true);
       letter = await service.save({ title: letter.title, submitForReview: false }, { id: letter.id });
@@ -1505,4 +1538,5 @@ updateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || l
 </script>
 </body>
 </html>
+
 
