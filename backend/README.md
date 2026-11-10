@@ -1,5 +1,7 @@
 # 珞珈烟火邮局后端开发说明
 
+> 本文说明真实 API 模式。`npm run dev` 和 GitHub Pages 的演示版公开信寄出后直接展示；此后端当前仍要求管理员审核公开信与公开回信。两套流程请勿混用，参见仓库根目录 README。
+
 ## 1 环境准备
 
 ```powershell
@@ -90,3 +92,4 @@ POST   /api/v1/admin/letters/{letterId}/review
 ```
 
 接口字段、状态码和响应格式以 `restriction/openapi.yaml` 为准。
+
