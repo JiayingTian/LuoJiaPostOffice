@@ -57,7 +57,13 @@ export class DemoService {
   async detail(id) {
     const row = seeds.find(row => row.id === id) || this.rows().find(row => row.id === id && (this.user || (row.status === 'active' && row.visibility === 'public' && row.publishedAt)));
     if (!row) throw new ApiError('这封信暂时无法查看。', { status: 404 });
-    return structuredClone(row);
+    const canDelete = Boolean(this.user && row.canDelete);
+    const canEdit = canDelete && (row.status === 'draft' || (row.status === 'active' && (row.visibility === 'private' || Boolean(row.publishedAt))));
+    const result = structuredClone({ ...row, canEdit, canDelete });
+    if (canEdit && result.visibility === 'private' && !result.recipient?.user) {
+      result.recipient = { type: 'user', user: { id: result.recipientUserId || 'usr_demo_recipient', username: result.recipientUsername || 'demo_recipient' } };
+    }
+    return result;
   }
   async replies(id, { page = 1, pageSize = 6 } = {}) {
     await this.detail(id);
@@ -68,7 +74,7 @@ export class DemoService {
     if (!this.user) throw new ApiError('请先登录。', { status: 401 });
     const rows = this.rows();
     const row = rows.find(item => item.id === id);
-    if (!row || row.status !== 'draft') throw new ApiError('草稿暂时无法删除。', { status: 404 });
+    if (!row?.canDelete) throw new ApiError('这封信暂时无法删除。', { status: 404 });
     try { this.storage.setItem(storageKey, JSON.stringify(rows.filter(item => item.id !== id))); }
     catch { throw new ApiError('暂时未能删除，请稍后再试。'); }
   }
@@ -77,7 +83,7 @@ export class DemoService {
     if (!id && this.keys.has(key)) return this.detail(this.keys.get(key));
     const rows = this.rows();
     const previous = id ? rows.find(row => row.id === id) : null;
-    if (id && (!previous || previous.status !== 'draft' && previous.visibility !== 'private' && !previous.publishedAt)) throw new ApiError('只能继续编辑自己的草稿。', { status: 409 });
+    if (id && (!previous || previous.status !== 'draft' && previous.visibility !== 'private' && !previous.publishedAt)) throw new ApiError('这封信暂时无法编辑。', { status: 409 });
     if (previous) payload = { ...previous, penName: previous.author?.displayName, isAnonymous: previous.author?.isAnonymous, ...payload };
     const draft = id ? !payload.submitForReview : payload.saveAsDraft;
     const now = new Date().toISOString();
@@ -85,11 +91,11 @@ export class DemoService {
     const row = {
       ...seeds[0], ...previous, id: id || `let_local_${crypto.randomUUID()}`, ...payload,
       author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '珞珈来客', isAnonymous: payload.isAnonymous },
-      recipient: privateLetter ? { type: 'user', user: { id: payload.recipientUserId || 'usr_demo_recipient', username: 'demo_recipient', displayName: '收件人', avatarUrl: null } } : { type: 'wall', user: null }, pattern: demoPattern,
+      recipient: privateLetter ? { type: 'user', user: { id: payload.recipientUserId || 'usr_demo_recipient', username: payload.recipientUsername || previous?.recipient?.user?.username || 'demo_recipient', displayName: '收件人', avatarUrl: null } } : { type: 'wall', user: null }, pattern: demoPattern,
       excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
       workflowState: draft ? 'draft' : privateLetter ? 'private' : 'published', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: !draft && !privateLetter ? now : null,
       submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
-      canEdit: draft || privateLetter, canDelete: true, canForward: false,
+      canEdit: true, canDelete: true, canForward: false,
     };
     // 演示存储与真实接口完全隔离，不保存账号口令或 token。
     const next = [row, ...rows.filter(item => item.id !== row.id)];
