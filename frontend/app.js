@@ -83,6 +83,45 @@ function card(letter, mine, index = 0) {
     <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(letter.publishedAt ? date(letter.publishedAt) : letter.visibility === 'private' ? '私密投递' : '尚未公开')}</span><span class="envelope-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="stamp" aria-hidden="true">珞</span>
   </button>`;
 }
+let encounterBusy = false;
+async function encounterLetter(control) {
+  if (encounterBusy || route().path !== '/mailbox' || !canRequest()) return;
+  encounterBusy = true;
+  const token = state.render;
+  control.disabled = true;
+  control.setAttribute('aria-busy', 'true');
+  control.textContent = '正在寻找一封来信…';
+  try {
+    // Reservoir sampling gives every public letter the same chance, across pages.
+    let chosen = null, count = 0;
+    const seen = new Set();
+    for (let page = 1; ; page++) {
+      const result = await service.list({ mine: false, page, pageSize: 50 });
+      if (token !== state.render || route().path !== '/mailbox') return;
+      let added = 0;
+      for (const letter of result.items) {
+        if (!letter.id || seen.has(letter.id)) continue;
+        seen.add(letter.id); added++;
+        if (letter.visibility !== 'public' || letter.status !== 'active' || !letter.publishedAt) continue;
+        if (Math.random() < 1 / ++count) chosen = letter;
+      }
+      if (!result.hasMore) break;
+      if (!added) throw new Error('暂时没能取到完整来信，请再试一次。');
+    }
+    if (!chosen) { toast('信箱暂时安静，等一封来信吧。'); return; }
+    state.list = location.hash || '#/mailbox';
+    state.positions.set(state.list, window.scrollY);
+    navigate('#/letter/' + encodeURIComponent(chosen.id));
+  } catch (error) {
+    if (token === state.render) showError(error);
+  } finally {
+    encounterBusy = false;
+    control.disabled = false;
+    control.removeAttribute('aria-busy');
+    control.textContent = '偶遇一封信 ↗';
+  }
+}
+
 async function mailbox(params, mine, token) {
   const page = Math.max(1, Math.floor(Number(params.get('page'))) || 1);
   const filter = mine && ['draft','replies','published','private'].includes(params.get('filter')) ? params.get('filter') : '';
@@ -110,6 +149,7 @@ async function mailbox(params, mine, token) {
   const paging = p => `#${base}?page=${p}${filter ? `&filter=${filter}` : ''}`;
   const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['replies','我的回信'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${filter === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
   app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '<a class="button primary" href="#/write">写一封信</a>') + tabs +
+    (mine ? '' : '<div class="encounter-bar"><p>让一封未曾谋面的信，来到你面前。</p><button type="button" class="button encounter-button" data-action="encounter">偶遇一封信 ↗</button></div>') +
     `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
     (result.items.length ? `<div class="letter-grid${mine ? '' : ' public-letter-grid'}">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(filter === 'replies' ? '还没有寄出的回信' : mine ? '这里还没有信' : '信箱暂时安静', filter === 'replies' ? '读到想回应的信时，给对方回一封吧。' : mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
@@ -332,27 +372,48 @@ let deliveryTimer;
 
 function deliveryReceipt() {
   const receipt = history.state?.deliveryReceipt;
-  if (!service.user || !receipt || receipt.userId !== service.user.id) {
+  if (!service.user || !receipt || receipt.userId !== service.user.id || !Number.isFinite(receipt.readyAt)) {
     history.replaceState(null, '', '#/mine');
     render();
     return;
   }
   const href = '#/letter/' + encodeURIComponent(receipt.letterId);
-  app.innerHTML = `<section class="delivery-receipt" aria-labelledby="delivery-title">
-    <img src="assets/open-letter.png" alt="">
-    <p class="eyebrow">LUOJIA POST OFFICE</p>
-    <div role="status" aria-atomic="true">
+  const sentAt = receipt.sentAt || receipt.readyAt - 5000;
+  const elapsed = Math.max(0, Math.min(5000, Date.now() - sentAt));
+  app.innerHTML = `<section class="delivery-receipt postal-ritual" aria-labelledby="delivery-title" style="--ritual-delay:-${elapsed}ms">
+    <p class="eyebrow">LUOJIA POST OFFICE · 寄予此刻</p>
+    <div class="postal-scene" aria-hidden="true">
+      <div class="postal-envelope">
+        <div class="postal-back"></div>
+        <div class="postal-paper"><span>见字如面</span><i></i><i></i><i></i></div>
+        <div class="postal-front"></div><div class="postal-flap"></div>
+        <span class="postal-address">珞珈烟火邮局</span>
+        <img class="postal-imprint" src="assets/art-19.png" alt="">
+        <div class="postal-tool"><i></i><b></b></div>
+      </div>
+    </div>
+    <div role="status" aria-live="polite" aria-atomic="true">
       <h1 id="delivery-title">信件已投递</h1>
       <p class="receipt-stage"><strong>邮局整理中</strong><br>正在为你的信件盖戳，请稍候</p>
     </div>
-    <a class="button primary" href="${e(href)}" hidden>查看信件</a>
+    <div class="postal-ticket" hidden>
+      <span class="postal-ticket-label">投递回执 / POSTAL RECEIPT</span>
+      <strong>${e(receipt.title || '一封写给珞珈的信')}</strong>
+      <span>投递日期 · ${e(date(new Date(sentAt).toISOString()))}</span>
+      <p>字句已妥帖收好，愿心事有所抵达。</p>
+    </div>
+    <a class="button primary" href="${e(href)}" hidden>查看信件 ↗</a>
   </section>`;
+  const section = app.querySelector('.delivery-receipt');
   const finish = () => {
-    app.querySelector('#delivery-title').textContent = '投递完成';
-    const note = app.querySelector('.receipt-stage');
+    if (!section.isConnected) return;
+    section.classList.add('is-complete');
+    section.querySelector('#delivery-title').textContent = '投递完成';
+    const note = section.querySelector('.receipt-stage');
     note.className = 'receipt-note';
-    note.textContent = '可以查看刚寄出的信了。';
-    app.querySelector('.delivery-receipt a').hidden = false;
+    note.textContent = '这一刻，已留下你的邮戳。';
+    section.querySelector('.postal-ticket').hidden = false;
+    section.querySelector('a').hidden = false;
   };
   const remaining = receipt.readyAt - Date.now();
   if (remaining > 0) deliveryTimer = setTimeout(finish, remaining);
@@ -424,6 +485,8 @@ async function save(draft) {
       state.list = '#/mine';
       history.replaceState({ deliveryReceipt: {
         letterId: letter.id,
+        title: letter.title,
+        sentAt: Date.now(),
         userId: service.user.id,
         readyAt: Date.now() + 5000,
       } }, '', '#/delivery');
@@ -486,6 +549,7 @@ app.addEventListener('click', async event => {
   }
   const action = event.target.closest('[data-action]')?.dataset.action;
   try {
+    if (action === 'encounter') await encounterLetter(event.target.closest('[data-action]'));
     if (action === 'login') openAuth();
     if (action === 'retry' && canRequest()) render();
     if (action === 'delete-draft') await deleteDraft();
