@@ -78,9 +78,9 @@ function card(letter, mine, index = 0) {
   const frame = (index + Math.floor(index / 3)) % 3 + 1;
   return `<button class="envelope ${matchMedia('(hover: none)').matches && state.selected === letter.id ? 'revealed' : ''}" type="button" data-letter="${e(letter.id)}" aria-label="${e(letter.title || '未命名草稿')}，按 Enter 阅读全文" aria-describedby="summary-${e(letter.id)}">
     <img class="envelope-frame frame-${frame}" src="assets/frame${frame}.png" alt="" aria-hidden="true">
-    ${mine || letter.visibility === 'private' ? `<span class="badge">${e(statusLabel(letter))}</span>` : ''}
+    ${mine && letter.status === 'draft' ? '<span class="badge">草稿</span>' : ''}
     <span class="envelope-title">${e(letter.title || '未命名草稿')}</span><span class="envelope-excerpt" id="summary-${e(letter.id)}">${e(letter.excerpt || '这封信还在慢慢写。')}</span>
-    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(letter.publishedAt ? date(letter.publishedAt) : letter.visibility === 'private' ? '私密投递' : '尚未公开')}</span><span class="envelope-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="stamp" aria-hidden="true">珞</span>
+    <span class="envelope-meta">${e(letter.author?.displayName || '匿名来客')}<br>${e(date(letter.publishedAt || letter.submittedAt || letter.updatedAt || letter.createdAt))}</span><span class="envelope-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="stamp" aria-hidden="true">珞</span>
   </button>`;
 }
 let encounterBusy = false;
@@ -118,7 +118,7 @@ async function encounterLetter(control) {
     encounterBusy = false;
     control.disabled = false;
     control.removeAttribute('aria-busy');
-    control.textContent = '偶遇一封信 ↗';
+    control.textContent = '偶遇一封信';
   }
 }
 
@@ -129,7 +129,7 @@ async function mailbox(params, mine, token) {
   if (mine && !service.user) {
     app.innerHTML = empty('你的信，都在这里', '登录后查看自己保存的草稿和提交的信件。', button('登录', 'login', true)); return;
   }
-  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '<a class="button primary" href="#/write">写一封信</a>') + '<div class="letter-grid" aria-label="正在加载">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
+  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', mine ? '' : '<button type="button" class="button encounter-button" data-action="encounter" title="随机打开一封公共来信">偶遇一封信</button>') + '<div class="letter-grid" aria-label="正在加载">' + '<div class="skeleton"></div>'.repeat(6) + '</div>';
   let result;
   if (filter === 'replies') {
     const letters = await archiveLetters(token);
@@ -147,9 +147,8 @@ async function mailbox(params, mine, token) {
   if (token !== state.render) return;
   const base = mine ? '/mine' : '/mailbox';
   const paging = p => `#${base}?page=${p}${filter ? `&filter=${filter}` : ''}`;
-  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['replies','我的回信'],['published','已公开'],['private','已寄私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${filter === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
-  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', '<a class="button primary" href="#/write">写一封信</a>') + tabs +
-    (mine ? '' : '<div class="encounter-bar"><p>让一封未曾谋面的信，来到你面前。</p><button type="button" class="button encounter-button" data-action="encounter">偶遇一封信 ↗</button></div>') +
+  const tabs = mine ? `<div class="tabs">${[['','全部信件'],['draft','草稿箱'],['replies','我的回信'],['published','已公开'],['private','已私密']].map(([value,label]) => `<a href="#/mine${value ? `?filter=${value}` : ''}" class="${filter === value ? 'active' : ''}">${label}</a>`).join('')}</div>` : '';
+  app.innerHTML = titleBlock(mine ? '我的信件' : '公共来信', mine ? '还未寄出的心事，也值得好好保存。' : '读一封信，遇见另一段日常。', mine ? '' : '<button type="button" class="button encounter-button" data-action="encounter" title="随机打开一封公共来信">偶遇一封信</button>') + tabs +
     `<div class="section-label"><span>${mine ? '我的信笺' : '最新来信'}</span><span>共 ${Number(result.total) || 0} 封</span></div>` +
     (result.items.length ? `<div class="letter-grid${mine ? '' : ' public-letter-grid'}">${result.items.map((item, index) => card(item, mine, index)).join('')}</div>` : empty(filter === 'replies' ? '还没有寄出的回信' : mine ? '这里还没有信' : '信箱暂时安静', filter === 'replies' ? '读到想回应的信时，给对方回一封吧。' : mine ? '把今天想说的话写下来吧。' : '第一封来信正在路上。')) +
     `<nav class="pagination" aria-label="翻页">${page > 1 ? `<a class="button" href="${paging(page - 1)}">上一页</a>` : ''}<span>第 ${page} 页</span>${result.hasMore ? `<a class="button" href="${paging(page + 1)}">下一页</a>` : ''}</nav>`;
@@ -186,13 +185,13 @@ async function archiveLetters(token) {
 function archiveCard(entry, index = 0) {
   const { letter, parts } = entry;
   const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
-  return `<a class="time-letter calendar-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="calendar-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : '<img class="calendar-card-flower" src="assets/art-3.png" alt="" aria-hidden="true">'}<h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="calendar-letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span><span>${dateTime}</span></span><span class="badge">${e(statusLabel(letter))}</span><span class="calendar-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="calendar-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a>`;
+  return `<a class="time-letter calendar-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}">${index % 2 ? '<img class="calendar-card-frame" src="assets/frame1.png" alt="" aria-hidden="true">' : '<img class="calendar-card-flower" src="assets/art-3.png" alt="" aria-hidden="true">'}<h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="calendar-letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span><span>${dateTime}</span></span><span class="calendar-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="calendar-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a>`;
 }
 function timelineCard(entry, index) {
   const { letter, parts } = entry;
   const dateTime = `${parts.year}.${String(parts.month).padStart(2, '0')}.${String(parts.day).padStart(2, '0')} · ${parts.hour}:${parts.minute}`;
   const frameName = `frame${index % 3 + 1}.png`;
-  return `<div class="timeline-entry"><span class="timeline-dot" aria-hidden="true"></span><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}"><img class="timeline-card-frame" src="assets/${frameName}" alt="" aria-hidden="true"><span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="badge">${e(statusLabel(letter))}</span><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a></div>`;
+  return `<div class="timeline-entry"><span class="timeline-dot" aria-hidden="true"></span><a class="time-letter ${index % 2 ? 'airmail' : ''}" href="#/letter/${encodeURIComponent(letter.id)}"><img class="timeline-card-frame" src="assets/${frameName}" alt="" aria-hidden="true"><span class="time-letter-date">${dateTime}</span><h3>${e(letter.title || '未命名信件')}</h3><p>${e(letter.excerpt || '这封信没有留下摘要。')}</p><span class="timeline-postmark" aria-hidden="true"><svg viewBox="0 0 100 54"><path d="M2 9Q14 1 26 9T50 9T74 9T98 9M2 20Q14 12 26 20T50 20T74 20T98 20M2 31Q14 23 26 31T50 31T74 31T98 31M2 42Q14 34 26 42T50 42T74 42T98 42"/></svg></span><span class="timeline-stamp timeline-fallback-stamp" aria-hidden="true">珞</span></a></div>`;
 }
 function timelineArchive(entries) {
   const groups = [];
@@ -241,7 +240,7 @@ async function timeLetters(params, token) {
   state.list = location.hash || '#/calendar';
   if (!entries.length) {
     app.innerHTML = titleBlock('时光信笺', '每一封寄出的信，都在时间里留下一个坐标。', '<a class="button primary" href="#/write">写一封信</a>') +
-      empty('尚未留下时光足迹', '提交审核或寄出一封私密信后，它会出现在这里。');
+      empty('尚未留下时光足迹', '寄出一封信后，它会出现在这里。');
     return;
   }
 
@@ -278,7 +277,7 @@ async function timeLetters(params, token) {
     </section>
     <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section>
   </div></div>`;
-  app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，查看那一天的所有来信，重温时光的回响。', '<a class="button primary" href="#/write">写一封信</a>') +
+  app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，重温时光的回响。', '<a class="button primary" href="#/write">写一封信</a>') +
     `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
   const timeline = app.querySelector('[data-calendar-timeline]');
   const target = timeline?.querySelector(`[data-timeline-date="${selectedKey}"]`);
@@ -286,7 +285,7 @@ async function timeLetters(params, token) {
 }
 function paper(letter, preview = false) {
   return `<article class="paper"><p class="eyebrow">A LETTER FOR YOU</p>${letter.parentLetterId ? `<p class="parent-note">回信${letter.parentTitle ? ` · ${e(letter.parentTitle)}` : ''}${!preview ? `　<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信</a>` : ''}</p>` : ''}
-  <h1>${e(letter.title || '未命名草稿')}</h1><div class="letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span>${!preview ? `<span>${e(date(letter.publishedAt || letter.updatedAt || letter.createdAt))}</span><span class="badge">${e(statusLabel(letter))}</span>` : `<span>${letter.visibility === 'private' ? `私密投递给 ${e(letter.recipientUsername || letter.recipient?.user?.displayName || '指定收件人')}` : '寄往公共信箱 · 审核后公开'}</span>`}</div>
+  <h1>${e(letter.title || '未命名草稿')}</h1><div class="letter-meta"><span>${e(letter.author?.displayName || '匿名来客')}</span>${!preview ? `<span>${e(date(letter.publishedAt || letter.updatedAt || letter.createdAt))}</span><span class="badge">${e(statusLabel(letter))}</span>` : `<span>${letter.visibility === 'private' ? `私密投递给 ${e(letter.recipientUsername || letter.recipient?.user?.displayName || '指定收件人')}` : '寄往公共信箱'}</span>`}</div>
   <div class="letter-content">${e(letter.content)}</div><p class="letter-signature">${e(letter.author?.displayName || '匿名来客')}</p>`;
 }
 async function detail(id, token, params) {
@@ -353,7 +352,7 @@ async function write(token) {
     <div class="signature-row"><div class="form-field"><label for="pen-name">署名</label><input id="pen-name" name="penName" value="${e(value.penName)}" autocomplete="off"><div class="field-error" data-error="penName"></div></div>
     <label class="check-label"><input type="checkbox" name="isAnonymous" ${value.isAnonymous ? 'checked' : ''}> 匿名展示</label></div>
     <fieldset class="letter-settings"><legend>这封信的设置</legend>
-      <div class="form-field"><label for="visibility">投递方式</label><select id="visibility" name="visibility"><option value="public" ${value.visibility !== 'private' ? 'selected' : ''}>信墙（公开，审核后展示）</option><option value="private" ${value.visibility === 'private' ? 'selected' : ''}>指定用户（仅双方可见）</option></select></div>
+      <div class="form-field"><label for="visibility">投递方式</label><select id="visibility" name="visibility"><option value="public" ${value.visibility !== 'private' ? 'selected' : ''}>信墙（公开）</option><option value="private" ${value.visibility === 'private' ? 'selected' : ''}>指定用户（仅双方可见）</option></select></div>
       <div class="form-field" id="recipient-field" ${value.visibility === 'private' ? '' : 'hidden'}><label for="recipient-username">收件人用户名</label><input id="recipient-username" name="recipientUsername" value="${e(value.recipientUsername || '')}" autocomplete="off" placeholder="请输入对方的用户名"><p class="help">投递前会核对账号；私密信只有你和收件人可见。</p><div class="field-error" data-error="recipientUsername"></div></div>
       <label class="check-label"><input type="checkbox" name="allowReplies" ${value.visibility !== 'private' && value.allowReplies !== false ? 'checked' : ''} ${value.visibility === 'private' ? 'disabled' : ''}> 允许别人回信</label><p class="help" id="reply-setting-note">${value.visibility === 'private' ? '私密信件不开放公开回信。' : '关闭后，别人仍能阅读公开信件，但不能给它写回信。'}</p>
     </fieldset>
@@ -385,11 +384,11 @@ function deliveryReceipt() {
     <div class="postal-scene" aria-hidden="true">
       <div class="postal-envelope">
         <div class="postal-back"></div>
-        <div class="postal-paper"><span>见字如面</span><i></i><i></i><i></i></div>
+        <div class="postal-paper"><i></i><i></i><i></i></div>
         <div class="postal-front"></div><div class="postal-flap"></div>
         <span class="postal-address">珞珈烟火邮局</span>
         <img class="postal-imprint" src="assets/art-19.png" alt="">
-        <div class="postal-tool"><i></i><b></b></div>
+        <div class="postal-tool"><div class="postal-tool-turn"><b></b><i></i></div></div>
       </div>
     </div>
     <div role="status" aria-live="polite" aria-atomic="true">
@@ -425,6 +424,7 @@ async function render() {
   renderedHash = location.hash || '#/mailbox';
   const token = ++state.render;
   const { path, params } = route();
+  document.body.classList.toggle('public-mailbox-view', path === '/mailbox');
   document.querySelectorAll('[data-nav]').forEach(el => {
     if (path.startsWith('/' + el.dataset.nav)) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current');
   });
@@ -504,7 +504,7 @@ async function startFrom(letter, edit) {
     if (leaving) return;
     leaving = true;
     try {
-      const choice = await choose('收回草稿箱，再继续写？', '确认后，这封信将不再公开，已保存的正文会保留。修改完成后，可重新提交审核。', [['cancel','取消'],['edit','收回并编辑',true]]);
+      const choice = await choose('收回草稿箱，再继续写？', '确认后，这封信将不再公开，已保存的正文会保留。修改完成后，可以重新寄出。', [['cancel','取消'],['edit','收回并编辑',true]]);
       if (choice !== 'edit') return;
       setBusy(true);
       letter = await service.save({ title: letter.title, submitForReview: false }, { id: letter.id });
@@ -713,3 +713,4 @@ if (startupParams.get('login') === '1') {
   history.replaceState(null, '', `${location.pathname}${location.hash || '#/mailbox'}`);
   if (!service.user) openAuth();
 }
+

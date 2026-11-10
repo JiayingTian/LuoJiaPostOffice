@@ -34,7 +34,7 @@ export class DemoService {
     if (!Array.isArray(rows) || rows.some(row => !row || typeof row.id !== 'string' || typeof row.title !== 'string' || typeof row.content !== 'string')) {
       throw new ApiError('信件数据暂时无法读取，请联系维护人员。');
     }
-    return rows;
+    return rows.map(row => row.status === 'active' && row.visibility === 'public' && row.workflowState === 'pendingReview' ? { ...row, workflowState: 'published', publishedAt: row.submittedAt || row.updatedAt || row.createdAt } : row);
   }
   async session() {
     if (this.sessionStorage.getItem('luojia.demo.signedIn') === 'true') await this.login();
@@ -48,20 +48,21 @@ export class DemoService {
   async metadata() { return { locations: [], patterns: [demoPattern] }; }
   async list({ mine = false, drafts = false, workflowState, page = 1, pageSize = 6 } = {}) {
     if (mine && !this.user) throw new ApiError('请先登录。', { status: 401 });
-    let rows = mine ? this.rows() : seeds;
+    let rows = mine ? this.rows() : [...this.rows().filter(row => row.status === 'active' && row.visibility === 'public' && row.publishedAt && !row.parentLetterId), ...seeds];
     if (workflowState === 'draft' || drafts) rows = rows.filter(row => row.status === 'draft');
     else if (workflowState) rows = rows.filter(row => (row.workflowState || (row.status === 'draft' ? 'draft' : 'pendingReview')) === (workflowState || 'draft'));
     if (mine) rows = [...rows].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
     return { items: rows.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total: rows.length, hasMore: page * pageSize < rows.length };
   }
   async detail(id) {
-    const row = seeds.find(row => row.id === id) || (this.user && this.rows().find(row => row.id === id));
+    const row = seeds.find(row => row.id === id) || this.rows().find(row => row.id === id && (this.user || (row.status === 'active' && row.visibility === 'public' && row.publishedAt)));
     if (!row) throw new ApiError('这封信暂时无法查看。', { status: 404 });
     return structuredClone(row);
   }
   async replies(id, { page = 1, pageSize = 6 } = {}) {
     await this.detail(id);
-    return { items: [], page, pageSize, total: 0, hasMore: false };
+    const rows = this.rows().filter(row => row.parentLetterId === id && row.status === 'active' && row.visibility === 'public' && row.publishedAt);
+    return { items: rows.slice((page-1)*pageSize,page*pageSize), page, pageSize, total: rows.length, hasMore: page*pageSize < rows.length };
   }
   async remove(id) {
     if (!this.user) throw new ApiError('请先登录。', { status: 401 });
@@ -86,7 +87,7 @@ export class DemoService {
       author: { displayName: payload.isAnonymous ? '匿名来客' : payload.penName || '珞珈来客', isAnonymous: payload.isAnonymous },
       recipient: privateLetter ? { type: 'user', user: { id: payload.recipientUserId || 'usr_demo_recipient', username: 'demo_recipient', displayName: '收件人', avatarUrl: null } } : { type: 'wall', user: null }, pattern: demoPattern,
       excerpt: excerpt(payload.content), parentLetterId: previous?.parentLetterId || payload.parentLetterId || null,
-      workflowState: draft ? 'draft' : privateLetter ? 'private' : 'pendingReview', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: null,
+      workflowState: draft ? 'draft' : privateLetter ? 'private' : 'published', status: draft ? 'draft' : 'active', visibility: privateLetter ? 'private' : 'public', publishedAt: !draft && !privateLetter ? now : null,
       submittedAt: draft || privateLetter ? null : now, createdAt: previous?.createdAt || now, updatedAt: now,
       canEdit: draft || privateLetter, canDelete: true, canForward: false,
     };
@@ -98,3 +99,4 @@ export class DemoService {
     return structuredClone(row);
   }
 }
+
