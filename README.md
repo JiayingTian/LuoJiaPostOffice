@@ -10,7 +10,7 @@ GitHub Pages 与 `npm run dev` 默认使用静态演示模式。访问者可以�
 
 ## 真实接口模式
 
-`backend/` 提供 FastAPI、MySQL、登录会话、草稿、信件、私密投递和回信接口。运行 `npm run dev:api` 并按 [后端说明](backend/README.md) 启动服务，可以联调真实接口。**目前这套后端仍要求公开信和公开回信经管理员审核后才出现在公共列表**，与上面的演示模式投递规则不同。评审时应分别说明实际使用的模式。
+`backend/` 提供 FastAPI、MySQL、登录会话、草稿、信件、私密投递和回信接口。运行 `npm run dev:api` 并按 [后端说明](backend/README.md) 启动服务，可以联调真实接口。公开信和公开回信在成功寄出后直接进入公共列表；私密信仅双方可读。演示模式的数据只在当前浏览器保存，真实接口模式由数据库持久化。
 
 ## 启动和验证
 
@@ -19,6 +19,6 @@ GitHub Pages 与 `npm run dev` 默认使用静态演示模式。访问者可以�
 - 自动测试：`npm test`。投递状态的断言已与当前演示文案同步。
 - 可携带的演示目录：`npm run preview:build`，产物位于 `dist/luojia-preview/`。进入该目录运行 `npm run dev`，再打开终端给出的地址；资源与页面一起打包。
 
-Chrome 129 是赛事指定环境。作品使用原生 HTML、CSS、JavaScript 和后端 Python；页面入口未引用 Bootstrap、Element UI 等预设样式库。首页、信箱和关于页包含响应式规则。完整的参赛说明、技术依赖和待补信息见 [提交说明](docs/参赛提交说明.md)。
+Chrome 129 是赛事指定环境。作品使用原生 HTML、CSS、JavaScript 和后端 Python；页面入口未引用 Bootstrap、Element UI 等预设样式库。首页、信箱和关于页包含响应式规则。参赛压缩包的 README 列出队伍成员及第三方功能库用途。
 
-详细前端文件与本地配置见 [前端说明](frontend/README.md)。`docs/`、`restriction/`、`ui-end/` 和 `luojia-v21-handoff/` 保留的是开发过程中的设计稿与接口约定，页面实际行为以当前源码和上述模式说明为准。
+详细前端文件与本地配置见 [前端说明](frontend/README.md)。仓库中的 `docs/`、`restriction/`、`ui-end/` 和 `luojia-v21-handoff/` 是开发过程的历史资料，不随参赛作品打包；当前行为以运行代码及本说明为准。

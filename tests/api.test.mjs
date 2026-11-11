@@ -65,12 +65,10 @@ test('concurrent failed writes share one token recovery',async()=>{
     return options.headers['X-CSRF-Token']==='old'?failure(403,40302):success({id:'ok'});
   });api.user={id:'a'};api.csrfToken='old';await Promise.all([api.save({a:1},{key:'one'}),api.save({a:2},{key:'two'})]);assert.equal(recovery,1);
 });
-test('workflow filters, private inbox, user search and review use declared paths and bodies',async()=>{
+test('workflow filters, private inbox and user search use declared paths',async()=>{
   const calls=[];const api=new ApiClient('/api/v1',async(url,options)=>{calls.push({url,options});return success({});});api.csrfToken='csrf';
   await api.list({mine:true,workflowState:'draft'});assert.match(calls[0].url,/status=draft/);assert.ok(!calls[0].url.includes('workflowState='));
   await api.replies('let_a',{page:2});assert.match(calls[1].url,/letters\/let_a\/replies\?page=2/);
-  await api.review('let_a','approve');assert.deepEqual(JSON.parse(calls[2].options.body),{action:'approve'});
-  await api.review('let_b','returnForEdit','垃圾信息与恶意广告');assert.deepEqual(JSON.parse(calls[3].options.body),{action:'returnForEdit',reason:'垃圾信息与恶意广告'});
-  await api.inbox({page:2});assert.match(calls[4].url,/me\/inbox\?page=2/);
-  await api.searchUsers('test_user_b');assert.match(calls[5].url,/users\/search\?keyword=test_user_b/);
+  await api.inbox({page:2});assert.match(calls[2].url,/me\/inbox\?page=2/);
+  await api.searchUsers('test_user_b');assert.match(calls[3].url,/users\/search\?keyword=test_user_b/);
 });

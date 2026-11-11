@@ -298,7 +298,7 @@ body.public-mailbox-view{height:100dvh;overflow:hidden;display:flex;flex-directi
   <header class="header">
     <a class="brand" href="../index.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
     <nav aria-label="主导航"><a href="../index.html">首页</a><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光信笺</a><a href="about.html">关于我们</a></nav>
-    <div class="account"><div class="account-menu" id="account-menu" hidden><button class="account-trigger" id="user-name" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="#/mine" role="menuitem">我的信件</a><button id="logout-button" type="button" role="menuitem">退出登录</button></div></div><a href="#/admin" data-nav="admin" class="button" hidden>审核</a><button id="account-button" class="button primary" type="button">登录</button></div>
+    <div class="account"><div class="account-menu" id="account-menu" hidden><button class="account-trigger" id="user-name" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="#/mine" role="menuitem">我的信件</a><button id="logout-button" type="button" role="menuitem">退出登录</button></div></div><button id="account-button" class="button primary" type="button">登录</button></div>
   </header>
   <div class="page-surface"><div class="desk-decor" aria-hidden="true"><div class="old-envelope"></div><div class="desk-blossom"><img src="assets/art-3.png" alt=""></div><span class="petal petal-a"></span><span class="petal petal-b"></span><span class="petal petal-c"></span></div>
 
@@ -471,12 +471,6 @@ class ApiClient {
   detail(id) { return this.request(`/letters/${encodeURIComponent(id)}`); }
   replies(id, { page = 1, pageSize = 6 } = {}) {
     return this.request(`/letters/${encodeURIComponent(id)}/replies?${new URLSearchParams({ page, pageSize })}`);
-  }
-  reviewQueue({ page = 1, pageSize = 6 } = {}) {
-    return this.request(`/admin/letters?${new URLSearchParams({ page, pageSize })}`);
-  }
-  review(id, action, reason) {
-    return this.request(`/admin/letters/${encodeURIComponent(id)}/review`, { method: 'POST', body: { action, ...(reason ? { reason } : {}) } });
   }
   remove(id) { return this.request(`/letters/${encodeURIComponent(id)}`, { method: 'DELETE' }); }
   save(payload, { id, key } = {}) {
@@ -813,7 +807,7 @@ function updateAccount() {
   userMenu.hidden = !service.user;
   document.querySelector('#account-button').textContent = '登录';
   document.querySelector('#account-button').hidden = Boolean(service.user);
-  document.querySelector('[data-nav=admin]').hidden = service.user?.role !== 'admin';
+
 }
 function navigate(hash) { if (hash === location.hash) render(); else location.hash = hash; }
 function goToAuth() {
@@ -1083,12 +1077,8 @@ async function detail(id, token, params) {
   const editAction = letter.canEdit ? button(letter.status === 'draft' ? '继续写信' : '编辑', 'edit', true) : '';
   const deleteAction = letter.canDelete ? button(letter.status === 'draft' ? '删除草稿' : '删除', 'delete-letter') : '';
   app.innerHTML = `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a></div>` + '<div class="reading-layout"><div class="reading-main">' + paper(letter) +
-    `</article>${letter.reviewNote ? `<p class="review-note"><strong>未通过原因：</strong>${e(letter.reviewNote)}</p>` : ''}<div class="actions">${editAction}${deleteAction}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('<img class="reply-icon" src="assets/art-45.svg" alt="">回一封信', 'reply', true) : ''}</div></div><aside class="correspondence"><h2>这封信的往返</h2><div class="original-letter"><span class="badge">${letter.parentLetterId ? '回信' : '原信'}</span><h3>${e(letter.title)}</h3><p>${e(letter.author?.displayName || '匿名来客')}</p>${letter.parentLetterId ? `<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信 →</a>` : ''}</div><div id="reply-list" aria-live="polite"><p class="help">${letter.parentLetterId ? '可返回原信查看其他往返信件。' : '这封信尚无公开的回信。'}</p></div></aside></div>`;
+    `</article><div class="actions">${editAction}${deleteAction}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('<img class="reply-icon" src="assets/art-45.svg" alt="">回一封信', 'reply', true) : ''}</div></div><aside class="correspondence"><h2>这封信的往返</h2><div class="original-letter"><span class="badge">${letter.parentLetterId ? '回信' : '原信'}</span><h3>${e(letter.title)}</h3><p>${e(letter.author?.displayName || '匿名来客')}</p>${letter.parentLetterId ? `<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信 →</a>` : ''}</div><div id="reply-list" aria-live="polite"><p class="help">${letter.parentLetterId ? '可返回原信查看其他往返信件。' : '这封信尚无公开的回信。'}</p></div></aside></div>`;
   disposeReader = mountLetterReader(app.querySelector('.stationery-sheet'));
-  if (!demo && service.user?.role === 'admin' && letter.status === 'active' && letter.visibility === 'public' && !letter.publishedAt && letter.submittedAt) {
-    app.insertAdjacentHTML('beforeend', `<section class="paper review-panel"><h2>审核这封信</h2><div class="form-field"><label for="review-reason">未通过原因</label><select id="review-reason"><option value="">请选择原因标签</option>${['色情低俗','暴力血腥','仇恨歧视与骚扰','违法违规内容','垃圾信息与恶意广告'].map(reason => `<option value="${reason}">${reason}</option>`).join('')}</select></div><p class="form-error" role="alert"></p><div class="actions">${button('退回草稿箱','reject-review')}${button('审核通过','approve-review',true)}</div></section>`);
-    app.querySelectorAll('.review-panel button').forEach(el => el.dataset.mutate = '');
-  }
   if (letter.status === 'active' && letter.publishedAt && !letter.parentLetterId) {
     const page = Math.max(1, Number(params.get('replyPage')) || 1);
     app.querySelector('#reply-list').textContent = '正在取回信……';
@@ -1102,30 +1092,6 @@ async function detail(id, token, params) {
       if (token === state.render) app.querySelector('#reply-list').innerHTML = `<p class="form-error">${e(errorText(error))}</p>${button('重试','retry')}`;
     }
   }
-}
-async function reviewQueue(params, token) {
-  if (!service.user) { app.innerHTML = empty('审核工作台', '请使用管理员账号登录。', button('登录','login',true)); return; }
-  if (demo || service.user.role !== 'admin') { app.innerHTML = empty('无法进入审核工作台', '此入口仅供管理员使用。'); return; }
-  app.innerHTML = empty('正在读取待审核信件', '请稍等片刻。');
-  const page = Math.max(1, Number(params.get('page')) || 1);
-  const result = await service.reviewQueue({ page, pageSize: config.pageSize });
-  if (token !== state.render) return;
-  state.list = location.hash;
-  app.innerHTML = titleBlock('待审核信件','审核通过后，其他人才能读到这封信。') +
-    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, true, index)).join('')}</div>` : empty('暂时没有待审核信件','可以稍后再来看看。')) +
-    `<nav class="pagination">${page > 1 ? `<a class="button" href="#/admin?page=${page-1}">上一页</a>` : ''}${result.hasMore ? `<a class="button" href="#/admin?page=${page+1}">下一页</a>` : ''}</nav>`;
-}
-async function reviewLetter(action) {
-  if (state.busy || !canRequest() || authNeeded()) return;
-  setBusy(true);
-  try {
-    const reason = action === 'returnForEdit' ? app.querySelector('#review-reason')?.value : undefined;
-    if (action === 'returnForEdit' && !reason) throw new ApiError('请先选择未通过原因。', { fieldErrors: { reason: '请选择一个原因标签。' } });
-    await service.review(state.currentLetter.id, action, reason);
-    toast(action === 'approve' ? '审核已通过。' : '已说明原因并退回作者草稿箱。');
-    navigate('#/admin');
-  } catch (error) { showError(error); }
-  finally { setBusy(false); }
 }
 async function write(token) {
   app.innerHTML = empty('正在铺开信纸', '请稍等片刻。');
@@ -1252,7 +1218,6 @@ async function render() {
     else if (path === '/calendar') await timeLetters(params, token);
     else if (path === '/inbox') await inbox(params, token);
     else if (path.startsWith('/letter/')) await detail(decodeURIComponent(path.slice(8)), token, params);
-    else if (path === '/admin') await reviewQueue(params, token);
     else if (path === '/write') await write(token);
     else if (path === '/decorate') await decorate(token);
     else if (path === '/preview') preview();
@@ -1386,8 +1351,6 @@ app.addEventListener('click', async event => {
     if (action === 'submit') await save(false);
     if (action === 'reply') await startFrom(state.currentLetter, false);
     if (action === 'edit') await startFrom(state.currentLetter, true);
-    if (action === 'approve-review') await reviewLetter('approve');
-    if (action === 'reject-review') await reviewLetter('returnForEdit');
   } catch (error) { showError(error); }
   if (!action && !event.target.closest('a,button,input,textarea')) {
     state.selected = null; app.querySelectorAll('.revealed').forEach(el => el.classList.remove('revealed'));

@@ -28,7 +28,6 @@ from app.services.idempotency import (
     finish_idempotent_request,
 )
 from app.services.letters import (
-    add_moderation_record,
     build_letter_read,
     build_letter_summary,
     resolve_location,
@@ -195,16 +194,11 @@ def create_letter(
         )
         if not payload.save_as_draft:
             validate_submission(letter)
+            if not private_delivery:
+                letter.published_at = letter.submitted_at
 
         database_session.add(letter)
         database_session.flush()
-        if not payload.save_as_draft and not private_delivery:
-            add_moderation_record(
-                database_session,
-                letter,
-                auth_context.user.id,
-                "submitted",
-            )
 
         response = LetterResponse(
             data=build_letter_read(database_session, letter, auth_context.user),
@@ -243,14 +237,7 @@ def get_letter(
         and letter.status == "active"
         and viewer.id == letter.recipient_user_id
     )
-    is_review_admin = (
-        viewer is not None
-        and viewer.role == "admin"
-        and letter.visibility == "public"
-        and letter.submitted_at is not None
-        and letter.published_at is None
-    )
-    if not (is_public or is_author or is_recipient or is_review_admin):
+    if not (is_public or is_author or is_recipient):
         raise_api_error(404, 40401, "信件不存在")
 
     return LetterResponse(
@@ -273,13 +260,6 @@ def update_letter(
             raise_api_error(404, 40401, "信件不存在")
         if letter.author_id != auth_context.user.id:
             raise_api_error(404, 40401, "信件不存在")
-        if (
-            letter.status == "active"
-            and letter.submitted_at is not None
-            and letter.published_at is None
-        ):
-            raise_api_error(409, 40901, "待审核信件暂时不能修改")
-
         changed_fields = payload.model_fields_set - {"submit_for_review"}
         was_published = letter.published_at is not None
 
@@ -387,17 +367,12 @@ def update_letter(
             letter.submitted_at = (
                 None if letter.visibility == "private" else utc_now()
             )
-            letter.published_at = None
+            letter.published_at = (
+                letter.submitted_at if letter.visibility == "public" else None
+            )
             if not changed_fields:
                 letter.version += 1
                 letter.updated_at = utc_now()
-            if letter.visibility == "public":
-                add_moderation_record(
-                    database_session,
-                    letter,
-                    auth_context.user.id,
-                    "submitted",
-                )
 
         database_session.flush()
         response = LetterResponse(

@@ -20,7 +20,7 @@ from app.models import (
 )
 
 
-TEST_USERNAMES = ("smoke_user_a", "smoke_user_b", "smoke_admin")
+TEST_USERNAMES = ("smoke_user_a", "smoke_user_b")
 TEST_PASSWORD = "TemporaryPassword123!"
 
 
@@ -96,17 +96,6 @@ def cleanup_test_data() -> None:
         database_session.commit()
 
 
-def promote_admin() -> None:
-    with SessionLocal() as database_session:
-        admin = database_session.scalar(
-            select(User).where(User.username == "smoke_admin")
-        )
-        if admin is None:
-            raise AssertionError("smoke_admin was not created")
-        admin.role = "admin"
-        database_session.commit()
-
-
 def register(client: APIClient, username: str, display_name: str) -> str:
     status, response = client.request(
         "POST",
@@ -142,7 +131,6 @@ def wait_for_server(url: str) -> None:
 def run_flow(base_url: str) -> None:
     user_a = APIClient(base_url)
     user_b = APIClient(base_url)
-    admin = APIClient(base_url)
     anonymous = APIClient(base_url)
 
     status, metadata = anonymous.request("GET", "/metadata")
@@ -152,8 +140,6 @@ def run_flow(base_url: str) -> None:
 
     csrf_a = register(user_a, "smoke_user_a", "冒烟用户 A")
     csrf_b = register(user_b, "smoke_user_b", "冒烟用户 B")
-    csrf_admin = register(admin, "smoke_admin", "冒烟管理员")
-    promote_admin()
 
     status, refreshed = user_a.request("GET", "/auth/csrf")
     assert status == 200, refreshed
@@ -205,48 +191,13 @@ def run_flow(base_url: str) -> None:
         },
         {"X-CSRF-Token": csrf_a},
     )
-    assert status == 200 and submitted["data"]["publishedAt"] is None, submitted
-
-    status, hidden = user_b.request("GET", f"/letters/{letter_id}")
-    assert status == 404, hidden
-    status, public_before = anonymous.request("GET", "/letters")
-    assert status == 200, public_before
-    assert letter_id not in {
-        item["id"] for item in public_before["data"]["items"]
-    }, public_before
-
-    status, queue = admin.request("GET", "/admin/letters")
-    assert status == 200, queue
-    assert letter_id in {item["id"] for item in queue["data"]["items"]}, queue
-    status, rejected = admin.request(
-        "POST",
-        f"/admin/letters/{letter_id}/review",
-        {"action": "returnForEdit", "reason": "垃圾信息与恶意广告"},
-        {"X-CSRF-Token": csrf_admin},
-    )
-    assert status == 200 and rejected["data"]["status"] == "draft", rejected
-    assert rejected["data"]["reviewNote"] == "垃圾信息与恶意广告", rejected
-
-    status, returned = user_a.request("GET", f"/letters/{letter_id}")
-    assert status == 200 and returned["data"]["reviewNote"] == "垃圾信息与恶意广告", returned
-    status, submitted_again = user_a.request(
-        "PATCH",
-        f"/letters/{letter_id}",
-        {"submitForReview": True},
-        {"X-CSRF-Token": csrf_a},
-    )
-    assert status == 200 and submitted_again["data"]["submittedAt"], submitted_again
-
-    status, approved = admin.request(
-        "POST",
-        f"/admin/letters/{letter_id}/review",
-        {"action": "approve"},
-        {"X-CSRF-Token": csrf_admin},
-    )
-    assert status == 200 and approved["data"]["allowReplies"] is True, approved
-
-    status, public_after = anonymous.request("GET", f"/letters/{letter_id}")
-    assert status == 200, public_after
+    assert status == 200 and submitted["data"]["publishedAt"], submitted
+    status, public_letter = anonymous.request("GET", f"/letters/{letter_id}")
+    assert status == 200 and public_letter["data"]["id"] == letter_id, public_letter
+    status, public_list = anonymous.request("GET", "/letters")
+    assert status == 200 and letter_id in {
+        item["id"] for item in public_list["data"]["items"]
+    }, public_list
 
     status, users = user_a.request("GET", "/users/search?keyword=smoke_user_b")
     assert status == 200 and users["data"]["total"] == 1, users
@@ -276,8 +227,6 @@ def run_flow(base_url: str) -> None:
     private_id = private_letter["data"]["id"]
     status, _ = anonymous.request("GET", f"/letters/{private_id}")
     assert status == 404
-    status, _ = admin.request("GET", f"/letters/{private_id}")
-    assert status == 404
     status, received = user_b.request("GET", f"/letters/{private_id}")
     assert status == 200 and received["data"]["id"] == private_id, received
     status, inbox = user_b.request("GET", "/me/inbox")
@@ -304,13 +253,7 @@ def run_flow(base_url: str) -> None:
     )
     assert status == 201, reply
     reply_id = reply["data"]["id"]
-    status, _ = admin.request(
-        "POST",
-        f"/admin/letters/{reply_id}/review",
-        {"action": "approve"},
-        {"X-CSRF-Token": csrf_admin},
-    )
-    assert status == 200
+    assert reply["data"]["publishedAt"], reply
     status, replies = anonymous.request("GET", f"/letters/{letter_id}/replies")
     assert status == 200 and replies["data"]["total"] == 1, replies
 
