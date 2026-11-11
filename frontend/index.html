@@ -1503,6 +1503,14 @@ window.addEventListener('beforeunload', event => { if (state.dirty) { event.prev
 
 window.requestLuojiaLeave=requestLeave;
 try { const key='luojia.v17.stampSwap'; if(!localStorage.getItem(key)){for(let j=0;j<localStorage.length;j++){const k=localStorage.key(j);if(!k.startsWith('luojia')||k===key)continue;const raw=localStorage.getItem(k);if(!raw.includes('let_demo_4'))continue;const data=JSON.parse(raw);const walk=o=>{if(!o||typeof o!=='object')return;if(o.id==='let_demo_4')o.stampId='stamp_6';if(o.id==='let_demo_6')o.stampId='stamp_4';Object.values(o).forEach(walk)};walk(data);localStorage.setItem(k,JSON.stringify(data));}localStorage.setItem(key,'1');}}catch{}
+const startupQuery = new URLSearchParams(location.search);
+if (demo && startupQuery.get('demoLogin') === '1') {
+  try { sessionStorage.setItem('luojia.demo.signedIn', 'true'); }
+  catch { /* session() below will show a recoverable error. */ }
+  startupQuery.delete('demoLogin');
+  const rest = startupQuery.toString();
+  history.replaceState(null, '', `${location.pathname}${rest ? `?${rest}` : ''}${location.hash}`);
+}
 await service.session().catch(error => toast(errorText(error)));
 updateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get('login') === '1' && !service.user) goToAuth();
 

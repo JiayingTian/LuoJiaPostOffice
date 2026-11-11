@@ -3,6 +3,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Script } from 'node:vm';
 
 const run = promisify(execFile);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -54,10 +55,17 @@ for (const edition of ['full', 'anonymous']) {
   // directly from disk. Chrome blocks local ES-module imports on file://.
   const mailbox = resolve(target, 'frontend/index.html');
   const mailboxHtml = await readFile(mailbox, 'utf8');
-  await writeFile(mailbox, mailboxHtml.replace(
+  const offlineMailbox = mailboxHtml.replace(
     '<script type="module">\nimport { calendarParts, groupEntriesByDate, sentLetterEntries } from \'./calendar.js\';',
     `<script>\n${calendar}`,
-  ));
+  ).replace(
+    'await service.session().catch(error => toast(errorText(error)));\nupdateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get(\'login\') === \'1\' && !service.user) goToAuth();',
+    'void (async () => {\nawait service.session().catch(error => toast(errorText(error)));\nupdateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get(\'login\') === \'1\' && !service.user) goToAuth();\n})().catch(error => { app.innerHTML = empty(\'信箱暂时无法打开\', errorText(error), button(\'重试\', \'retry\')); });',
+  );
+  if (offlineMailbox === mailboxHtml || offlineMailbox.includes('<script type="module">') || !offlineMailbox.includes('void (async () => {')) {
+    throw new Error('本地信箱脚本转换失败，请检查 frontend/index.html。');
+  }
+  await writeFile(mailbox, offlineMailbox);
   const about = resolve(target, 'frontend/about.html');
   const aboutHtml = await readFile(about, 'utf8');
   await writeFile(about, aboutHtml.replace(
@@ -68,6 +76,18 @@ for (const edition of ['full', 'anonymous']) {
   const authHtml = await readFile(authPage, 'utf8');
   await writeFile(authPage, authHtml.replace('<script type="module" src="auth.js"></script>', '<script src="auth-offline.js"></script>'));
   await writeFile(resolve(target, 'frontend/auth-offline.js'), `${api}\n${auth}`);
+  const home = await readFile(resolve(target, 'index.html'), 'utf8');
+  if (/frontend\/(?:#|\?)/.test(home)) throw new Error('首页仍有指向 frontend 文件夹的链接。');
+  for (const file of ['index.html', 'frontend/index.html', 'frontend/auth.html', 'frontend/about.html']) {
+    const html = await readFile(resolve(target, file), 'utf8');
+    if (/<script\b[^>]*type="module"/.test(html)) throw new Error(`${file} 仍依赖本地文件不支持的模块脚本。`);
+    for (const [, code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) {
+      new Script(code, { filename: file });
+    }
+  }
+  for (const file of ['frontend/auth-offline.js', 'frontend/runtime-config.js']) {
+    new Script(await readFile(resolve(target, file), 'utf8'), { filename: file });
+  }
   // Keep historical notes and account identifiers out of the judging copies.
   const introduction = `# 珞珈烟火邮局\n\n一座可读、可写、可偶遇陌生人故事的线上邮局。静态演示包括公共来信、时光日历、信纸邮票、投递盖戳动画、草稿、我的信件与回信。\n\n## 打开网页\n\n先完整解压本 ZIP（不要在压缩包预览窗口里单独打开 index.html），再打开解压得到的「珞珈烟火邮局」文件夹中的 index.html。登录及其他页面依赖同一文件夹里的 frontend/ 与 pictures/。也可以安装 Node.js 20+ 后在该文件夹运行 npm run dev，再打开终端显示的网址；无需数据库。运行 npm test 可执行逻辑测试。\n\n## 技术与流程\n\n前端为原生 HTML、CSS、JavaScript，没有预设样式库或外部 CDN。后端采用 FastAPI（接口）、Uvicorn（服务）、SQLAlchemy（数据库映射）、Alembic（迁移）、PyMySQL（驱动）、pydantic-settings（配置）、argon2-cffi（密码哈希），详见 backend/README.md。静态演示中的新增数据在当前浏览器保存；真实接口模式需另启 MySQL 和后端。两个模式均为寄出后即时公开，无管理员审核。\n\n建议展示规格：1920、1440、720；赛事环境 Chrome 129。\n`;
   const personal = edition === 'full'
