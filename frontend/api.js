@@ -89,12 +89,6 @@ export class ApiClient {
   replies(id, { page = 1, pageSize = 6 } = {}) {
     return this.request(`/letters/${encodeURIComponent(id)}/replies?${new URLSearchParams({ page, pageSize })}`);
   }
-  reviewQueue({ page = 1, pageSize = 6 } = {}) {
-    return this.request(`/admin/letters?${new URLSearchParams({ page, pageSize })}`);
-  }
-  review(id, action, reason) {
-    return this.request(`/admin/letters/${encodeURIComponent(id)}/review`, { method: 'POST', body: { action, ...(reason ? { reason } : {}) } });
-  }
   remove(id) { return this.request(`/letters/${encodeURIComponent(id)}`, { method: 'DELETE' }); }
   save(payload, { id, key } = {}) {
     return this.request(id ? `/letters/${encodeURIComponent(id)}` : '/letters', {

@@ -19,7 +19,6 @@ class TestAccount:
 TEST_ACCOUNTS = (
     TestAccount("test_user_a", "测试用户 A", "user"),
     TestAccount("test_user_b", "测试用户 B", "user"),
-    TestAccount("test_admin", "测试管理员", "admin"),
 )
 
 

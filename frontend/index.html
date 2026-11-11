@@ -26,7 +26,7 @@
 /* V5: 原始纸纹仅叠加背景，校园插画连续循环 */
 :root{--texture-opacity:.4;--scenery-opacity:.72;--scenery-duration:80s}
 .page-surface{position:relative;isolation:isolate;min-height:calc(100vh - 92px)}
-.page-surface::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("assets/art-16.png") center top / 1400px auto repeat;opacity:var(--texture-opacity)}
+.page-surface::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("assets/art-16.webp") center top / 1400px auto repeat;opacity:var(--texture-opacity)}
 #app{padding-bottom:40px}
 .footer{position:relative;isolation:isolate;overflow:hidden;min-height:330px;padding:30px 24px 245px;border-top:1px solid #dfcfb3;background:rgba(252,248,239,.15)}
 .footer-copy{position:relative;z-index:1;color:#77614b;font-size:15px;line-height:1.8}
@@ -143,7 +143,7 @@ body.reading-view,body.writing-view{background:#eee1cb;color:#594432}
 .reading-view .header,.writing-view .header{background:#fff8ecdc;border-color:#c7ab7a55}
 .writing-view #app{max-width:1240px;padding-top:25px}.writing-view .breadcrumbs{max-width:920px;margin:0 auto 24px}.write-steps{max-width:780px;padding:13px 24px;border-top:1px solid #b68d5355;border-bottom:1px solid #b68d5355;color:#8d7356;letter-spacing:.06em;background:#fff7e84d}.write-steps [aria-current]{color:#98682f}
 #editor.paper{position:relative;isolation:isolate;max-width:920px;border-radius:3px;padding:58px 70px 42px;border:1px solid #d3b88d;background:radial-gradient(ellipse at 0 0,#be915c1c,transparent 42%),radial-gradient(ellipse at 100% 100%,#cda57422,transparent 44%),linear-gradient(100deg,#fff7e9ee,#faf0e0f5);box-shadow:0 14px 35px #69482125,7px -7px 0 #eee2ce,8px -8px 0 #d7b995,14px -14px 0 #f6ecdb}
-#editor.paper:before{content:'';position:absolute;inset:0;background:url('assets/art-16.png') center/900px;opacity:.18;z-index:-1;pointer-events:none}
+#editor.paper:before{content:'';position:absolute;inset:0;background:url('assets/art-16.webp') center/900px;opacity:.18;z-index:-1;pointer-events:none}
 .vintage-frame{position:absolute;inset:20px;pointer-events:none;z-index:-1;border:1px solid #ba955a77;outline:1px solid #c8a87144;outline-offset:5px}.corner{position:absolute;width:70px;height:70px;background:#fbf1e2}.paper-flourish{width:100%;height:100%;stroke:#b38b50;stroke-width:1;opacity:.72}.c0{left:-1px;top:-1px}.c1{right:-1px;top:-1px;transform:rotate(90deg)}.c2{right:-1px;bottom:-1px;transform:rotate(180deg)}.c3{left:-1px;bottom:-1px;transform:rotate(270deg)}
 #editor h1{color:#664731;font-weight:500;letter-spacing:.12em;margin-top:10px}#editor .eyebrow{color:#9e7848;letter-spacing:.3em}#editor .form-field label{color:#80613e;letter-spacing:.12em}#editor .form-field input,#editor .form-field textarea{background:#fffaf16b;border-color:#c9ab7d;border-radius:2px;box-shadow:inset 0 2px 8px #95672b06}#editor .form-field textarea{background:repeating-linear-gradient(transparent 0,transparent 33px,#bca47c20 33px,#bca47c20 34.2px),#fffaf14d;line-height:34.2px;padding-top:10px}#editor .actions{border-top:1px solid #c2a17166;padding-top:20px}.primary{background:linear-gradient(145deg,#b1844d,#936233);border-color:#966935;box-shadow:0 3px 8px #78532916}.pattern-picker{background:#fff9ef55;border-color:#c9ac7d}.pattern-option>span{background:#f4e8d6!important}.stamp-options label>span{background:#fff8ec80;border-radius:3px;border-color:#cdb48b}.stamp-options label:has(input:checked)>span{background:#f3e4cc;border-color:#aa7a43}
 .reading-layout{gap:32px;margin-top:22px}.reading-main{position:relative;isolation:isolate}.reading-main:before{content:'';position:absolute;inset:0 14px 70px -12px;z-index:-1;transform:rotate(-1.3deg);border:1px solid #c5a47c;background:linear-gradient(135deg,#c1a17b44,transparent 55%),#e6d2b5;box-shadow:0 4px 12px #62422120;border-radius:3px}.stationery-sheet.paper{background:#faf0df;box-shadow:0 10px 25px #6c49232b,6px -6px 0 #f6ead7,7px -7px 0 #d5ba94,12px -12px 0 #f2e4cc;border-radius:5px}.stationery-sheet .sheet-header{border-bottom-color:#a7855466}.stationery-sheet .sheet-header h1{color:#503c2b;font-weight:500}.stationery-sheet .letter-content{color:#493c2d}.reader-corner-flower{position:absolute;right:2%;top:0;width:155px;height:42px;overflow:hidden;opacity:.55;pointer-events:none;transform:scaleX(-1)}.reader-corner-flower img{width:155px;max-width:none}.sheet-paging{color:#937047}.sheet-paging button{font-family:var(--serif);text-decoration:none;border-bottom:1px solid #b49a7455;border-radius:0}.correspondence{border:1px solid #d6bd96;border-radius:4px;padding:28px 24px;background:radial-gradient(ellipse at top left,#d6b17f20,transparent 70%),#fff7e9ed;box-shadow:0 10px 24px #6c49231c,inset 0 0 28px #cda97415;outline:1px solid #d5bd943d;outline-offset:-7px}.correspondence h2{font-weight:500;color:#89602f;letter-spacing:.08em;padding-bottom:16px;border-bottom:1px solid #c6a67966}.original-letter{border:1px solid #dcc49d;background:#f1e2c971;border-radius:2px;box-shadow:4px 4px 0 #f1e3cd66}.reply-item{border-bottom-color:#bea07777;padding:20px 0}.reply-item h3{font-weight:500;color:#6d4b2b}.reply-item p{line-height:1.9}.reading-view .footer,.writing-view .footer{background:transparent;border-color:#bea27b55}.reading-view .footer-copy,.writing-view .footer-copy{color:#8f704b}
@@ -265,8 +265,8 @@ body.reading-view{height:100svh;min-height:0;overflow:hidden}.reading-view .head
 <style>/* Compact heading action: no extra row in the public mailbox. */
 .page-heading .encounter-button{position:relative;flex:none;align-self:center;margin-left:auto;padding:13px 30px;border:1px solid #ae8752;border-radius:3px;background:linear-gradient(120deg,#fffaf0,#f1e2c7);color:#855c32;font-family:var(--serif,serif);font-size:18px;letter-spacing:.12em;box-shadow:inset 0 0 0 4px #fff9ed,inset 0 0 0 5px #c5a77866,0 4px 12px #8f6a2f12}
 .page-heading .encounter-button:hover{background:linear-gradient(120deg,#fff9eb,#e9d4af);box-shadow:inset 0 0 0 4px #fff9ed,inset 0 0 0 5px #b99b6e,0 5px 16px #8f6a2f20}
-.postal-ritual{background-image:radial-gradient(ellipse at 50% 25%,#fffdf5e6,#f0e1cbd9),url('assets/art-16.png')!important;background-size:auto,650px!important}
-.postal-paper{background:linear-gradient(120deg,#fffdf1df,#efe0c8dd),url('assets/art-16.png') center/450px;padding-top:32px}
+.postal-ritual{background-image:radial-gradient(ellipse at 50% 25%,#fffdf5e6,#f0e1cbd9),url('assets/art-16.webp')!important;background-size:auto,650px!important}
+.postal-paper{background:linear-gradient(120deg,#fffdf1df,#efe0c8dd),url('assets/art-16.webp') center/450px;padding-top:32px}
 .postal-paper i{height:1px;opacity:.55}
 .postal-tool{perspective:650px;transform-style:preserve-3d}
 .postal-tool-turn{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:44px 101px;animation:postal-turn 5s both;animation-delay:var(--ritual-delay)}
@@ -298,7 +298,7 @@ body.public-mailbox-view{height:100dvh;overflow:hidden;display:flex;flex-directi
   <header class="header">
     <a class="brand" href="../index.html"><span class="brand-icon brand-stamp" aria-hidden="true"><svg class="stamp-frame" viewBox="0 0 70 60" focusable="false"><defs><mask id="brand-perforation"><rect width="70" height="60" fill="white"/><g fill="black"><circle cx="5" cy="0" r="2.3"/><circle cx="5" cy="60" r="2.3"/><circle cx="13" cy="0" r="2.3"/><circle cx="13" cy="60" r="2.3"/><circle cx="21" cy="0" r="2.3"/><circle cx="21" cy="60" r="2.3"/><circle cx="29" cy="0" r="2.3"/><circle cx="29" cy="60" r="2.3"/><circle cx="37" cy="0" r="2.3"/><circle cx="37" cy="60" r="2.3"/><circle cx="45" cy="0" r="2.3"/><circle cx="45" cy="60" r="2.3"/><circle cx="53" cy="0" r="2.3"/><circle cx="53" cy="60" r="2.3"/><circle cx="61" cy="0" r="2.3"/><circle cx="61" cy="60" r="2.3"/><circle cx="69" cy="0" r="2.3"/><circle cx="69" cy="60" r="2.3"/><circle cx="0" cy="6" r="2.3"/><circle cx="0" cy="14" r="2.3"/><circle cx="0" cy="22" r="2.3"/><circle cx="0" cy="30" r="2.3"/><circle cx="0" cy="38" r="2.3"/><circle cx="0" cy="46" r="2.3"/><circle cx="0" cy="54" r="2.3"/><circle cx="70" cy="6" r="2.3"/><circle cx="70" cy="14" r="2.3"/><circle cx="70" cy="22" r="2.3"/><circle cx="70" cy="30" r="2.3"/><circle cx="70" cy="38" r="2.3"/><circle cx="70" cy="46" r="2.3"/><circle cx="70" cy="54" r="2.3"/></g></mask></defs><rect width="70" height="60" fill="#f3e7ce" mask="url(#brand-perforation)"/><rect x="7" y="7" width="56" height="46" fill="#fffaf0" stroke="#bb9464" stroke-width=".65"/></svg><img src="assets/art-20.jpg" alt="" width="1815" height="1280"></span><span>珞珈烟火邮局<small>LUOJIA POST OFFICE</small></span></a>
     <nav aria-label="主导航"><a href="../index.html">首页</a><a href="#/mailbox" data-nav="mailbox">珞珈印记</a><a href="#/calendar" data-nav="calendar">时光信笺</a><a href="about.html">关于我们</a></nav>
-    <div class="account"><div class="account-menu" id="account-menu" hidden><button class="account-trigger" id="user-name" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="#/mine" role="menuitem">我的信件</a><button id="logout-button" type="button" role="menuitem">退出登录</button></div></div><a href="#/admin" data-nav="admin" class="button" hidden>审核</a><button id="account-button" class="button primary" type="button">登录</button></div>
+    <div class="account"><div class="account-menu" id="account-menu" hidden><button class="account-trigger" id="user-name" type="button" aria-haspopup="menu" aria-expanded="false"></button><div class="account-dropdown" role="menu"><a href="#/mine" role="menuitem">我的信件</a><button id="logout-button" type="button" role="menuitem">退出登录</button></div></div><button id="account-button" class="button primary" type="button">登录</button></div>
   </header>
   <div class="page-surface"><div class="desk-decor" aria-hidden="true"><div class="old-envelope"></div><div class="desk-blossom"><img src="assets/art-3.png" alt=""></div><span class="petal petal-a"></span><span class="petal petal-b"></span><span class="petal petal-c"></span></div>
 
@@ -471,12 +471,6 @@ class ApiClient {
   detail(id) { return this.request(`/letters/${encodeURIComponent(id)}`); }
   replies(id, { page = 1, pageSize = 6 } = {}) {
     return this.request(`/letters/${encodeURIComponent(id)}/replies?${new URLSearchParams({ page, pageSize })}`);
-  }
-  reviewQueue({ page = 1, pageSize = 6 } = {}) {
-    return this.request(`/admin/letters?${new URLSearchParams({ page, pageSize })}`);
-  }
-  review(id, action, reason) {
-    return this.request(`/admin/letters/${encodeURIComponent(id)}/review`, { method: 'POST', body: { action, ...(reason ? { reason } : {}) } });
   }
   remove(id) { return this.request(`/letters/${encodeURIComponent(id)}`, { method: 'DELETE' }); }
   save(payload, { id, key } = {}) {
@@ -679,7 +673,7 @@ function mountLetterReader(sheet) {
 
 const demoPattern = stationeryCatalog[0];
 const samples = [["想把那天的晚霞寄给你", "上周傍晚，从图书馆出来的时候，天边忽然变成了很浅的橘色。我本来已经低头点开了待办清单，走到台阶前，又把手机放回了口袋。那片云实在太慢了，慢得让人不好意思继续赶路。\n\n你以前总说，要给一天留一点发呆的时间。我当时觉得这句话很奢侈，课表、作业、实验报告，把每个空隙都填得满满的，好像只要停下来，就会落后于谁。可是那天我真的坐了一会儿，背包放在脚边，听见有人在楼下讨论晚饭，有人的水杯碰在栏杆上，发出清脆的一声。\n\n旁边坐着两个女生，共用一副耳机。其中一个把手机举起来拍天空，另一个伸手替她挡住镜头前晃动的背带。我不知道她们在听什么歌，却忽然想起，我们以前也会为了拍一张没有路人的照片，在同一个地方等很久。最后照片没拍好，倒把彼此笑弯腰的样子记得很清楚。\n\n后来风有点凉，我去买了一份晚饭。窗口的阿姨问我要不要加辣，我照例说一点点，又想起你每次都替我补一句：她说的一点点，是真的一点点。现在没人替我解释了，我倒也学会自己多说一句。原来长大有时候不是特别了不起的事，只是终于能把这些小小的需求说明白。\n\n回宿舍的路上，天空已经暗下来了。我翻了翻相册，发现刚才那张照片拍得很普通，远没有亲眼看见的好看。本来想删掉，手指停了一下，还是留下了。画面里有一角台阶，有模糊的人影，还有我那天确实坐下来休息过的证据。\n\n写这封信的时候，室友正在找她的充电线，楼道里有人刚洗完衣服回来。生活没有突然变得顺利，明天也还有没做完的事。但我想告诉你，我今天有好好吃饭，有抬头看天，也有在某个很普通的瞬间想起你。\n\n等下次见面，我们再找一个地方坐坐吧。不必等到所有事情都忙完，也不用提前想好要聊什么。", "晚归的人"], ["食堂最后一份热汤", "那天实验结束得很晚，我到食堂时，好几个窗口已经收拾好了。地上还有刚拖过的水痕，椅子一张张收在桌边。我站在门口犹豫，想着要不要回宿舍泡一碗面。\n\n阿姨看见我，隔着玻璃问了一句：“还没吃饭呀？”我点点头，忽然觉得有些不好意思，像是自己来得太迟，打扰了她下班。她没有催我，打开旁边的锅盖，说还有汤，米饭也能盛一点。\n\n热汤端到手里，眼镜立刻起了一层雾。我摘下眼镜，发现桌子对面还有一个同样晚来的同学。他埋头吃饭，书包拉链都没来得及拉好，一角打印纸露在外面。我们谁也没说话，只在阿姨拿来两双筷子时，一起说了声谢谢。\n\n那顿饭其实很简单，菜也不是我平时最喜欢的。可我吃得很慢，连碗底的一点汤都喝完了。离开时阿姨已经换下围裙，我说“您辛苦了”，她摆摆手，提醒我外面起风，把外套穿上。\n\n我一直以为值得写进信里的，应该是特别重要的事情。后来才发现，一顿晚饭、一句随口的关心，也能把很疲惫的一天接住。如果这封信恰好被你读到，希望你今天也能按时吃饭。忙的时候尤其要记得。", "一位珞珈来客"], ["致一起走过雨天的朋友", "还记得我们共撑一把伞走回宿舍的那个下午吗？雨是突然下起来的，出门时明明还有太阳。我们站在教学楼门口，分别翻了一遍书包，最后只找到你那把有点歪的小伞。\n\n你说挤一挤总能回去。我说当然可以，结果刚走出两步，我的鞋就踩进了水坑。那声响太清楚了，你没忍住笑，我也跟着笑起来。前一节课没听明白的题、刚收到的修改意见，忽然都变得没那么要紧。\n\n路上我们认真讨论过怎么撑伞才公平。你往左挪一点，我往右靠一点，伞尖碰到树叶，水又落下来，最后发现两个人的肩膀还是一样湿。我们索性不再调整，专心避开积水，却总在刚说完“这边没水”的时候，再踩中一个小坑。\n\n经过便利店，你提议进去避一会儿。门口挤着几个没带伞的人，大家轮流往外看，像在等待一场没有时间表的演出散场。你买了两盒牛奶，把温的那盒递给我。我握着盒子，听你讲起中学时一次更狼狈的淋雨经历，讲到最夸张的地方，还要腾出一只手比画。\n\n后来雨稍微小了，我们继续往前走。你突然问我，最近是不是不太开心。我记得自己沉默了一会儿，才说有一点。原来有些事情在聊天框里反复打字也说不出口，在两个人并肩走路、谁也不用看着谁的时候，反而可以慢慢讲出来。\n\n你没有马上告诉我该怎么做，也没有说这些事情不值得难过。你只是把伞往我这边偏了一点，问：“那后来呢？”我一直记得这句话。它让我知道，我不必赶快把故事讲成一个已经解决的问题。\n\n到宿舍楼下，我们站着聊了很久。雨水顺着伞骨往下滴，你的袖口湿了一大片，我的鞋也彻底没救了。分别的时候你说，回去先换袜子，其他事情明天再想。我后来真的照做了，洗完热水澡，坐在桌前，第一次没有逼自己立刻恢复精神。\n\n如今每次经过那条路，我都会想起那个下午。我们没做什么特别的事，不过是一起走了一段路，买了两盒牛奶，说了一些平常不肯说的话。可那天之后，我知道自己可以在不那么好的时候给你发消息。\n\n这封信写到这里，窗外又有雨声了。希望你身边有伞，有干燥的袜子，也有愿意听你说“后来呢”的人。下次如果碰巧又只带了一把伞，我们就慢一点走。", "小满"], ["路灯亮起的时候", "我喜欢路灯刚亮起来的那几分钟。天空还留着一点蓝，树影已经深下去了，灯光落在路面上，看起来像有人提前铺好了回去的路。\n\n今天下课以后，我没有直接回宿舍，绕着校园多走了一段。有人抱着书快步经过，有人拎着晚饭，一边走一边提醒电话那头的人：“我知道，已经吃了。”走近了才听见，袋子里的餐盒还在轻轻碰响。原来我们都很擅长先让家里放心，再处理自己的晚饭。\n\n一个小朋友在前面追着影子跑。他每跑到一盏灯下面，影子就换一个方向，他便停下来，认真找一找。大人没有催，只拎着东西在后面慢慢跟着。我在他们后面走了一小段，忽然也低头看了看自己的影子。\n\n我给家里打了个电话。其实没有什么新鲜事，妈妈说阳台上的衣服终于晒干了，我说今天的课有点难。我们把这些小事讲完，又各自安静了一会儿。她问是不是累了，我说还好，正在往回走。\n\n挂断电话后，路已经走到尽头。宿舍楼的窗户亮着，有人从楼上喊朋友的名字。我站了一下，才进门。今天没有发生值得庆祝的大事，但这条路、这通电话，还有楼上那声招呼，让我觉得自己确实属于这里。", "山下"], ["今天也向前走了一点", "这周过得有点慢。有一道题，我来回看了三次，笔记写得很整齐，脑子里却还是乱的。每次听见旁边同学说“这个很简单”，我都想把那一页轻轻翻过去，假装自己也懂了。\n\n今天终于鼓起勇气问了出来。我原本准备了很长的解释，想证明自己不是完全没学，结果对方拿过草稿纸，说：“我们从这里重新画一下。”没有谁笑我，我们只是把条件一条条写出来，再把遗漏的那一步补上。\n\n弄懂的瞬间也没有想象中激动。我先是愣了一下，随后特别想笑：原来我一直卡在这里。回宿舍前，我买了一杯热豆浆，站在路边慢慢喝完，当作这件小事的奖励。\n\n所以给今天留一封短信。以后再遇到不会的东西，希望我能记住，开口问一句并不会让之前的努力失效。今天只前进了一点点，但这一步是真的。", "慢慢来"], ["留一盏灯等你", "你发消息说今晚还要晚一点回来，我看见的时候，正准备关掉桌上的灯。于是把灯罩转了个方向，让光落在靠门的那一小块地方。这样你进来找拖鞋，就不用拿着手机照来照去了。\n\n桌上有一个小面包，是傍晚顺手买的。本来想问你要不要，又怕你忙起来忘记看消息，就挑了你常吃的那一种。袋口没有拆，放在你的杯子旁边。要是不饿，留到明早也可以。\n\n还记得刚住进来的时候，我们彼此都很客气。谁晚睡一点，谁早起一点，都要提前说好多句不好意思。后来慢慢熟悉了，才知道你找不到东西时会先在原地转一圈，我遇到难题时会不停地拧笔帽。很多事情不用问，就能猜个大概。\n\n前几天你回来，看见我还坐在桌前，也没问我为什么没睡，只把一颗糖放到键盘边上。我当时正在赶报告，随口说了谢谢。后来拆糖纸的时候，已经过了十二点。我突然觉得，那颗糖比任何“加油”都有用，因为它不要求我立刻变得精神，只是让我嘴里有一点甜。\n\n我们说好，等这一阵忙完，就去操场走走。其实不必等到哪一天完全空闲，找个普通的晚上也行。不聊成绩，不排计划，随便说说今天遇到了什么人，或者一起安静走两圈。\n\n我先睡了，灯给你留着。回来轻一点，不是怕你吵醒我，是门最近有点响，楼道里总能听见。面包记得拿，明天见。", "室友"], ["在书页里遇见秋天", "翻开借来的书，里面夹着一张旧书签。边角已经磨圆了，背面用铅笔写着一句话：记得看看窗外。我不知道是上一位读者留下的，还是已经跟着这本书走过很多人的书桌。\n\n于是我真的抬起头。窗外那棵树有几片叶子黄了，风吹过来的时候，叶背会翻出浅一点的颜色。前几周它是不是也这样，我竟然完全想不起来。我每天都坐在差不多的位置，却好像从来没有仔细看过它。\n\n那天下午，我只读了十几页。不是因为书不好看，而是某个段落让我想起了很久以前的事情。小时候去旧书店，父亲总会给我一点零钱，让我自己挑一本。我挑得很慢，看封面，也看有没有插图，最后常常选中最厚的那本，觉得这样比较划算。\n\n父亲没有纠正过这种挑法。他站在旁边翻报纸，等我抱着书过来，才帮我看看有没有缺页。买完书，我们会在回家的路上分一袋刚出炉的点心。我一边吃一边急着翻书，他提醒我手上有油，我就把书举得远一点，自以为这样便能两全。\n\n上大学以后，我读书越来越像在完成什么任务。要做笔记，要记住观点，要觉得自己没有浪费时间。有时一页看了很久，脑子里却只剩下还有多少页没读。那张书签让我停了一下，想起自己原本也会因为一个有意思的故事，愿意在旧书店待上一整个下午。\n\n我把书合上，出去走了一会儿。路边有一片叶子落在长椅上，叶脉很清楚，我看了几秒，没有捡走。随后去买了点心，给父亲发了一张照片。他过了好一会儿才回复，问我是不是又只顾着吃甜的，没有好好吃饭。\n\n等回到座位，我重新翻开那一页。这次没有划线，也没有急着总结，只慢慢读下去。书里写到一场告别，我想起家门口那条路，忽然读懂了一点以前略过去的地方。\n\n还书时，我把书签放回原来的位置，没有添字。也许下一位读者正好需要这句话，也许它会一直安静地夹在那里。不管怎样，我已经在那个下午看过窗外了。原来秋天不是突然来的，只是我终于有空认出它。", "书页之间"]];
-const stampCatalog = [{"id": "stamp_1", "src": "assets/art-38.png", "box": [140, 152, 1265, 1238, 1536, 1536]}, {"id": "stamp_2", "src": "assets/art-39.jpg", "box": [145, 220, 970, 840, 1280, 1280]}, {"id": "stamp_3", "src": "assets/art-40.png", "box": [64, 70, 1925, 1909, 2048, 2048]}, {"id": "stamp_4", "src": "assets/art-41.jpg", "box": [0, 0, 1279, 1287, 1279, 1287]}, {"id": "stamp_5", "src": "assets/art-42.jpg", "box": [0, 0, 1126, 1439, 1126, 1439]}, {"id": "stamp_6", "src": "assets/art-43.png", "box": [0, 0, 2048, 2048, 2048, 2048]}];
+const stampCatalog = [{"id": "stamp_1", "src": "assets/art-38.webp", "box": [140, 152, 1265, 1238, 1536, 1536]}, {"id": "stamp_2", "src": "assets/art-39.jpg", "box": [145, 220, 970, 840, 1280, 1280]}, {"id": "stamp_3", "src": "assets/art-40.webp", "box": [64, 70, 1925, 1909, 2048, 2048]}, {"id": "stamp_4", "src": "assets/art-41.jpg", "box": [0, 0, 1279, 1287, 1279, 1287]}, {"id": "stamp_5", "src": "assets/art-42.jpg", "box": [0, 0, 1126, 1439, 1126, 1439]}, {"id": "stamp_6", "src": "assets/art-43.webp", "box": [0, 0, 2048, 2048, 2048, 2048]}];
 const seeds = samples.map(([title, content, name], i) => ({
   id: `let_demo_${i + 1}`, stampId: stampCatalog[({3:5,5:3})[i] ?? (i % stampCatalog.length)].id, title, content, excerpt: excerpt(content),
   author: { displayName: name, isAnonymous: false }, recipient: { type: 'wall', user: null },
@@ -813,7 +807,7 @@ function updateAccount() {
   userMenu.hidden = !service.user;
   document.querySelector('#account-button').textContent = '登录';
   document.querySelector('#account-button').hidden = Boolean(service.user);
-  document.querySelector('[data-nav=admin]').hidden = service.user?.role !== 'admin';
+
 }
 function navigate(hash) { if (hash === location.hash) render(); else location.hash = hash; }
 function goToAuth() {
@@ -1052,7 +1046,7 @@ async function timeLetters(params, token) {
   }
   const previous = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
-  const calendarPanel = `<div class="calendar-shell combined-calendar-shell"><img class="calendar-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><img class="calendar-campus" src="assets/art-22.png" alt="" aria-hidden="true"><div class="calendar-layout"><section class="calendar-picker"><div class="calendar-bar"><a href="${calendarUrl(previous)}">‹ 上月</a><h2>${year} 年 ${month} 月</h2><a href="${calendarUrl(next)}">下月 ›</a></div><div class="calendar-week" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="calendar-grid">${cells.join('')}</div><p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p></section><section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section></div></div>`;
+  const calendarPanel = `<div class="calendar-shell combined-calendar-shell"><img class="calendar-blossom" src="assets/art-3.png" alt="" aria-hidden="true"><img class="calendar-campus" src="assets/art-22.png" alt="" aria-hidden="true"><div class="calendar-layout"><section class="calendar-picker"><div class="calendar-bar"><a href="${calendarUrl(previous)}">‹ 上月</a><h2>${year} 年 ${month} 月</h2><a href="${calendarUrl(next)}">下月 ›</a></div><div class="calendar-week" aria-hidden="true"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="calendar-grid">${cells.join('')}</div><p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p></section><section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.webp" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section></div></div>`;
   app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，重温时光的回响。', '<a class="button primary" href="#/write?theme=time">写一封时光信</a>') + `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
   const timeline = app.querySelector('[data-calendar-timeline]');
   const target = timeline?.querySelector(`[data-timeline-date="${selectedKey}"]`);
@@ -1064,7 +1058,7 @@ function paper(letter, preview = false) {
   const pattern = (state.metadata?.patterns || []).find(item => item.id === visualPatternId) || letter.pattern || {};
   const orientation = pattern.orientation === 'portrait' ? 'portrait' : 'landscape';
   const source = safePatternURL(pattern.previewUrl);
-  return `<article class="paper stationery-sheet ${orientation}">${source ? `<img class="stationery-bg" src="${e(source)}" alt="">` : ''}<div class="reader-corner-flower" aria-hidden="true"><img src="assets/art-3.png" alt=""></div><div class="sheet-cancel" aria-hidden="true"><img src="assets/art-19.png" alt=""><svg viewBox="0 0 100 50" fill="none"><path d="M0 10Q12 0 25 10T50 10T75 10T100 10M0 22Q12 12 25 22T50 22T75 22T100 22M0 34Q12 24 25 34T50 34T75 34T100 34"/></svg></div><div class="sheet-header">${stampMarkup(letter.stampId || decoration.stampId)}<p class="eyebrow">A LETTER FOR YOU</p>${letter.parentLetterId ? `<p class="parent-note">回信${letter.parentTitle ? ` · ${e(letter.parentTitle)}` : ''}${!preview ? `　<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信</a>` : ''}</p>` : ''}
+  return `<article class="paper stationery-sheet ${orientation}">${source ? `<img class="stationery-bg" src="${e(source)}" alt="">` : ''}<div class="reader-corner-flower" aria-hidden="true"><img src="assets/art-3.png" alt=""></div><div class="sheet-cancel" aria-hidden="true"><img src="assets/art-19.webp" alt=""><svg viewBox="0 0 100 50" fill="none"><path d="M0 10Q12 0 25 10T50 10T75 10T100 10M0 22Q12 12 25 22T50 22T75 22T100 22M0 34Q12 24 25 34T50 34T75 34T100 34"/></svg></div><div class="sheet-header">${stampMarkup(letter.stampId || decoration.stampId)}<p class="eyebrow">A LETTER FOR YOU</p>${letter.parentLetterId ? `<p class="parent-note">回信${letter.parentTitle ? ` · ${e(letter.parentTitle)}` : ''}${!preview ? `　<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信</a>` : ''}</p>` : ''}
   <h1>${e(letter.title || '未命名草稿')}</h1><div class="letter-meta"><span>署名：${e(letter.author?.displayName || '匿名来客')}</span>${!preview ? `<span>${e(date(letter.publishedAt || letter.updatedAt || letter.createdAt))}</span><span class="badge">${e(statusLabel(letter))}</span>` : `<span>${letter.visibility === 'private' ? `私密投递给 ${e(letter.recipientUsername || letter.recipient?.user?.displayName || '指定收件人')}` : '寄往公共信箱'}</span>`}</div></div>
   <div class="reading-body"><div class="letter-content">${e(letter.content)}</div></div>
   <nav class="sheet-paging" aria-label="信纸翻页"><button class="text-button" type="button" data-page-prev>← 上一页</button><span class="paper-page-count" role="status"></span><button class="text-button" type="button" data-page-next>下一页 →</button></nav>`;
@@ -1083,12 +1077,8 @@ async function detail(id, token, params) {
   const editAction = letter.canEdit ? button(letter.status === 'draft' ? '继续写信' : '编辑', 'edit', true) : '';
   const deleteAction = letter.canDelete ? button(letter.status === 'draft' ? '删除草稿' : '删除', 'delete-letter') : '';
   app.innerHTML = `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a></div>` + '<div class="reading-layout"><div class="reading-main">' + paper(letter) +
-    `</article>${letter.reviewNote ? `<p class="review-note"><strong>未通过原因：</strong>${e(letter.reviewNote)}</p>` : ''}<div class="actions">${editAction}${deleteAction}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('<img class="reply-icon" src="assets/art-45.svg" alt="">回一封信', 'reply', true) : ''}</div></div><aside class="correspondence"><h2>这封信的往返</h2><div class="original-letter"><span class="badge">${letter.parentLetterId ? '回信' : '原信'}</span><h3>${e(letter.title)}</h3><p>${e(letter.author?.displayName || '匿名来客')}</p>${letter.parentLetterId ? `<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信 →</a>` : ''}</div><div id="reply-list" aria-live="polite"><p class="help">${letter.parentLetterId ? '可返回原信查看其他往返信件。' : '这封信尚无公开的回信。'}</p></div></aside></div>`;
+    `</article><div class="actions">${editAction}${deleteAction}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('<img class="reply-icon" src="assets/art-45.svg" alt="">回一封信', 'reply', true) : ''}</div></div><aside class="correspondence"><h2>这封信的往返</h2><div class="original-letter"><span class="badge">${letter.parentLetterId ? '回信' : '原信'}</span><h3>${e(letter.title)}</h3><p>${e(letter.author?.displayName || '匿名来客')}</p>${letter.parentLetterId ? `<a href="#/letter/${encodeURIComponent(letter.parentLetterId)}">查看原信 →</a>` : ''}</div><div id="reply-list" aria-live="polite"><p class="help">${letter.parentLetterId ? '可返回原信查看其他往返信件。' : '这封信尚无公开的回信。'}</p></div></aside></div>`;
   disposeReader = mountLetterReader(app.querySelector('.stationery-sheet'));
-  if (!demo && service.user?.role === 'admin' && letter.status === 'active' && letter.visibility === 'public' && !letter.publishedAt && letter.submittedAt) {
-    app.insertAdjacentHTML('beforeend', `<section class="paper review-panel"><h2>审核这封信</h2><div class="form-field"><label for="review-reason">未通过原因</label><select id="review-reason"><option value="">请选择原因标签</option>${['色情低俗','暴力血腥','仇恨歧视与骚扰','违法违规内容','垃圾信息与恶意广告'].map(reason => `<option value="${reason}">${reason}</option>`).join('')}</select></div><p class="form-error" role="alert"></p><div class="actions">${button('退回草稿箱','reject-review')}${button('审核通过','approve-review',true)}</div></section>`);
-    app.querySelectorAll('.review-panel button').forEach(el => el.dataset.mutate = '');
-  }
   if (letter.status === 'active' && letter.publishedAt && !letter.parentLetterId) {
     const page = Math.max(1, Number(params.get('replyPage')) || 1);
     app.querySelector('#reply-list').textContent = '正在取回信……';
@@ -1102,30 +1092,6 @@ async function detail(id, token, params) {
       if (token === state.render) app.querySelector('#reply-list').innerHTML = `<p class="form-error">${e(errorText(error))}</p>${button('重试','retry')}`;
     }
   }
-}
-async function reviewQueue(params, token) {
-  if (!service.user) { app.innerHTML = empty('审核工作台', '请使用管理员账号登录。', button('登录','login',true)); return; }
-  if (demo || service.user.role !== 'admin') { app.innerHTML = empty('无法进入审核工作台', '此入口仅供管理员使用。'); return; }
-  app.innerHTML = empty('正在读取待审核信件', '请稍等片刻。');
-  const page = Math.max(1, Number(params.get('page')) || 1);
-  const result = await service.reviewQueue({ page, pageSize: config.pageSize });
-  if (token !== state.render) return;
-  state.list = location.hash;
-  app.innerHTML = titleBlock('待审核信件','审核通过后，其他人才能读到这封信。') +
-    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, true, index)).join('')}</div>` : empty('暂时没有待审核信件','可以稍后再来看看。')) +
-    `<nav class="pagination">${page > 1 ? `<a class="button" href="#/admin?page=${page-1}">上一页</a>` : ''}${result.hasMore ? `<a class="button" href="#/admin?page=${page+1}">下一页</a>` : ''}</nav>`;
-}
-async function reviewLetter(action) {
-  if (state.busy || !canRequest() || authNeeded()) return;
-  setBusy(true);
-  try {
-    const reason = action === 'returnForEdit' ? app.querySelector('#review-reason')?.value : undefined;
-    if (action === 'returnForEdit' && !reason) throw new ApiError('请先选择未通过原因。', { fieldErrors: { reason: '请选择一个原因标签。' } });
-    await service.review(state.currentLetter.id, action, reason);
-    toast(action === 'approve' ? '审核已通过。' : '已说明原因并退回作者草稿箱。');
-    navigate('#/admin');
-  } catch (error) { showError(error); }
-  finally { setBusy(false); }
 }
 async function write(token) {
   app.innerHTML = empty('正在铺开信纸', '请稍等片刻。');
@@ -1201,7 +1167,7 @@ function deliveryReceipt() {
         <div class="postal-paper"><i></i><i></i><i></i></div>
         <div class="postal-front"></div><div class="postal-flap"></div>
         <span class="postal-address">珞珈烟火邮局</span>
-        <img class="postal-imprint" src="assets/art-19.png" alt="">
+        <img class="postal-imprint" src="assets/art-19.webp" alt="">
         <div class="postal-tool"><div class="postal-tool-turn"><b></b><i></i></div></div>
       </div>
     </div>
@@ -1252,7 +1218,6 @@ async function render() {
     else if (path === '/calendar') await timeLetters(params, token);
     else if (path === '/inbox') await inbox(params, token);
     else if (path.startsWith('/letter/')) await detail(decodeURIComponent(path.slice(8)), token, params);
-    else if (path === '/admin') await reviewQueue(params, token);
     else if (path === '/write') await write(token);
     else if (path === '/decorate') await decorate(token);
     else if (path === '/preview') preview();
@@ -1386,8 +1351,6 @@ app.addEventListener('click', async event => {
     if (action === 'submit') await save(false);
     if (action === 'reply') await startFrom(state.currentLetter, false);
     if (action === 'edit') await startFrom(state.currentLetter, true);
-    if (action === 'approve-review') await reviewLetter('approve');
-    if (action === 'reject-review') await reviewLetter('returnForEdit');
   } catch (error) { showError(error); }
   if (!action && !event.target.closest('a,button,input,textarea')) {
     state.selected = null; app.querySelectorAll('.revealed').forEach(el => el.classList.remove('revealed'));
@@ -1540,6 +1503,14 @@ window.addEventListener('beforeunload', event => { if (state.dirty) { event.prev
 
 window.requestLuojiaLeave=requestLeave;
 try { const key='luojia.v17.stampSwap'; if(!localStorage.getItem(key)){for(let j=0;j<localStorage.length;j++){const k=localStorage.key(j);if(!k.startsWith('luojia')||k===key)continue;const raw=localStorage.getItem(k);if(!raw.includes('let_demo_4'))continue;const data=JSON.parse(raw);const walk=o=>{if(!o||typeof o!=='object')return;if(o.id==='let_demo_4')o.stampId='stamp_6';if(o.id==='let_demo_6')o.stampId='stamp_4';Object.values(o).forEach(walk)};walk(data);localStorage.setItem(k,JSON.stringify(data));}localStorage.setItem(key,'1');}}catch{}
+const startupQuery = new URLSearchParams(location.search);
+if (demo && startupQuery.get('demoLogin') === '1') {
+  try { sessionStorage.setItem('luojia.demo.signedIn', 'true'); }
+  catch { /* session() below will show a recoverable error. */ }
+  startupQuery.delete('demoLogin');
+  const rest = startupQuery.toString();
+  history.replaceState(null, '', `${location.pathname}${rest ? `?${rest}` : ''}${location.hash}`);
+}
 await service.session().catch(error => toast(errorText(error)));
 updateAccount(); await render(); if(new URLSearchParams(window.luojiaSearch || location.search).get('login') === '1' && !service.user) goToAuth();
 

@@ -1,24 +1,29 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const names=['config.js','domain.js','api.js','demo.js','app.js'];
-const modules=[];
-for(const name of names){
-  let source=await readFile(resolve(root,'frontend',name),'utf8');
-  source=source.replace(/^import .*;\n/gm,'').replace(/^export /gm,'')
-    .replaceAll('href="../index.html"','href="https://jiayingtian.github.io/LuoJiaPostOffice/"');
-  // 离线文件始终用于演示，避免后续切换真实模式后误打包真实请求。
-  if(name==='config.js') source=source.replace(/mode:\s*['"]api['"]/, "mode: 'demo'");
-  if(name==='app.js') source='const e=escapeHTML;\n'+source;
-  modules.push(source);
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const target = resolve(root, 'dist/luojia-preview');
+
+await rm(target, { recursive: true, force: true });
+await mkdir(resolve(target, 'tools'), { recursive: true });
+for (const name of ['index.html', 'styles.css', 'script.js', 'favicon.svg', 'package.json']) {
+  await cp(resolve(root, name), resolve(target, name));
 }
-let html=await readFile(resolve(root,'frontend/index.html'),'utf8');
-const css=await readFile(resolve(root,'frontend/app.css'),'utf8');
-html=html.replace('<link rel="stylesheet" href="app.css">',()=>`<style>${css}</style>`)
-  .replace('<link rel="icon" href="../favicon.svg" type="image/svg+xml">','')
-  .replaceAll('href="../index.html"','href="https://jiayingtian.github.io/LuoJiaPostOffice/"')
-  .replace('<script type="module" src="app.js"></script>',()=>`<script type="module">\n${modules.join('\n').replaceAll('</script','<\\/script')}\n</script>`);
-await mkdir(resolve(root,'dist'),{recursive:true});
-await writeFile(resolve(root,'dist/luojia-preview.html'),html);
-console.log('已生成 dist/luojia-preview.html，可直接双击打开（仅本机演示）。');
+await cp(resolve(root, 'frontend'), resolve(target, 'frontend'), { recursive: true });
+await mkdir(resolve(target, 'pictures/material/letter-paper'), { recursive: true });
+await cp(
+  resolve(root, 'pictures/material/letter-paper/rice-yellow.png'),
+  resolve(target, 'pictures/material/letter-paper/rice-yellow.png'),
+);
+await cp(resolve(root, 'tools/dev-server.mjs'), resolve(target, 'tools/dev-server.mjs'));
+await writeFile(resolve(target, 'package.json'), JSON.stringify({
+  name: 'luojia-post-office-preview',
+  private: true,
+  type: 'module',
+  scripts: { dev: 'node tools/dev-server.mjs' },
+  engines: { node: '>=20' },
+}, null, 2) + '\n');
+await writeFile(resolve(target, 'README.md'),
+  '# 珞珈烟火邮局 · 演示包\n\n需要 Node.js 20 或更新版本。进入本目录运行 `npm run dev`，然后打开终端显示的网址。无需安装依赖或启动数据库。\n');
+console.log(`已生成 ${target}。进入该目录运行 npm run dev 后查看演示。`);

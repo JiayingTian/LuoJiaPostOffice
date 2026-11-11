@@ -97,7 +97,7 @@ a:focus-visible {
   width: 68px;
   height: 48px;
   margin-right: 12px;
-  background-image: url("frontend/assets/art-1.png");
+  background-image: url("frontend/assets/art-1.webp");
   background-repeat: no-repeat;
   background-size: 656px 600px;
   background-position: -8px -543px;
@@ -233,7 +233,7 @@ a:focus-visible {
   min-height: 600px;
   overflow: hidden;
   background-color: #e9dfc9;
-  background-image: url("frontend/assets/art-2.png");
+  background-image: url("frontend/assets/art-2.webp");
   background-position: center 47%;
   background-size: cover;
 }
@@ -567,7 +567,7 @@ a:focus-visible {
   position: absolute;
   z-index: -2;
   display: block;
-  background-image: url("frontend/assets/art-1.png");
+  background-image: url("frontend/assets/art-1.webp");
   background-repeat: no-repeat;
   background-size: 656px 600px;
   opacity: 0.9;
@@ -637,7 +637,7 @@ a:focus-visible {
 .footer-skyline {
   width: 520px;
   height: 58px;
-  background-image: url("frontend/assets/art-1.png");
+  background-image: url("frontend/assets/art-1.webp");
   background-repeat: no-repeat;
   background-size: 656px 600px;
   background-position: 0 -542px;
@@ -959,7 +959,7 @@ a:focus-visible {
 
       </section>
 
-<section class="portal-section" aria-label="邮局栏目"><div class="portal-grid"><article class="portal-card card-letters"><div class="card-copy"><p class="card-index">01 / MEMORIES</p><h3>珞珈印记</h3><p>把校园里的相遇与日常，<br />留在信里。</p></div><span class="sprite sprite-envelope" aria-hidden="true"></span><a class="card-button" href="frontend/#/mailbox" aria-label="进入珞珈印记">→</a></article><article class="portal-card card-write"><div class="card-copy"><p class="card-index">02 / TIME</p><h3>时光信笺</h3><p>与过去和未来的自己对话，<br />记下成长中的思考。</p></div><span class="sprite sprite-paper" aria-hidden="true"></span><a class="card-button" href="frontend/#/calendar" aria-label="进入时光信笺">→</a></article><article class="portal-card card-campus"><div class="card-copy"><p class="card-index">03 / SEASONS</p><h3>应时来信</h3><p>在特别的日子，<br />留下一封应景的信。</p></div><span class="sprite sprite-stamps" aria-hidden="true"></span><button class="card-button season-open" type="button" aria-label="应时来信">→</button></article><article class="portal-card card-plan"><div class="card-copy"><p class="card-index">04 / ABOUT</p><h3>关于我们</h3><p>一间邮局的初心，<br />和它背后的我们。</p></div><span class="sprite sprite-gate" aria-hidden="true"></span><a class="card-button" href="frontend/about.html#features" aria-label="进入关于我们">→</a></article></div></section>
+<section class="portal-section" aria-label="邮局栏目"><div class="portal-grid"><article class="portal-card card-letters"><div class="card-copy"><p class="card-index">01 / MEMORIES</p><h3>珞珈印记</h3><p>把校园里的相遇与日常，<br />留在信里。</p></div><span class="sprite sprite-envelope" aria-hidden="true"></span><a class="card-button" href="frontend/index.html#/mailbox" aria-label="进入珞珈印记">→</a></article><article class="portal-card card-write"><div class="card-copy"><p class="card-index">02 / TIME</p><h3>时光信笺</h3><p>与过去和未来的自己对话，<br />记下成长中的思考。</p></div><span class="sprite sprite-paper" aria-hidden="true"></span><a class="card-button" href="frontend/index.html#/calendar" aria-label="进入时光信笺">→</a></article><article class="portal-card card-campus"><div class="card-copy"><p class="card-index">03 / SEASONS</p><h3>应时来信</h3><p>在特别的日子，<br />留下一封应景的信。</p></div><span class="sprite sprite-stamps" aria-hidden="true"></span><button class="card-button season-open" type="button" aria-label="应时来信">→</button></article><article class="portal-card card-plan"><div class="card-copy"><p class="card-index">04 / ABOUT</p><h3>关于我们</h3><p>一间邮局的初心，<br />和它背后的我们。</p></div><span class="sprite sprite-gate" aria-hidden="true"></span><a class="card-button" href="frontend/about.html#features" aria-label="进入关于我们">→</a></article></div></section>
     </main>
 
     <footer class="site-footer">
@@ -970,5 +970,5 @@ a:focus-visible {
 
     <div class="toast" role="status" aria-live="polite"></div>
 
-  <script src="frontend/runtime-config.js"></script><script>const b=document.querySelector('.scene-login');let logged=false;async function syncAccount(){if(window.__LUOJIA_CONFIG__?.mode==='api'){try{const response=await fetch(`${window.__LUOJIA_CONFIG__.apiBase}/auth/me`,{credentials:'include',headers:{Accept:'application/json'}});const result=await response.json();logged=response.ok&&result.code===0&&Boolean(result.data?.id)}catch{logged=false}}else{try{logged=sessionStorage.getItem('luojia.demo.signedIn')==='true'}catch{logged=false}}b.textContent=logged?'我的':'登录';b.classList.toggle('signed-in',logged);b.disabled=false}b.disabled=true;b.textContent='读取中';b.onclick=()=>{location.href=logged?'frontend/#/mine':'frontend/auth.html?next=%23%2Fmine'};syncAccount();window.addEventListener('pageshow',syncAccount);</script><dialog class="season-modal"><h2>静候佳节</h2><form method="dialog"><button>好，等一封应时来信</button></form></dialog><script>document.querySelector('.season-open').onclick=()=>document.querySelector('.season-modal').showModal();</script></body>
+  <script src="frontend/runtime-config.js"></script><script>const b=document.querySelector('.scene-login');let logged=false;async function syncAccount(){if(window.__LUOJIA_CONFIG__?.mode==='api'){try{const response=await fetch(`${window.__LUOJIA_CONFIG__.apiBase}/auth/me`,{credentials:'include',headers:{Accept:'application/json'}});const result=await response.json();logged=response.ok&&result.code===0&&Boolean(result.data?.id)}catch{logged=false}}else{try{logged=sessionStorage.getItem('luojia.demo.signedIn')==='true'}catch{logged=false}}b.textContent=logged?'我的':'登录';b.classList.toggle('signed-in',logged);b.disabled=false}b.disabled=true;b.textContent='读取中';b.onclick=()=>{location.href=logged?'frontend/index.html#/mine':'frontend/auth.html?next=%23%2Fmine'};syncAccount();window.addEventListener('pageshow',syncAccount);</script><dialog class="season-modal"><h2>静候佳节</h2><form method="dialog"><button>好，等一封应时来信</button></form></dialog><script>document.querySelector('.season-open').onclick=()=>document.querySelector('.season-modal').showModal();</script></body>
 </html>

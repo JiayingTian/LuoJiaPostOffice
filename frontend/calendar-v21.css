@@ -4,7 +4,7 @@
 .review-note{margin:0;padding:16px 22px;background:#fff5df;border:1px solid #e5d8b9;color:#8a452f}.review-panel select{width:100%;padding:12px;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--ink);font:inherit}
 
 /* 日历：与时间轴共用复古纸张、邮票和校园装饰语言。 */
-.calendar-archive{position:relative;overflow:hidden;padding:22px 36px 42px;background:linear-gradient(rgba(255,249,235,.88),rgba(249,235,207,.86)),url('assets/frame3.png') center/100% 100% no-repeat;border-color:#d6b77d;box-shadow:0 18px 42px #76502221}
+.calendar-archive{position:relative;overflow:hidden;padding:22px 36px 42px;background:linear-gradient(rgba(255,249,235,.88),rgba(249,235,207,.86)),url('assets/frame3.webp') center/100% 100% no-repeat;border-color:#d6b77d;box-shadow:0 18px 42px #76502221}
 .calendar-archive .archive-tabs,.timeline-archive .archive-tabs{width:max-content;margin:0 auto 26px;padding:5px;border:1px solid #dfc99f;border-radius:999px;background:#fff8e9dd;box-shadow:0 6px 16px #70491d1c}
 .calendar-archive .archive-tabs a,.timeline-archive .archive-tabs a{min-width:116px;border:0;padding:9px 24px}
 .calendar-shell{position:relative;max-width:1180px;margin:auto;padding:10px 10px 6px}
@@ -26,7 +26,7 @@
 .calendar-archive .calendar-cell:hover{border:0;background:#ead5ad80;box-shadow:none}
 .calendar-archive .calendar-cell.has-letters:after{bottom:4px;width:6px;height:6px;background:#c79031}
 .calendar-archive .calendar-cell.today{box-shadow:inset 0 0 0 1px #b4823e}
-.calendar-archive .calendar-cell.selected{background:transparent url('assets/wax-sealed.png') center/58px 58px no-repeat;color:#fff;font-size:21px;font-weight:700;text-shadow:0 1px 2px #6f321b;box-shadow:none}
+.calendar-archive .calendar-cell.selected{background:transparent url('assets/wax-sealed.webp') center/58px 58px no-repeat;color:#fff;font-size:21px;font-weight:700;text-shadow:0 1px 2px #6f321b;box-shadow:none}
 .calendar-archive .calendar-cell.selected:after{content:'•••';bottom:2px;width:auto;height:auto;background:none;color:#fff;font:9px/1 var(--sans);letter-spacing:1px}
 .calendar-archive .calendar-hint{position:relative;z-index:2;color:#80674e}
 .calendar-archive .calendar-results>h2{margin:0 0 18px;color:#5a3c24;font-size:25px;letter-spacing:.05em}
@@ -53,7 +53,7 @@
 @media(max-width:430px){.calendar-archive .calendar-letter{min-height:245px;padding:20px 18px}.calendar-stamp{top:auto;right:16px;bottom:17px;width:72px;height:72px}.calendar-postmark{top:auto;right:80px;bottom:29px}.calendar-letter-meta{padding-right:100px}.calendar-letter-meta span+span:before{display:none}}
 
 /* 时间轴：蜡封节点、日期分组与信件卡片。 */
-.timeline-archive{position:relative;overflow:hidden;padding:22px 42px 46px;background:linear-gradient(rgba(255,249,235,.9),rgba(248,232,201,.88)),url('assets/frame3.png') center/100% 100% no-repeat;border-color:#d6b77d;box-shadow:0 18px 42px #76502221}
+.timeline-archive{position:relative;overflow:hidden;padding:22px 42px 46px;background:linear-gradient(rgba(255,249,235,.9),rgba(248,232,201,.88)),url('assets/frame3.webp') center/100% 100% no-repeat;border-color:#d6b77d;box-shadow:0 18px 42px #76502221}
 .timeline-archive .archive-tabs{position:relative;z-index:4;margin-bottom:18px}
 .timeline-shell{position:relative;max-width:1060px;margin:auto;padding:28px 24px 10px}
 .timeline-blossom{position:absolute;z-index:1;left:-72px;top:-68px;width:280px;max-width:none;opacity:.9;pointer-events:none}

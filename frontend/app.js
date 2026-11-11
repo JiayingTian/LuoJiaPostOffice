@@ -37,7 +37,7 @@ function updateAccount() {
   userMenu.hidden = !service.user;
   document.querySelector('#account-button').textContent = '登录';
   document.querySelector('#account-button').hidden = Boolean(service.user);
-  document.querySelector('[data-nav=admin]').hidden = service.user?.role !== 'admin';
+
 }
 function navigate(hash) { if (hash === location.hash) render(); else location.hash = hash; }
 function errorText(error) {
@@ -275,7 +275,7 @@ async function timeLetters(params, token) {
       <div class="calendar-grid">${cells.join('')}</div>
       <p class="calendar-hint"><i></i> 点击日期，右侧时间轴自动定位至当天来信</p>
     </section>
-    <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.png" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section>
+    <section class="calendar-results combined-timeline" aria-label="按日期排列的信件时间轴" aria-live="polite">${selectedEntries.length ? combinedTimeline(entries, selectedKey) : '<div class="calendar-empty timeline-empty"><img class="timeline-empty-image" src="assets/open-letter.webp" alt="打开的信封"><p>今天的心事藏在心里了</p></div>'}</section>
   </div></div>`;
   app.innerHTML = titleBlock('时光日历 · 信件时间轴', '在日历中选择一个日期，重温时光的回响。', '<a class="button primary" href="#/write">写一封信</a>') +
     `<section class="archive-card calendar-archive combined-archive">${calendarPanel}</section>`;
@@ -296,12 +296,7 @@ async function detail(id, token, params) {
   const editAction = letter.canEdit ? button(letter.status === 'draft' ? '继续写信' : '编辑', 'edit', true) : '';
   const deleteAction = letter.canDelete ? button(letter.status === 'draft' ? '删除草稿' : '删除', 'delete-letter') : '';
   app.innerHTML = `<div class="breadcrumbs"><a href="${e(state.list)}">← 返回信箱</a></div>` + paper(letter) +
-    (letter.reviewNote ? `<p class="review-note"><strong>未通过原因：</strong>${e(letter.reviewNote)}</p>` : '') +
     `<div class="actions">${editAction}${deleteAction}${letter.status === 'active' && letter.publishedAt && !letter.parentLetterId && letter.allowReplies === true ? button('回一封信', 'reply', true) : ''}</div></article>`;
-  if (!demo && service.user?.role === 'admin' && letter.status === 'active' && letter.visibility === 'public' && !letter.publishedAt && letter.submittedAt) {
-    app.insertAdjacentHTML('beforeend', `<section class="paper review-panel"><h2>审核这封信</h2><div class="form-field"><label for="review-reason">未通过原因</label><select id="review-reason"><option value="">请选择原因标签</option>${['色情低俗','暴力血腥','仇恨歧视与骚扰','违法违规内容','垃圾信息与恶意广告'].map(reason => `<option value="${reason}">${reason}</option>`).join('')}</select></div><p class="form-error" role="alert"></p><div class="actions">${button('退回草稿箱','reject-review')}${button('审核通过','approve-review',true)}</div></section>`);
-    app.querySelectorAll('.review-panel button').forEach(el => el.dataset.mutate = '');
-  }
   if (letter.status === 'active' && letter.publishedAt && !letter.parentLetterId) {
     const page = Math.max(1, Number(params.get('replyPage')) || 1);
     app.insertAdjacentHTML('beforeend', '<section class="replies"><h2>回信</h2><div id="reply-list" aria-live="polite">正在取回信……</div></section>');
@@ -315,30 +310,6 @@ async function detail(id, token, params) {
       if (token === state.render) app.querySelector('#reply-list').innerHTML = `<p class="form-error">${e(errorText(error))}</p>${button('重试','retry')}`;
     }
   }
-}
-async function reviewQueue(params, token) {
-  if (!service.user) { app.innerHTML = empty('审核工作台', '请使用管理员账号登录。', button('登录','login',true)); return; }
-  if (demo || service.user.role !== 'admin') { app.innerHTML = empty('无法进入审核工作台', '此入口仅供管理员使用。'); return; }
-  app.innerHTML = empty('正在读取待审核信件', '请稍等片刻。');
-  const page = Math.max(1, Number(params.get('page')) || 1);
-  const result = await service.reviewQueue({ page, pageSize: config.pageSize });
-  if (token !== state.render) return;
-  state.list = location.hash;
-  app.innerHTML = titleBlock('待审核信件','审核通过后，其他人才能读到这封信。') +
-    (result.items.length ? `<div class="letter-grid">${result.items.map((item, index) => card(item, true, index)).join('')}</div>` : empty('暂时没有待审核信件','可以稍后再来看看。')) +
-    `<nav class="pagination">${page > 1 ? `<a class="button" href="#/admin?page=${page-1}">上一页</a>` : ''}${result.hasMore ? `<a class="button" href="#/admin?page=${page+1}">下一页</a>` : ''}</nav>`;
-}
-async function reviewLetter(action) {
-  if (state.busy || !canRequest() || authNeeded()) return;
-  setBusy(true);
-  try {
-    const reason = action === 'returnForEdit' ? app.querySelector('#review-reason')?.value : undefined;
-    if (action === 'returnForEdit' && !reason) throw new ApiError('请先选择未通过原因。', { fieldErrors: { reason: '请选择一个原因标签。' } });
-    await service.review(state.currentLetter.id, action, reason);
-    toast(action === 'approve' ? '审核已通过。' : '已说明原因并退回作者草稿箱。');
-    navigate('#/admin');
-  } catch (error) { showError(error); }
-  finally { setBusy(false); }
 }
 async function write(token) {
   app.innerHTML = empty('正在铺开信纸', '请稍等片刻。');
@@ -389,7 +360,7 @@ function deliveryReceipt() {
         <div class="postal-paper"><i></i><i></i><i></i></div>
         <div class="postal-front"></div><div class="postal-flap"></div>
         <span class="postal-address">珞珈烟火邮局</span>
-        <img class="postal-imprint" src="assets/art-19.png" alt="">
+        <img class="postal-imprint" src="assets/art-19.webp" alt="">
         <div class="postal-tool"><div class="postal-tool-turn"><b></b><i></i></div></div>
       </div>
     </div>
@@ -436,7 +407,6 @@ async function render() {
     else if (path === '/calendar') await timeLetters(params, token);
     else if (path === '/inbox') await inbox(params, token);
     else if (path.startsWith('/letter/')) await detail(decodeURIComponent(path.slice(8)), token, params);
-    else if (path === '/admin') await reviewQueue(params, token);
     else if (path === '/write') await write(token);
     else if (path === '/preview') preview();
     else if (path === '/delivery') deliveryReceipt();
@@ -552,8 +522,6 @@ app.addEventListener('click', async event => {
     if (action === 'submit') await save(false);
     if (action === 'reply') await startFrom(state.currentLetter, false);
     if (action === 'edit') await startFrom(state.currentLetter, true);
-    if (action === 'approve-review') await reviewLetter('approve');
-    if (action === 'reject-review') await reviewLetter('returnForEdit');
   } catch (error) { showError(error); }
   if (!action && !event.target.closest('a,button,input,textarea')) {
     state.selected = null; app.querySelectorAll('.revealed').forEach(el => el.classList.remove('revealed'));

@@ -184,7 +184,9 @@ function setError(form, message = '') {
 function returnToSite() {
   const requested = new URLSearchParams(location.search).get('next');
   const hash = requested?.startsWith('#/') ? requested : '#/mine';
-  location.assign(`index.html${hash}`);
+  // file:// may give auth.html and index.html separate sessionStorage origins.
+  // Carry only the demo sign-in marker across the page navigation.
+  location.assign(`index.html${config.mode === 'demo' ? '?demoLogin=1' : ''}${hash}`);
 }
 
 async function submitLogin(form) {

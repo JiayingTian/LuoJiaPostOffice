@@ -1,12 +1,11 @@
-# 珞珈烟火邮局后端开发说明
+# 珞珈烟火邮局 · 后端说明
 
-> 本文说明真实 API 模式。`npm run dev` 和 GitHub Pages 的演示版公开信寄出后直接展示；此后端当前仍要求管理员审核公开信与公开回信。两套流程请勿混用，参见仓库根目录 README。
+当前投递流程与网页一致：公开信及公开回信在成功寄出后立即公开；私密信仅作者和指定收件人可读。无需管理员账号或审核步骤。旧数据库迁移中的审核记录表属于历史结构，不参与当前投递。
 
 ## 1 环境准备
 
 ```powershell
-conda activate postoffice
-cd D:\Code\26LingCup\backend
+cd backend
 pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
@@ -45,7 +44,7 @@ Swagger：http://127.0.0.1:8000/docs
 python -m scripts.create_test_accounts
 ```
 
-该命令创建或重置 `test_user_a`、`test_user_b` 和 `test_admin`，并在终端一次性输出随机密码。不要将输出保存到 Git、日志或截图中。
+该命令创建或重置 `test_user_a` 与 `test_user_b`，并在终端一次性输出随机密码。不要将输出保存到 Git、日志或截图中。
 
 ## 5 核心流程测试
 
@@ -58,12 +57,10 @@ python -m scripts.smoke_test_core
 1. 注册与 CSRF Token 恢复。
 2. 空草稿保存。
 3. 幂等重放和冲突。
-4. 草稿提交审核。
-5. 待审核信件权限隔离。
-6. 管理员审核通过。
-7. 公开信件读取。
-8. 完整回信创建、审核和列表。
-9. 临时数据自动清理。
+4. 草稿寄出后立即公开，访客可以读取。
+5. 私密信仅作者和指定收件人可以读取。
+6. 公开回信寄出后立即进入回信列表。
+7. 临时数据自动清理。
 
 成功输出：
 
@@ -87,9 +84,8 @@ PATCH  /api/v1/letters/{letterId}
 DELETE /api/v1/letters/{letterId}
 GET    /api/v1/letters/{letterId}/replies
 GET    /api/v1/me/letters
-GET    /api/v1/admin/letters
-POST   /api/v1/admin/letters/{letterId}/review
+GET    /api/v1/me/inbox
 ```
 
-接口字段、状态码和响应格式以 `restriction/openapi.yaml` 为准。
+兼容字段 `submitForReview` 在当前版本中表示“确认寄出”，成功响应即代表公开信已发布。旧 `restriction/openapi.yaml` 是历史接口草稿，不随参赛作品打包。
 
